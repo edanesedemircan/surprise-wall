@@ -1,0 +1,13 @@
+# Klasör bazlı korumalar
+**/node_modules/
+**/dist/
+**/.vs/
+**/bin/
+**/obj/
+
+# Şifre ve Token Korumaları (api ve client fark etmeksizin)
+**/appsettings.json
+**/appsettings.Development.json
+**/.env
+**/.env.local
+**/*.local
