@@ -70,42 +70,46 @@ const response = await fetch(`${apiUrl}/api/memory/wall/${wallId}`);
   document.head.appendChild(script);
 
   script.onload = () => {
-    // @ts-ignore
-    window.google?.accounts.id.initialize({
-      client_id: '200628903576-matrf8d1fosen9d64ralgu3fetpltcmh.apps.googleusercontent.com', 
-      callback: async (response: any) => {
-        setStatusMessage('Güvenli çember kontrol ediliyor...');
-        try {
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
-          const res = await fetch(`${apiUrl}/api/auth/google-login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              wallId: wallId,
-              idToken: response.credential 
-             }),
-          });
+    const anyWindow = window as any;
+    if (anyWindow.google?.accounts?.id) {
+      anyWindow.google.accounts.id.initialize({
+        client_id: '921932152643-i3n5p00is3ncaq0gclg1v7s74676be32.apps.googleusercontent.com',
+        callback: async (response: any) => {
+          setStatusMessage('Güvenli çember kontrol ediliyor...');
+          try {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+            const res = await fetch(`${apiUrl}/api/auth/google-login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                wallId: wallId,
+                idToken: response.credential
+              }),
+            });
 
-          const data = await res.json();
-          if (res.ok) {
-            onLoginSuccess(data.role, data.title, wallId);
-          } else {
-            setStatusMessage(`Giriş Engellendi: ${data.message}`);
+            const data = await res.json();
+            if (res.ok) {
+              onLoginSuccess(data.role, data.title, wallId);
+            } else {
+              setStatusMessage(`Giriş Engellendi: ${data.message}`);
+            }
+          } catch (error) {
+            setStatusMessage('API bağlantı hatası oluştu!');
           }
-        } catch (error) {
-          setStatusMessage('API bağlantı hatası oluştu!');
         }
-      }
-    });
+      });
 
-    window.google?.accounts.id.renderButton(
-      document.getElementById('googleBtn'),
-      { theme: 'outline', size: 'large', width: 320 }
-    );
+      anyWindow.google.accounts.id.renderButton(
+        document.getElementById('googleBtn'),
+        { theme: 'outline', size: 'large', width: 320 }
+      );
+    }
   };
 
   return () => {
-    document.head.removeChild(script);
+    if (document.head.contains(script)) {
+      document.head.removeChild(script);
+    }
   };
 }, [role, wallId]);
 
