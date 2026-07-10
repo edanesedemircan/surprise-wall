@@ -114,7 +114,17 @@ export function CreateWall() {
     const response = await fetch(`${apiUrl}/api/wall/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      // CreateWall.tsx içindeki body kısmı:
+body: JSON.stringify({
+  title,
+  theme: selectedTheme,
+  targetEmail,
+  allowedEmails,
+  creatorEmail: loggedInUser?.email || "test@gmail.com", 
+  isCountdownActive: isCountdownActive,
+  
+  targetDate: isCountdownActive && targetDate ? new Date(targetDate).toISOString() : null
+}),
     });
 
     // 400 hatası alındığında mesajı okuyabilmek için önceden text olarak almayı deneyelim

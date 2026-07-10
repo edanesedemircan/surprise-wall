@@ -48,82 +48,42 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
 
-  // --- 1. Odanın Genel Özelliklerini (Başlık, Tarih, Tema) Çekme ---
-  useEffect(() => {
-    const fetchWallSpecs = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/api/wall/${wallId}`);
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Backend'den Gelen Ham Veri:", data);
+// --- 1. Odanın Genel Özelliklerini (Başlık, Tarih, Tema) Çekme ---
+useEffect(() => {
+  const fetchWallSpecs = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/wall/${wallId}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Backend'den Gelen Ham Veri:", data);
+        
+        const incomingTitle = data.title || data.Title || 'Yükleniyor...';
+        const incomingTheme = data.theme || data.Theme || 'birthday';
+        let incomingTargetDate = data.targetDate || data.TargetDate || null;
+
+       
+        if (incomingTargetDate && typeof incomingTargetDate === 'string') {
           
-          const incomingTitle = data.title || data.Title || 'Yükleniyor...';
-          const incomingTheme = data.theme || data.Theme || 'birthday';
-          let incomingTargetDate = data.targetDate || data.TargetDate || null;
-
-          if (incomingTargetDate && typeof incomingTargetDate === 'string') {
-            const match = incomingTargetDate.match(/(\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?)/);
-            if (match && match[1]) {
-              incomingTargetDate = match[1]; 
-            } else if (incomingTargetDate.length > 10) {// --- 1. Odanın Genel Özelliklerini (Başlık, Tarih, Tema) Çekme ---
-  useEffect(() => {
-    const fetchWallSpecs = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/api/wall/${wallId}`);
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Backend'den Gelen Ham Veri:", data);
-          
-          const incomingTitle = data.title || data.Title || 'Yükleniyor...';
-          const incomingTheme = data.theme || data.Theme || 'birthday';
-          let incomingTargetDate = data.targetDate || data.TargetDate || null;
-
-  
-          if (incomingTargetDate && typeof incomingTargetDate === 'string') {
-           
-            const match = incomingTargetDate.match(/(\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?)/);
-            if (match && match[1]) {
-              incomingTargetDate = match[1]; 
-            } else if (incomingTargetDate.length > 10) {
-              
-              if (incomingTargetDate.includes('-') && incomingTargetDate.indexOf('-') === 7) {
-                incomingTargetDate = incomingTargetDate.substring(3);
-              }
-            }
+          incomingTargetDate = incomingTargetDate.trim().replace(/^\+/, '');
+          const firstDash = incomingTargetDate.indexOf('-');
+          if (firstDash === 6) {
+            incomingTargetDate = incomingTargetDate.substring(2);
           }
-
-          setWallTitle(incomingTitle);
-          setWallTheme(incomingTheme.toLowerCase());
-          setTargetDate(incomingTargetDate);
         }
-      } catch (error) {
-        console.error('Oda bilgileri sunucudan alınamadı:', error);
+
+        setWallTitle(incomingTitle);
+        setWallTheme(incomingTheme.toLowerCase());
+        setTargetDate(incomingTargetDate);
       }
-    };
-
-    if (wallId) {
-      fetchWallSpecs();
+    } catch (error) {
+      console.error('Oda bilgileri sunucudan alınamadı:', error);
     }
-  }, [wallId, apiUrl]);
-              if (incomingTargetDate.includes('-') && incomingTargetDate.indexOf('-') === 7) {
-                incomingTargetDate = incomingTargetDate.substring(3);
-              }
-            }
-          }
+  };
 
-          setWallTitle(incomingTitle);
-          setWallTheme(incomingTheme.toLowerCase());
-          setTargetDate(incomingTargetDate);
-        }
-      } catch (error) {
-        console.error('Oda bilgileri sunucudan alınamadı:', error);
-      }
-    };
-
-    if (wallId) {
-      fetchWallSpecs();
-    }
-  }, [wallId, apiUrl]);
+  if (wallId) {
+    fetchWallSpecs();
+  }
+}, [wallId, apiUrl]);
 
 
   // --- 2. Anıları Veritabanından Çekme ---
