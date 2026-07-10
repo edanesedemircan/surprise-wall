@@ -113,32 +113,6 @@ const response = await fetch(`${apiUrl}/api/memory/wall/${wallId}`);
   };
 }, [role, wallId]);
 
-  const handleTestLogin = async () => {
-    setStatusMessage('Güvenli çember kontrol ediliyor (Test Modu)...');
-    try {
-  
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
-const response = await fetch(`${apiUrl}/api/auth/google-login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          wallId: wallId,
-          idToken: "test_token_eda_nese" 
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-  
-        onLoginSuccess(data.role, data.title, wallId);
-      } else {
-        setStatusMessage(`Giriş Engellendi: ${data.message}`);
-      }
-    } catch (error) {
-      setStatusMessage('API bağlantı hatası! Backend projenin (5106) açık olduğundan emin ol');
-    }
-  };
 
   const handleAddMemory = async (e: React.FormEvent) => {
     e.preventDefault();
