@@ -17,10 +17,11 @@ interface WallDetailProps {
 
 // 🎨 Tema Renk Yapılandırması Sözlüğü
 const themeStyles: Record<string, { bg: string, primary: string, border: string, text: string }> = {
-  pink: { bg: '#FFF5F5', primary: '#a02b6a', border: '#FECDD3', text: '#4A2828' },
-  blue: { bg: '#F0F9FF', primary: '#0369A1', border: '#BAE6FD', text: '#1E3A8A' },
-  gold: { bg: '#FEFCE8', primary: '#A16207', border: '#FEF08A', text: '#451A03' },
-  purple: { bg: '#FAF5FF', primary: '#7E22CE', border: '#E9D5FF', text: '#3B0764' }
+  birthday: { bg: '#F3E8FF', primary: '#6b21a8', border: '#E9D5FF', text: '#3B0764' },     // Doğum Günü
+  romantic: { bg: '#FFF1F2', primary: '#9f1238', border: '#FFE4E6', text: '#4C0519' },     // Romantik Anılar
+  graduation: { bg: '#F1F5F9', primary: '#0f172a', border: '#E2E8F0', text: '#0F172A' },   // Kep Fırlatma
+  job: { bg: '#FEF3C7', primary: '#92400e', border: '#FDE68A', text: '#451A03' },          // Yeni Başlangıç
+  funny: { bg: '#FCE7F3', primary: '#db2777', border: '#FBCFE8', text: '#4D072B' }         // Sadece Kutlama
 };
 
 export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
