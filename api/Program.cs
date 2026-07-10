@@ -59,6 +59,21 @@ app.MapGet("/api/test", () => new { Message = "Selam Eda, .NET ve React köprüs
 
 app.MapControllers();
 
+//(Tabloları Canlı Veritabanına Yükleme)
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.Migrate(); // Tablolar yoksa otomatik oluşturur kanka!
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Veritabanı migration sırasında bir hata oluştu.");
+    }
+}
 
 app.Run();
 
