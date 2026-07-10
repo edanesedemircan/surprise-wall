@@ -98,7 +98,7 @@ export function CreateWall() {
     finalTargetDate = new Date().toISOString();
   }
 
-  const payload = {
+ /* const payload = {
     title: title || "İsimsiz Duvar",
     theme: selectedTheme || "birthday",
     targetEmail: targetEmail,
@@ -107,7 +107,7 @@ export function CreateWall() {
     creatorEmail: creatorEmailValue,
     isCountdownActive: !!isCountdownActive,
     targetDate: finalTargetDate
-  };
+  };*/
 
   try {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
