@@ -73,7 +73,7 @@ const response = await fetch(`${apiUrl}/api/memory/wall/${wallId}`);
     const anyWindow = window as any;
     if (anyWindow.google?.accounts?.id) {
       anyWindow.google.accounts.id.initialize({
-        client_id: '921932152643-i3n5p00is3ncaq0gclg1v7s74676be32.apps.googleusercontent.com',
+        client_id: '200628903576-matrf8d1fosen9d64ralgu3fetpltcmh.apps.googleusercontent.com',
         callback: async (response: any) => {
           setStatusMessage('Güvenli çember kontrol ediliyor...');
           try {
