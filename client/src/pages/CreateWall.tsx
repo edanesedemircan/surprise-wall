@@ -87,7 +87,7 @@ export function CreateWall() {
   setCreatedWallId(null); 
 
   // Güvenlik Kilidi: Eğer loggedInUser yoksa veya email'i boşsa çökmesin, elle yazılan targetEmail'i veya geçici bir şeyi baz alsın
-  const creatorEmailValue = loggedInUser?.email || targetEmail || "test@gmail.com";
+  //const creatorEmailValue = loggedInUser?.email || targetEmail || "test@gmail.com";
 
   // Tarih boşsa .NET DateTime modelinin çökmemesi için geçerli bir gelecek tarih verelim (Örn: 1 gün sonrası)
   let finalTargetDate = null;
