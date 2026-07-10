@@ -28,7 +28,8 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
 
   const fetchMemories = async () => {
     try {
-      const response = await fetch(`http://localhost:5106/api/memory/wall/${wallId}`);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+const response = await fetch(`${apiUrl}/api/memory/wall/${wallId}`);
       if (response.ok) {
         const data = await response.json();
         setMemories(data);
@@ -63,7 +64,8 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     setStatusMessage('Güvenli çember kontrol ediliyor (Test Modu)...');
     try {
   
-      const response = await fetch('http://localhost:5106/api/auth/google-login', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+const response = await fetch(`${apiUrl}/api/auth/google-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -90,7 +92,8 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     if (!authorName.trim() || !content.trim()) return;
 
     try {
-      const response = await fetch('http://localhost:5106/api/memory/add', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+const response = await fetch(`${apiUrl}/api/memory/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wallId, authorName, content })

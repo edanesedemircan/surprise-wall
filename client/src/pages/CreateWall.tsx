@@ -87,7 +87,8 @@ export function CreateWall() {
     setCreatedWallId(null); 
 
     try {
-      const response = await fetch('http://localhost:5106/api/wall/create', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+const response = await fetch(`${apiUrl}/api/wall/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

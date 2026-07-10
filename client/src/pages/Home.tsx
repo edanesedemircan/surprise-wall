@@ -22,7 +22,8 @@ export function Home({ onLoginSuccess }: HomeProps) {
     setStatusMessage('Google doğrulaması başarılı, güvenli çember kontrol ediliyor...');
 
     try {
-      const response = await fetch('http://localhost:5106/api/auth/google-login', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+const response = await fetch(`${apiUrl}/api/auth/google-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
