@@ -216,15 +216,15 @@ export function CreateWall() {
             </p>
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', alignItems: 'center' }}>
               <input 
-                type="text" 
-                readOnly 
-                value={`http://localhost:5173/wall/${createdWallId}`} 
-                style={{ 
-                  padding: '0.75rem 1rem', width: '70%', borderRadius: '10px', 
-                  border: '1px solid #FCA5A5', fontSize: '13px', backgroundColor: '#fff',
-                  color: '#7C5858', fontFamily: '"Segoe UI", sans-serif'
-                }}
-              />
+  type="text" 
+  readOnly 
+  value={`${window.location.origin}/wall/${createdWallId}`} 
+  style={{ 
+    padding: '0.75rem 1rem', width: '70%', borderRadius: '10px', 
+    border: '1px solid #FCA5A5', fontSize: '13px', backgroundColor: '#fff',
+    color: '#7C5858', fontFamily: '"Segoe UI", sans-serif'
+  }}
+/>
               <button 
                 type="button" 
                 onClick={handleCopyLink} 

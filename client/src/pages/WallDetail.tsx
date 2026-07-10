@@ -36,11 +36,16 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   
   // Canlı veritabanından gelecek dinamik veriler
   const [wallTitle, setWallTitle] = useState(title || 'Yükleniyor...');
-  const [wallTheme, setWallTheme] = useState('pink'); 
+  
+  // 🚀 BAŞLANGIÇ DÜZELTMESİ: İlk yüklemede çökmesin diye 'pink' yerine 'birthday' ile başlatıyoruz
+  const [wallTheme, setWallTheme] = useState('birthday'); 
   const [targetDate, setTargetDate] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-  const currentTheme = themeStyles[wallTheme] || themeStyles.pink;
+  // 🛡️ KORUMA: Büyük-küçük harf veya tanımsız tema durumunda 'birthday'e düşerek çökmeyi önler
+  const normalizedTheme = (wallTheme || 'birthday').toLowerCase();
+  const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
+  
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
 
   // --- 1. Odanın Genel Özelliklerini (Başlık, Tarih, Tema) Çekme ---
@@ -51,7 +56,14 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
         if (response.ok) {
           const data = await response.json();
           setWallTitle(data.title);
-          setWallTheme(data.theme || 'pink');
+          
+          // 🚀 BACKEND UYUMLULUĞU: Backend'den ne gelirse gelsin küçük harfe çevirip eşleştiriyoruz
+          if (data.theme) {
+            setWallTheme(data.theme.toLowerCase());
+          } else {
+            setWallTheme('birthday');
+          }
+          
           setTargetDate(data.targetDate);
         }
       } catch (error) {
@@ -62,7 +74,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     if (wallId) {
       fetchWallSpecs();
     }
-  }, [wallId]);
+  }, [wallId, apiUrl]);
 
   // --- 2. Anıları Veritabanından Çekme ---
   const fetchMemories = async () => {
@@ -159,7 +171,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
         document.head.removeChild(script);
       }
     };
-  }, [role, wallId]);
+  }, [role, wallId, apiUrl, onLoginSuccess]);
 
   // --- 5. Yeni Anı Ekleme Fonksiyonu ---
   const handleAddMemory = async (e: React.FormEvent) => {
@@ -184,12 +196,21 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   };
 
   // Ortak Arka Plan Tasarımı
+  // 🚀 UX DÜZELTMESİ: Sayfa uzadıkça arka planın kesilmesini önlemek için absolute yerine relative yaptık
   const sharedBackgroundStyle: React.CSSProperties = {
-    minHeight: '100vh', width: '100%', backgroundColor: currentTheme.bg,
-    backgroundImage: `linear-gradient(90deg, rgba(244, 63, 94, 0.02) 50%, transparent 50%), linear-gradient(rgba(244, 63, 94, 0.02) 50%, transparent 50%)`,
-    backgroundSize: '80px 80px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-    fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif', boxSizing: 'border-box', padding: '2rem',
-    position: 'absolute', top: 0, left: 0
+    minHeight: '100vh', 
+    width: '100%', 
+    backgroundColor: currentTheme.bg,
+    backgroundImage: `linear-gradient(90deg, rgba(244, 63, 94, 0.01) 50%, transparent 50%), linear-gradient(rgba(244, 63, 94, 0.01) 50%, transparent 50%)`,
+    backgroundSize: '80px 80px', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    justifyContent: 'flex-start', 
+    alignItems: 'center',
+    fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif', 
+    boxSizing: 'border-box', 
+    padding: '3rem 2rem 6rem 2rem', 
+    position: 'relative'
   };
 
   // ==========================================
@@ -197,13 +218,13 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   // ==========================================
   if (role === 'Guest') {
     return (
-      <div style={sharedBackgroundStyle}>
+      <div style={{ ...sharedBackgroundStyle, justifyContent: 'center' }}>
         <style>{`
           body, html, #root { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; overflow-x: hidden !important; }
         `}</style>
         <div style={{
           backgroundColor: '#ffffff', padding: '4rem 3rem', borderRadius: '28px',
-          boxShadow: '0 25px 60px rgba(160, 43, 106, 0.06)', border: `1px solid ${currentTheme.border}`,
+          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.04)', border: `1px solid ${currentTheme.border}`,
           textAlign: 'center', maxWidth: '500px', width: '100%', boxSizing: 'border-box'
         }}>
           <div style={{ marginBottom: '1.5rem' }}>
@@ -228,8 +249,8 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   // ==========================================
   if (role === 'Admin') {
     return (
-      <div style={sharedBackgroundStyle}>
-        <div style={{ backgroundColor: '#ffffff', padding: '4rem 3rem', borderRadius: '28px', border: `1px solid ${currentTheme.border}`, textAlign: 'center', maxWidth: '550px', width: '100%', boxSizing: 'border-box', boxShadow: '0 20px 50px rgba(0,0,0,0.03)' }}>
+      <div style={{ ...sharedBackgroundStyle, justifyContent: 'center' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '4rem 3rem', borderRadius: '28px', border: `1px solid ${currentTheme.border}`, textAlign: 'center', maxWidth: '550px', width: '100%', boxSizing: 'border-box', boxShadow: '0 20px 50px rgba(0,0,0,0.02)' }}>
           <div style={{ fontSize: '64px', marginBottom: '1rem' }}>🎁</div>
           <h1 style={{ fontSize: '36px', fontStyle: 'italic', color: currentTheme.primary, fontWeight: '700', margin: 0 }}>Şşşşt!</h1>
           <h2 style={{ color: '#7C5858', fontStyle: 'italic', fontSize: '20px', marginTop: '10px' }}>{wallTitle}</h2>
@@ -241,8 +262,8 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
               { label: 'Dak', val: timeLeft.minutes },
               { label: 'Sn', val: timeLeft.seconds }
             ].map((item, i) => (
-              <div key={i} style={{ minWidth: '70px', padding: '0.75rem 1rem', backgroundColor: currentTheme.bg, borderRadius: '12px', border: `1px solid ${currentTheme.border}` }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: currentTheme.primary }}>{item.val}</div>
+              <div key={i} style={{ minWidth: '60px', padding: '0.75rem 1rem', backgroundColor: currentTheme.bg, borderRadius: '12px', border: `1px solid ${currentTheme.border}` }}>
+                <div style={{ fontSize: '22px', fontWeight: 'bold', color: currentTheme.primary }}>{item.val}</div>
                 <div style={{ fontSize: '12px', color: '#BFA7A7', marginTop: '4px' }}>{item.label}</div>
               </div>
             ))}
@@ -256,20 +277,20 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   // ✍️ SENARYO 3: Davetli Erişimi - Anı Duvarı Ekranı
   // ==========================================
   return (
-    <div style={{...sharedBackgroundStyle, justifyContent: 'flex-start'}}>
+    <div style={sharedBackgroundStyle}>
       <style>{`
         body, html, #root { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; overflow-x: hidden !important; }
       `}</style>
-      <div style={{ width: '100%', maxWidth: '750px', display: 'flex', flexDirection: 'column', gap: '2.5rem', marginTop: '2rem' }}>
+      <div style={{ width: '100%', maxWidth: '750px', display: 'flex', flexDirection: 'column', gap: '2.5rem', marginTop: '1rem' }}>
         
         {/* Üst Başlık Paneli */}
-        <div style={{ textAlign: 'center', backgroundColor: '#ffffff', padding: '2.5rem', borderRadius: '24px', border: `1px solid ${currentTheme.border}`, boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+        <div style={{ textAlign: 'center', backgroundColor: '#ffffff', padding: '2.5rem', borderRadius: '24px', border: `1px solid ${currentTheme.border}`, boxShadow: '0 10px 30px rgba(0,0,0,0.01)' }}>
           <h1 style={{ fontSize: '36px', fontStyle: 'italic', fontWeight: '700', color: currentTheme.primary, margin: 0 }}>🎉 {wallTitle}</h1>
-          <p style={{ color: '#7C5858', fontWeight: 'bold', marginTop: '12px' }}>Oda ID: #{wallId} | ✍️ Davetli Erişimi</p>
+          <p style={{ color: '#7C5858', fontWeight: 'bold', marginTop: '10px' }}>Oda ID: #{wallId} | ✍️ Davetli Erişimi</p>
         </div>
 
         {/* Anı Ekleme Formu */}
-        <div style={{ backgroundColor: '#ffffff', padding: '3rem 2.5rem', borderRadius: '24px', border: `1px solid ${currentTheme.border}`, boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '3rem 2.5rem', borderRadius: '24px', border: `1px solid ${currentTheme.border}`, boxShadow: '0 10px 30px rgba(0,0,0,0.01)' }}>
           <h3 style={{ margin: '0 0 1.5rem 0', color: currentTheme.text, fontSize: '20px', fontStyle: 'italic' }}>✨ Duvara Bir Anı Bırak</h3>
           <form onSubmit={handleAddMemory} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: `1px solid ${currentTheme.border}`, backgroundColor: currentTheme.bg, outline: 'none', fontStyle: 'italic', fontSize: '15px' }} />
@@ -280,16 +301,16 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
               📸 Fotoğraf Ekle (Çok Yakında)
             </div>
 
-            <button type="submit" style={{ width: '100%', padding: '1.25rem', backgroundColor: currentTheme.primary, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', boxShadow: '0 5px 15px rgba(0,0,0,0.05)' }}>🚀 Anıyı Duvara As</button>
+            <button type="submit" style={{ width: '100%', padding: '1.25rem', backgroundColor: currentTheme.primary, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', boxShadow: '0 5px 15px rgba(0,0,0,0.02)' }}>🚀 Anıyı Duvara As</button>
           </form>
         </div>
 
         {/* Liste Alanı */}
-        <div style={{ backgroundColor: '#ffffff', padding: '3rem 2.5rem', borderRadius: '24px', border: `1px solid ${currentTheme.border}`, boxShadow: '0 10px 30px rgba(0,0,0,0.02)', marginBottom: '4rem' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '3rem 2.5rem', borderRadius: '24px', border: `1px solid ${currentTheme.border}`, boxShadow: '0 10px 30px rgba(0,0,0,0.01)' }}>
           <h3 style={{ margin: '0 0 1.5rem 0', color: currentTheme.text, fontSize: '20px', fontStyle: 'italic', borderBottom: `2px dashed ${currentTheme.border}`, paddingBottom: '0.75rem' }}>📝 Duvara Asılan Anılar</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {memories.map((m) => (
-              <div key={m.id} style={{ backgroundColor: currentTheme.bg, padding: '1.5rem', borderRadius: '16px', borderLeft: `6px solid ${currentTheme.primary}`, boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
+              <div key={m.id} style={{ backgroundColor: currentTheme.bg, padding: '1.5rem', borderRadius: '16px', borderLeft: `6px solid ${currentTheme.primary}` }}>
                 <p style={{ margin: '0 0 1rem 0', fontStyle: 'italic', color: currentTheme.text, lineHeight: '1.6' }}>"{m.content}"</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#7C5858', fontWeight: '500' }}>
                   <span>✍️ {m.authorName}</span>
@@ -297,7 +318,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
                 </div>
               </div>
             ))}
-            {memories.length === 0 && <p style={{ color: '#BFA7A7', fontStyle: 'italic', textAlign: 'center', margin: '2rem 0' }}>Henüz hiç anı yazılmamış. İlk adımı sen at !</p>}
+            {memories.length === 0 && <p style={{ color: '#BFA7A7', fontStyle: 'italic', textAlign: 'center', margin: '1.5rem 0' }}>Henüz hiç anı yazılmamış. İlk adımı sen at !</p>}
           </div>
         </div>
 
