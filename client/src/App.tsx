@@ -1,4 +1,28 @@
 import { useState } from 'react';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Home } from './pages/Home';
+import { CreateWall } from './pages/CreateWall';
+import { WallDetail } from './pages/WallDetail';
+import { Welcome } from './pages/Welcome';
+
+// 🚀 Yeni tasarladığımız anı duvarı sayfasını ekledik:
+import { MemoryWallGrid } from './pages/MemoryWallGrid'; 
+
+function App() {
+  // Rotaları tamamen boş verip direkt yeni sayfayı basıyoruz kanka:
+  return (
+    <div style={{ backgroundColor: '#F1F5F9', minHeight: '100vh', padding: '2rem 0' }}>
+      <MemoryWallGrid themeName="graduation" />
+    </div>
+  );
+}
+
+export default App;
+
+
+
+
+/* import { useState } from 'react';
 //import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Home } from './pages/Home';
@@ -45,4 +69,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;*/
