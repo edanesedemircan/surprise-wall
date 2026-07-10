@@ -55,16 +55,23 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
         const response = await fetch(`${apiUrl}/api/wall/${wallId}`);
         if (response.ok) {
           const data = await response.json();
-          setWallTitle(data.title);
+          console.log("Backend'den Gelen Ham Veri:", data);
           
-          // 🚀 BACKEND UYUMLULUĞU: Backend'den ne gelirse gelsin küçük harfe çevirip eşleştiriyoruz
-          if (data.theme) {
-            setWallTheme(data.theme.toLowerCase());
-          } else {
-            setWallTheme('birthday');
+          const incomingTitle = data.title || data.Title || 'Yükleniyor...';
+          const incomingTheme = data.theme || data.Theme || 'birthday';
+          let incomingTargetDate = data.targetDate || data.TargetDate || null;
+
+          // 🛠️ 6 Haneli Yıl Formatını (Örn: 002026-05-12...) Düzeltme Filtresi:
+          if (incomingTargetDate && typeof incomingTargetDate === 'string') {
+            // Eğer tarih "00" ile başlıyorsa ve 6 haneli yıl geliyorsa baştaki fazla sıfırları uçur
+            if (incomingTargetDate.startsWith("00")) {
+              incomingTargetDate = incomingTargetDate.substring(2);
+            }
           }
-          
-          setTargetDate(data.targetDate);
+
+          setWallTitle(incomingTitle);
+          setWallTheme(incomingTheme.toLowerCase());
+          setTargetDate(incomingTargetDate);
         }
       } catch (error) {
         console.error('Oda bilgileri sunucudan alınamadı:', error);
@@ -75,6 +82,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
       fetchWallSpecs();
     }
   }, [wallId, apiUrl]);
+
 
   // --- 2. Anıları Veritabanından Çekme ---
   const fetchMemories = async () => {
@@ -100,7 +108,12 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     if (role !== 'Admin' || !targetDate) return;
 
     const calculateTimeLeft = () => {
-      const difference = +new Date(targetDate) - +new Date();
+      const parsedDate = Date.parse(targetDate);
+      if (isNaN(parsedDate)) {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+
+      const difference = parsedDate - +new Date();
       if (difference <= 0) {
         return { days: 0, hours: 0, minutes: 0, seconds: 0 };
       }
@@ -119,6 +132,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
 
     return () => clearInterval(interval);
   }, [targetDate, role]);
+  
 
   // --- 4. Google Giriş Entegrasyonu ---
   useEffect(() => {
