@@ -90,13 +90,13 @@ export function CreateWall() {
   //const creatorEmailValue = loggedInUser?.email || targetEmail || "test@gmail.com";
 
   // Tarih boşsa .NET DateTime modelinin çökmemesi için geçerli bir gelecek tarih verelim (Örn: 1 gün sonrası)
-  let finalTargetDate = null;
+ /* let finalTargetDate = null;
   if (isCountdownActive && targetDate) {
     finalTargetDate = new Date(targetDate).toISOString();
   } else {
     // Sayaç aktif değilse bile .NET DateTime? (Nullable) değilse patlar. Garanti olsun diye bugünün tarihini ISO formatında verelim
     finalTargetDate = new Date().toISOString();
-  }
+  }*/
 
  /* const payload = {
     title: title || "İsimsiz Duvar",
