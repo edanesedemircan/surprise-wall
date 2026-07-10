@@ -125,7 +125,8 @@ const response = await fetch(`${apiUrl}/api/wall/create`, {
 
   const handleCopyLink = () => {
     if (!createdWallId) return;
-    const magicLink = `http://localhost:5173/wall/${createdWallId}`;
+    const currentUrl = window.location.origin;
+    const magicLink = `${currentUrl}/wall/${createdWallId}` ;
     
     navigator.clipboard.writeText(magicLink)
       .then(() => {
