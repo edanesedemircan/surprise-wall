@@ -82,46 +82,66 @@ export function CreateWall() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatusMessage('Zaman kapsülü oluşturuluyor...');
-    setCreatedWallId(null); 
+  e.preventDefault();
+  setStatusMessage('Zaman kapsülü oluşturuluyor...');
+  setCreatedWallId(null); 
 
-    try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
-const response = await fetch(`${apiUrl}/api/wall/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          theme: selectedTheme,
-          targetEmail,
-          allowedEmails,
-          
-          
-          creatorEmail: loggedInUser.email, 
+  // Güvenlik Kilidi: Eğer loggedInUser yoksa veya email'i boşsa çökmesin, elle yazılan targetEmail'i veya geçici bir şeyi baz alsın
+  const creatorEmailValue = loggedInUser?.email || targetEmail || "test@gmail.com";
 
-          isCountdownActive: isCountdownActive,
-          targetDate: isCountdownActive && targetDate ? targetDate : null
-        }),
-      });
+  // Tarih boşsa .NET DateTime modelinin çökmemesi için geçerli bir gelecek tarih verelim (Örn: 1 gün sonrası)
+  let finalTargetDate = null;
+  if (isCountdownActive && targetDate) {
+    finalTargetDate = new Date(targetDate).toISOString();
+  } else {
+    // Sayaç aktif değilse bile .NET DateTime? (Nullable) değilse patlar. Garanti olsun diye bugünün tarihini ISO formatında verelim
+    finalTargetDate = new Date().toISOString();
+  }
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatusMessage('🚀 Zaman kapsülü başarıyla oluşturuldu!');
-        setCreatedWallId(data.wallId); 
-        setTitle('');
-        setTargetEmail('');
-        setAllowedEmails([]);
-        setIsCountdownActive(false); // Başarılı olunca sayacı sıfırla
-        setTargetDate('');
-      } else {
-        setStatusMessage(`Hata: ${data.message}`);
-      }
-    } catch (error) {
-      setStatusMessage('API bağlantı hatası oluştu!');
-    }
+  const payload = {
+    title: title || "İsimsiz Duvar",
+    theme: selectedTheme || "birthday",
+    targetEmail: targetEmail,
+    // Eğer allowedEmails array ise ve backend string[] bekliyorsa okey, ama düz string bekliyorsa .join(',') yapmak gerekir. Şimdilik array yolluyoruz:
+    allowedEmails: allowedEmails || [], 
+    creatorEmail: creatorEmailValue,
+    isCountdownActive: !!isCountdownActive,
+    targetDate: finalTargetDate
   };
+
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+    const response = await fetch(`${apiUrl}/api/wall/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    // 400 hatası alındığında mesajı okuyabilmek için önceden text olarak almayı deneyelim
+    if (!response.ok) {
+      const errorText = await response.text();
+      try {
+        const errorJson = JSON.parse(errorText);
+        setStatusMessage(`Hata: ${errorJson.message || errorText}`);
+      } catch {
+        setStatusMessage(`Hata (Kod 400): ${errorText || 'Backend veriyi kabul etmedi.'}`);
+      }
+      return;
+    }
+
+    const data = await response.json();
+    setStatusMessage('🚀 Zaman kapsülü başarıyla oluşturuldu!');
+    setCreatedWallId(data.wallId); 
+    setTitle('');
+    setTargetEmail('');
+    setAllowedEmails([]);
+    setIsCountdownActive(false);
+    setTargetDate('');
+
+  } catch (error) {
+    setStatusMessage('API bağlantı hatası oluştu!');
+  }
+};
 
   const handleCopyLink = () => {
     if (!createdWallId) return;
