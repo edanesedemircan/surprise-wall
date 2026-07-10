@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-// 🚀 Az önce oluşturduğumuz yeni modüler sayfayı buraya bağlıyoruz:
+// 🚀 Premium anı grid sayfamız:
 import { MemoryWallGrid } from './MemoryWallGrid'; 
 
 interface WallDetailProps {
@@ -29,6 +29,9 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   const [wallTheme, setWallTheme] = useState('birthday'); 
   const [targetDate, setTargetDate] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  
+  // 🔑 Kullanıcı Google butonuyla başarıyla giriş yaptı mı kontrolü
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const normalizedTheme = (wallTheme || 'birthday').toLowerCase();
   const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
@@ -86,7 +89,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
 
   // --- 3. Google Giriş Entegrasyonu ---
   useEffect(() => {
-    if (role !== 'Guest') return;
+    if (role !== 'Guest' || isLoggedIn) return; 
 
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
@@ -107,14 +110,16 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
                 body: JSON.stringify({ wallId, idToken: response.credential }),
               });
 
-              const data = await res.json();
-              if (res.ok) {
-                onLoginSuccess(data.role, data.title, wallId);
-              } else {
-                setStatusMessage(`Giriş Engellendi: ${data.message}`);
+              if (!res.ok) {
+                setStatusMessage(`Giriş Engellendi (Kod: ${res.status}). Çember dışındasınız.`);
+                return;
               }
+
+              const data = await res.json();
+              setIsLoggedIn(true); 
+              onLoginSuccess(data.role, data.title, wallId);
             } catch (error) {
-              setStatusMessage('API bağlantı hatası oluştu!');
+              setStatusMessage('API bağlantı hatası oluştu !');
             }
           }
         });
@@ -126,7 +131,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
       }
     };
     return () => { if (document.head.contains(script)) document.head.removeChild(script); };
-  }, [role, wallId, apiUrl, onLoginSuccess]);
+  }, [role, wallId, apiUrl, onLoginSuccess, isLoggedIn]);
 
   const sharedBackgroundStyle: React.CSSProperties = {
     minHeight: '100vh', width: '100%', backgroundColor: currentTheme.bg,
@@ -134,8 +139,8 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     boxSizing: 'border-box', padding: '2rem', position: 'relative'
   };
 
-  // 🔐 SENARYO 1: Giriş Yapılmadıysa (Guest) -> Giriş Butonunu Görür
-  if (role === 'Guest') {
+  // 🔐 SENARYO 1: Giriş Yapmamış Davetli (Role Guest ve henüz login tetiklenmemiş)
+  if (role === 'Guest' && !isLoggedIn) {
     return (
       <div style={sharedBackgroundStyle}>
         <style>{`body, html, #root { margin:0; padding:0; width:100%; height:100%; }`}</style>
@@ -170,8 +175,8 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     );
   }
 
-  // 🧱 SENARYO 3: Sadece Davetli Erişimi (User) -> Yeni Büyük Duvarı Görür
-  if (role === 'User') {
+  // 🧱 SENARYO 3: Giriş Yapmış Davetli (Role Guest ve login doğrulanmış) -> Yeni Büyük Duvarı Görür
+  if (role === 'Guest' && isLoggedIn) {
     return (
       <MemoryWallGrid 
         wallId={wallId} 
@@ -185,7 +190,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   return (
     <div style={sharedBackgroundStyle}>
       <p style={{ color: '#7C5858', fontStyle: 'italic', fontFamily: '"Georgia", serif' }}>
-        Yükleniyor kanka...
+        Yükleniyor ...
       </p>
     </div>
   );
