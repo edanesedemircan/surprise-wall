@@ -60,6 +60,55 @@ const response = await fetch(`${apiUrl}/api/memory/wall/${wallId}`);
     return () => clearInterval(interval);
   }, [role]);
 
+  useEffect(() => {
+  if (role !== 'Guest') return;
+
+  const script = document.createElement('script');
+  script.src = 'https://accounts.google.com/gsi/client';
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
+
+  script.onload = () => {
+    // @ts-ignore
+    window.google?.accounts.id.initialize({
+      client_id: '200628903576-matrf8d1fosen9d64ralgu3fetpltcmh.apps.googleusercontent.com', 
+      callback: async (response: any) => {
+        setStatusMessage('Güvenli çember kontrol ediliyor...');
+        try {
+          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+          const res = await fetch(`${apiUrl}/api/auth/google-login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              wallId: wallId,
+              idToken: response.credential 
+             }),
+          });
+
+          const data = await res.json();
+          if (res.ok) {
+            onLoginSuccess(data.role, data.title, wallId);
+          } else {
+            setStatusMessage(`Giriş Engellendi: ${data.message}`);
+          }
+        } catch (error) {
+          setStatusMessage('API bağlantı hatası oluştu!');
+        }
+      }
+    });
+
+    window.google?.accounts.id.renderButton(
+      document.getElementById('googleBtn'),
+      { theme: 'outline', size: 'large', width: 320 }
+    );
+  };
+
+  return () => {
+    document.head.removeChild(script);
+  };
+}, [role, wallId]);
+
   const handleTestLogin = async () => {
     setStatusMessage('Güvenli çember kontrol ediliyor (Test Modu)...');
     try {
@@ -142,38 +191,10 @@ const response = await fetch(`${apiUrl}/api/memory/add`, {
           </h2>
 
           <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-            <button
-              onClick={handleTestLogin}
-              style={{
-                width: '100%',
-                maxWidth: '320px',
-                padding: '1rem 1.5rem',
-                backgroundColor: '#ffffff',
-                border: '1px solid #CBD5E1',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.75rem',
-                fontSize: '15px',
-                fontWeight: '600',
-                color: '#334155',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                transition: 'all 0.2s ease',
-                fontFamily: '"Segoe UI", sans-serif'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F8FAFC'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
-            >
-              <svg width="18" height="18" viewBox="0 0 18 18">
-                <path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.79 2.7v2.24h2.91c1.71-1.57 2.68-3.88 2.68-6.57z"/>
-                <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.24c-.8.54-1.84.87-3.05.87-2.34 0-4.33-1.58-5.03-3.71H.95v2.3A9 9 0 0 0 9 18z"/>
-                <path fill="#FBBC05" d="M3.97 10.74c-.18-.54-.28-1.12-.28-1.74s.1-1.2.28-1.74V4.96H.95A8.996 8.996 0 0 0 0 9c0 1.45.35 2.82.95 4.04l3.02-2.3z"/>
-                <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46 1.02 11.42 0 9 0 5.48 0 2.45 2.02.95 4.96l3.02 2.3c.7-2.13 2.7-3.71 5.03-3.71z"/>
-              </svg>
-              Google ile Giriş Yap (Geliştirici Modu)
-            </button>
+           <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+  {/* Google butonu tam bu div'in içine otomatik olarak kurulacak kanka */}
+  <div id="googleBtn"></div>
+</div>
           </div>
         </div>
       </div>
