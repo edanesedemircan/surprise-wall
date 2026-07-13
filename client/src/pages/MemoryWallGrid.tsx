@@ -16,7 +16,7 @@ interface MemoryWallGridProps {
   apiUrl: string;
 }
 
-// 🎨 Temaların tüm sayfaya hükmeden genişletilmiş renk paletleri:
+// 🎨 Temaların renk paletleri:
 const themeStyles = {
   birthday: {
     pageBg: '#FDF4FF', 
@@ -67,7 +67,7 @@ const themeStyles = {
     gridGap: '#FEF3C7'
   },
   funny: {
-    pageBg: '#FFF5F8',
+    pageBg: '#FFF5F8', 
     heroText: '#4D072B',
     heroSubtext: '#831843',
     cardBg: '#ffffff',
@@ -120,7 +120,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Bu anıyı kalıcı olarak silmek istediğine emin misin?")) return;
+    if (!window.confirm("Bu anıyı kalıcı olarak silmek istediğine emin misin? ")) return;
     try {
       const response = await fetch(`${apiUrl}/api/memory/${id}`, { method: 'DELETE' });
       if (response.ok) fetchMemories();
@@ -165,7 +165,6 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
   };
 
   return (
- 
     <div style={{ 
       width: '100%', 
       minHeight: '100vh', 
@@ -186,6 +185,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         }
       `}</style>
       
+      {/* Üst Kısım*/}
       <div style={{ 
         textAlign: 'center', 
         padding: '5rem 1.5rem 4rem 1.5rem', 
@@ -303,8 +303,46 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             </h3>
             
             <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `1px solid ${colors.border}`, backgroundColor: colors.pageBg, outline: 'none', fontSize: '15px', fontFamily: 'sans-serif', boxSizing: 'border-box' }} />
-              <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `1px solid ${colors.border}`, backgroundColor: colors.pageBg, outline: 'none', fontSize: '15px', fontFamily: 'sans-serif', resize: 'none', boxSizing: 'border-box', lineHeight: '1.5' }} />
+              <input 
+                type="text" 
+                placeholder="Adınız / Rumuzunuz" 
+                value={authorName} 
+                onChange={(e) => setAuthorName(e.target.value)} 
+                required 
+                style={{ 
+                  width: '100%', 
+                  padding: '0.95rem 1.25rem', 
+                  borderRadius: '14px', 
+                  border: `1px solid ${colors.border}`, 
+                  backgroundColor: colors.pageBg, 
+                  color: colors.text, 
+                  outline: 'none', 
+                  fontSize: '15px', 
+                  fontFamily: 'sans-serif', 
+                  boxSizing: 'border-box' 
+                }} 
+              />
+              <textarea 
+                rows={4} 
+                placeholder="Anınızı buraya dökün..." 
+                value={content} 
+                onChange={(e) => setContent(e.target.value)} 
+                required 
+                style={{ 
+                  width: '100%', 
+                  padding: '0.95rem 1.25rem', 
+                  borderRadius: '14px', 
+                  border: `1px solid ${colors.border}`, 
+                  backgroundColor: colors.pageBg, 
+                  color: colors.text, 
+                  outline: 'none', 
+                  fontSize: '15px', 
+                  fontFamily: 'sans-serif', 
+                  resize: 'none', 
+                  boxSizing: 'border-box', 
+                  lineHeight: '1.5' 
+                }} 
+              />
               <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} />
               
               {!selectedImage ? (
