@@ -5,7 +5,7 @@ interface Memory {
   authorName: string;
   content: string;
   imageUrl?: string;
-  ImageUrl?: string; 
+  ImageUrl?: string;
   createdAt: string;
 }
 
@@ -31,9 +31,14 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
   const [memories, setMemories] = useState<Memory[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Form State'leri
   const [authorName, setAuthorName] = useState('');
   const [content, setContent] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
+  // Düzenleme Modu İçin State'ler
+  const [editingMemoryId, setEditingMemoryId] = useState<number | null>(null);
 
   const fetchMemories = async () => {
     try {
@@ -60,13 +65,40 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
     }
   };
 
+  // Anı Silme Fonksiyonu
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Bu anıyı kalıcı olarak silmek istediğine emin misin?")) return;
+    try {
+      const response = await fetch(`${apiUrl}/api/memory/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        fetchMemories();
+      }
+    } catch (error) {
+      console.error("Silme işlemi başarısız:", error);
+    }
+  };
+
+  //Düzenleme Butonuna Basıldığında Formu Doldurma
+  const startEdit = (memory: Memory) => {
+    setEditingMemoryId(memory.id);
+    setAuthorName(memory.authorName);
+    setContent(memory.content);
+    setSelectedImage(memory.imageUrl || memory.ImageUrl || null);
+    setIsModalOpen(true);
+  };
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!authorName.trim() || !content.trim()) return;
 
     try {
-      const response = await fetch(`${apiUrl}/api/memory/add`, {
-        method: 'POST',
+      const isEditing = editingMemoryId !== null;
+      const url = isEditing 
+        ? `${apiUrl}/api/memory/${editingMemoryId}` 
+        : `${apiUrl}/api/memory/add`;
+      
+      const response = await fetch(url, {
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           wallId, 
@@ -80,6 +112,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         setAuthorName('');
         setContent('');
         setSelectedImage(null);
+        setEditingMemoryId(null);
         setIsModalOpen(false);
         fetchMemories();
       }
@@ -106,7 +139,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             <span style={{ fontFamily: '"Segoe UI", sans-serif', fontSize: '15px', color: '#7C5858', fontWeight: '600' }}>
               Duvarda <span style={{ color: colors.accent, fontSize: '18px' }}>{memories.length}</span> Anı Var
             </span>
-            <button onClick={() => setIsModalOpen(true)} style={{ padding: '0.6rem 1.2rem', borderRadius: '10px', backgroundColor: colors.accent, color: '#ffffff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button onClick={() => { setEditingMemoryId(null); setIsModalOpen(true); }} style={{ padding: '0.6rem 1.2rem', borderRadius: '10px', backgroundColor: colors.accent, color: '#ffffff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>
               ✨ Duvara Bir Anı Bırak
             </button>
           </div>
@@ -121,11 +154,17 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               const imageSource = memory.imageUrl || memory.ImageUrl;
 
               return (
-                <div key={memory.id} style={{ backgroundColor: colors.bg, border: `1px solid ${colors.border}`, borderRadius: '20px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'transform 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+                <div key={memory.id} style={{ backgroundColor: colors.bg, border: `1px solid ${colors.border}`, borderRadius: '20px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative', transition: 'transform 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
                   
+                  {/* (Düzenle ve Sil) */}
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', display: 'flex', gap: '6px', zIndex: 10, backgroundColor: 'rgba(255,255,255,0.8)', padding: '4px 8px', borderRadius: '20px', backdropFilter: 'blur(4px)' }}>
+                    <button onClick={() => startEdit(memory)} title="Düzenle" style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '14px' }}>✏️</button>
+                    <button onClick={() => handleDelete(memory.id)} title="Sil" style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '14px' }}>🗑️</button>
+                  </div>
 
+                  {/* Görsel Alanı */}
                   {imageSource && (
-                    <div style={{ width: '100%', maxHeight: '200px', borderRadius: '12px', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', maxHeight: '200px', borderRadius: '12px', overflow: 'hidden', marginTop: '10px' }}>
                       <img src={imageSource} alt="Anı" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                   )}
@@ -142,19 +181,23 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         </div>
       </div>
 
-      {/* Anı Ekleme Modalı */}
+      {/* Anı Ekleme / Düzenleme Modalı */}
       {isModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
           <div style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '500px', borderRadius: '24px', padding: '2.5rem', position: 'relative', border: `1px solid ${colors.border}` }}>
-            <button onClick={() => { setIsModalOpen(false); setSelectedImage(null); }} style={{ position: 'absolute', top: '20px', right: '20px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontSize: '16px' }}>✕</button>
-            <h3 style={{ margin: '0 0 1.5rem 0', fontStyle: 'italic', color: colors.text, fontSize: '22px' }}>✨ Duvara Bir Anı İliştir</h3>
+            <button onClick={() => { setIsModalOpen(false); setSelectedImage(null); setEditingMemoryId(null); setAuthorName(''); setContent(''); }} style={{ position: 'absolute', top: '20px', right: '20px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+            
+            <h3 style={{ margin: '0 0 1.5rem 0', fontStyle: 'italic', color: colors.text, fontSize: '22px' }}>
+              {editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}
+            </h3>
+            
             <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: `1px solid ${colors.border}`, backgroundColor: colors.badge, outline: 'none' }} />
               <textarea rows={4} placeholder="Anınızı dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: `1px solid ${colors.border}`, backgroundColor: colors.badge, outline: 'none' }} />
               <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} />
               
               {!selectedImage ? (
-                <div onClick={() => fileInputRef.current?.click()} style={{ padding: '1.25rem', border: `2px dashed ${colors.border}`, borderRadius: '12px', textAlign: 'center', cursor: 'pointer', backgroundColor: colors.badge, fontStyle: 'italic', fontSize: '13px' }}>📸 Fotoğraf Ekle</div>
+                <div onClick={() => fileInputRef.current?.click()} style={{ padding: '1.25rem', border: `2px dashed ${colors.border}`, borderRadius: '12px', textAlign: 'center', cursor: 'pointer', backgroundColor: colors.badge, fontStyle: 'italic', fontSize: '13px' }}>📸 Fotoğraf Değiştir / Ekle</div>
               ) : (
                 <div style={{ position: 'relative', width: '100%', height: '150px', borderRadius: '12px', overflow: 'hidden' }}>
                   <img src={selectedImage} alt="Önizleme" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -162,7 +205,9 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
                 </div>
               )}
               
-              <button type="submit" style={{ width: '100%', padding: '1.1rem', backgroundColor: colors.accent, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>🚀 Anıyı Duvara As</button>
+              <button type="submit" style={{ width: '100%', padding: '1.1rem', backgroundColor: colors.accent, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
+                {editingMemoryId ? '💾 Değişiklikleri Kaydet' : '🚀 Anıyı Duvara As'}
+              </button>
             </form>
           </div>
         </div>
