@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using AniDefteri.Api.Controllers; 
-using AniDefteri.Api.Models;
+using AniDefteri.Api.Data;   // 🚀 Üst harfe duyarlı gerçek klasör yolun kanka
+using AniDefteri.Api.Models; // 🚀 Modellerin için gerçek yol
 
 namespace AniDefteri.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] 
+    [Route("api/[controller]")]
     public class QuizController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -16,13 +16,13 @@ namespace AniDefteri.Api.Controllers
             _context = context;
         }
 
-        // YENİ SORU EKLEME
+        // 📥 1) YENİ SORU EKLEME ENDPOINT'İ
         [HttpPost("add")]
         public async Task<IActionResult> AddQuestion([FromBody] QuizQuestion question)
         {
             if (string.IsNullOrWhiteSpace(question.QuestionText))
             {
-                return BadRequest(new { Message = "Soru alanı boş bırakılamaz!" });
+                return BadRequest(new { Message = "Soru alanı boş bırakılamaz kanka!" });
             }
 
             _context.QuizQuestions.Add(question);
@@ -30,7 +30,7 @@ namespace AniDefteri.Api.Controllers
             return Ok(new { Message = "Soru başarıyla kapsüle gizlendi! 🧠💥" });
         }
 
-        // ODANIN TÜM SORULARINI GETİRME 
+        // 📤 2) ODANIN TÜM SORULARINI GETİRME ENDPOINT'İ
         [HttpGet("wall/{wallId}")]
         public async Task<IActionResult> GetWallQuestions(int wallId)
         {
@@ -42,32 +42,25 @@ namespace AniDefteri.Api.Controllers
             return Ok(questions);
         }
 
-        //  SORU SİLME 
+        // 🗑️ 3) SORU SİLME ENDPOINT'İ
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuestion(int id)
         {
             var question = await _context.QuizQuestions.FindAsync(id);
-            if (question == null) 
-            {
-                return NotFound(new { Message = "Silinmek istenen soru zaten yok!" });
-            }
+            if (question == null) return NotFound();
 
             _context.QuizQuestions.Remove(question);
             await _context.SaveChangesAsync();
-            return Ok(new { Message = "Soru başarıyla imha edildi! 💣" });
+            return Ok();
         }
 
-        // SORU DÜZENLEME 
+        // 📝 4) SORU DÜZENLEME ENDPOINT'İ
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateQuestion(int id, [FromBody] QuizQuestion dto)
         {
             var question = await _context.QuizQuestions.FindAsync(id);
-            if (question == null) 
-            {
-                return NotFound(new { Message = "Güncellenmek istenen soru bulunamadı!" });
-            }
+            if (question == null) return NotFound();
 
-            // Verileri güncelliyoruz 
             question.QuestionText = dto.QuestionText;
             question.OptionA = dto.OptionA;
             question.OptionB = dto.OptionB;
@@ -77,7 +70,7 @@ namespace AniDefteri.Api.Controllers
             question.CreatorName = dto.CreatorName;
 
             await _context.SaveChangesAsync();
-            return Ok(new { Message = "Soru başarıyla güncellendi! 📝" });
+            return Ok();
         }
     }
 }

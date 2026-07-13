@@ -9,5 +9,6 @@ namespace AniDefteri.Api.Data
 
         public DbSet<Wall> Walls { get; set; }
         public DbSet<Memory> Memories { get; set; } 
+        public DbSet<QuizQuestion> QuizQuestions { get; set; }
     }
 }
