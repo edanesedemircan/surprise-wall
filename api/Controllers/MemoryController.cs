@@ -35,6 +35,7 @@ namespace AniDefteri.Api.Controllers
                 WallId = dto.WallId,
                 AuthorName = dto.AuthorName,
                 Content = dto.Content,
+                ImageUrl = dto.ImageUrl, 
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -44,7 +45,7 @@ namespace AniDefteri.Api.Controllers
             return Ok(new { Message = "Anınız duvara asıldı! 📝✨", MemoryId = newMemory.Id });
         }
 
-       [HttpGet("wall/{wallId}")]
+        [HttpGet("wall/{wallId}")]
         public async Task<IActionResult> GetWallMemories(int wallId, [FromQuery] string? userEmail)
         {
             // 1. Önce bu anıların ait olduğu Duvar (Oda) bilgilerini çekiyoruz
@@ -55,12 +56,10 @@ namespace AniDefteri.Api.Controllers
             }
 
             // 2. KRİTİK KONTROL (Başrol Kilidi): 
-            // Eğer odaya giren kişinin maili Arife'nin maili ile eşleşiyorsa VE hedef tarih henüz gelmediyse anıları gizle!
             if (!string.IsNullOrWhiteSpace(userEmail) && 
                 userEmail.Equals(wall.TargetEmail, StringComparison.OrdinalIgnoreCase) && 
                 DateTime.UtcNow < wall.TargetDate)
             {
-                // İçeride anı varmış gibi hissettirmemek için başrol'e boş liste fırlatıyoruz 
                 return Ok(new List<object>());
             }
 
@@ -72,6 +71,7 @@ namespace AniDefteri.Api.Controllers
                     m.Id,
                     m.AuthorName,
                     m.Content,
+                    m.ImageUrl, 
                     m.CreatedAt
                 })
                 .ToListAsync();
