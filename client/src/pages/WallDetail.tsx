@@ -37,55 +37,61 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
 
-  // --- 1. Odanın Genel Özelliklerini Çekme ---
-  useEffect(() => {
-    const fetchWallSpecs = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/api/wall/${wallId}`);
-        if (response.ok) {
-          const data = await response.json();
-          let incomingTargetDate = data.targetDate || data.TargetDate || null;
+// --- 1. Odanın Genel Özelliklerini Çekme ---
+useEffect(() => {
+  const fetchWallSpecs = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/wall/${wallId}`);
+      if (response.ok) {
+        const data = await response.json();
+        
+        // 🚀 .NET backend'den gelen ham tarih verisini doğrudan alıyoruz, hiç ellemiyoruz kanka:
+        const incomingTargetDate = data.targetDate || data.TargetDate || null;
 
-          if (incomingTargetDate && typeof incomingTargetDate === 'string') {
-            incomingTargetDate = incomingTargetDate.trim().replace(/^\+/, '');
-            if (incomingTargetDate.indexOf('-') === 6) {
-              incomingTargetDate = incomingTargetDate.substring(2);
-            }
-          }
-
-          setWallTitle(data.title || data.Title || 'Yükleniyor...');
-          setWallTheme((data.theme || data.Theme || 'birthday').toLowerCase());
-          setTargetDate(incomingTargetDate);
-        }
-      } catch (error) {
-        console.error('Oda bilgileri sunucudan alınamadı:', error);
+        setWallTitle(data.title || data.Title || 'Yükleniyor...');
+        setWallTheme((data.theme || data.Theme || 'birthday').toLowerCase());
+        setTargetDate(incomingTargetDate); // Üstteki sayaç efekti bu ham veriyi temizce pars edecek!
       }
-    };
-    if (wallId) fetchWallSpecs();
-  }, [wallId, apiUrl]);
-
+    } catch (error) {
+      console.error('Oda bilgileri sunucudan alınamadı:', error);
+    }
+  };
+  if (wallId) fetchWallSpecs();
+}, [wallId, apiUrl]);
   // --- 2. Başrol (Admin) İçin Geri Sayım Sayacı ---
-  useEffect(() => {
-    if (role !== 'Admin' || !targetDate) return;
+useEffect(() => {
+  if (role !== 'Admin' || !targetDate) return;
 
-    const calculateTimeLeft = () => {
-      const parsedDate = Date.parse(targetDate);
-      if (isNaN(parsedDate)) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-      const difference = parsedDate - +new Date();
-      if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-      
-      return {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      };
+  const calculateTimeLeft = () => {
+    let parsedDate = Date.parse(targetDate);
+    if (isNaN(parsedDate)) {
+      const formattedStr = targetDate.replace(' ', 'T');
+      parsedDate = Date.parse(formattedStr);
+    }
+
+    if (isNaN(parsedDate)) {
+      parsedDate = new Date(targetDate).getTime();
+    }
+
+    if (isNaN(parsedDate)) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
+    const difference = parsedDate - +new Date();
+    if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
     };
+  };
 
-    setTimeLeft(calculateTimeLeft());
-    const interval = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
-    return () => clearInterval(interval);
-  }, [targetDate, role]);
+  setTimeLeft(calculateTimeLeft());
+  const interval = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+  return () => clearInterval(interval);
+}, [targetDate, role]);
 
   // --- 3. Google Giriş Entegrasyonu ---
   useEffect(() => {

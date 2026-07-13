@@ -21,7 +21,6 @@ export function Home({ onLoginSuccess }: HomeProps) {
   );
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
-    // 🚀 Kritik Düzeltme: Eğer URL'de ID varsa onu al, yoksa kullanıcının el yazısıyla yazdığı ID'yi al!
     const finalWallId = wallIdFromUrl || Number(manualWallId);
 
   
@@ -126,7 +125,6 @@ export function Home({ onLoginSuccess }: HomeProps) {
           {statusMessage}
         </p>
 
-        {/* 🚀 EĞER URL'DE ODA NUMARASI YOKSA KULLANICIYA KUTU GÖSTERİYORUZ */}
         {!wallIdFromUrl && (
           <div style={{ marginBottom: '2rem', padding: '0 10px' }}>
             <input
