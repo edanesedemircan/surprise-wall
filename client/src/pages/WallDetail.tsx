@@ -45,12 +45,11 @@ useEffect(() => {
       if (response.ok) {
         const data = await response.json();
         
-        // 🚀 .NET backend'den gelen ham tarih verisini doğrudan alıyoruz, hiç ellemiyoruz kanka:
         const incomingTargetDate = data.targetDate || data.TargetDate || null;
 
         setWallTitle(data.title || data.Title || 'Yükleniyor...');
         setWallTheme((data.theme || data.Theme || 'birthday').toLowerCase());
-        setTargetDate(incomingTargetDate); // Üstteki sayaç efekti bu ham veriyi temizce pars edecek!
+        setTargetDate(incomingTargetDate); 
       }
     } catch (error) {
       console.error('Oda bilgileri sunucudan alınamadı:', error);
@@ -58,28 +57,43 @@ useEffect(() => {
   };
   if (wallId) fetchWallSpecs();
 }, [wallId, apiUrl]);
-  // --- 2. Başrol (Admin) İçin Geri Sayım Sayacı ---
+
+
+// --- 2. Başrol (Admin) İçin Geri Sayım Sayacı ---
 useEffect(() => {
   if (role !== 'Admin' || !targetDate) return;
+  const getSafeTargetMs = (dateStr: string): number => {
+    let rawMs = Date.parse(dateStr);
+    if (isNaN(rawMs)) {
+      try {
+        const cleanStr = dateStr.replace('T', ' ').trim();
+        const [datePart, timePart] = cleanStr.split(' ');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hour, minute, second] = timePart.split(':').map(Number);
 
+
+        const nativeDate = new Date(year, month - 1, day, hour || 0, minute || 0, second || 0);
+        rawMs = nativeDate.getTime();
+      } catch (e) {
+        console.error("Manuel tarih parçalama da başarısız oldu kanka:", e);
+      }
+    }
+    return rawMs;
+  };
+
+  const targetMs = getSafeTargetMs(targetDate);
   const calculateTimeLeft = () => {
-    let parsedDate = Date.parse(targetDate);
-    if (isNaN(parsedDate)) {
-      const formattedStr = targetDate.replace(' ', 'T');
-      parsedDate = Date.parse(formattedStr);
-    }
-
-    if (isNaN(parsedDate)) {
-      parsedDate = new Date(targetDate).getTime();
-    }
-
-    if (isNaN(parsedDate)) {
+    if (isNaN(targetMs) || targetMs <= 0) {
       return { days: 0, hours: 0, minutes: 0, seconds: 0 };
     }
 
-    const difference = parsedDate - +new Date();
-    if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    
+    const nowMs = new Date().getTime();
+    const difference = targetMs - nowMs;
+
+    if (difference <= 0) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
     return {
       days: Math.floor(difference / (1000 * 60 * 60 * 24)),
       hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
@@ -89,7 +103,10 @@ useEffect(() => {
   };
 
   setTimeLeft(calculateTimeLeft());
-  const interval = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+  const interval = setInterval(() => {
+    setTimeLeft(calculateTimeLeft());
+  }, 1000);
+
   return () => clearInterval(interval);
 }, [targetDate, role]);
 
