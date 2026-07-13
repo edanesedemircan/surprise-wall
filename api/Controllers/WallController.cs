@@ -99,8 +99,32 @@ public async Task<IActionResult> CreateWall([FromBody] CreateWallDto dto)
                 });
             }
 
-            // 4. SENARYO: Tamamen yabancı, davetsiz biri sızmaya çalışıyorsa
+            // 4. SENARYO: Tamamen yabancı biri sızmaya çalışıyorsa
             return Unauthorized(new { Message = "Bu gizli odaya erişim izniniz bulunmuyor!" });
         }
+
+        // 🚀 FRONTEND'DEKİ SAYAÇ VE TEMA İÇİN ODA DETAYLARINI DÖNEN YENİ ENDPOINT:
+[HttpGet("{wallId}")]
+public async Task<IActionResult> GetWallById(int wallId)
+{
+    var wall = await _context.Walls.FirstOrDefaultAsync(w => w.Id == wallId);
+    
+    if (wall == null)
+    {
+        return NotFound(new { Message = "Böyle bir anı duvarı bulunamadı!" });
+    }
+
+    return Ok(new
+    {
+        Id = wall.Id,
+        Title = wall.Title,
+        Theme = wall.Theme,
+        TargetEmail = wall.TargetEmail,
+        IsCountdownActive = wall.IsCountdownActive,
+        // Tarih JS tarafında doğru pars edilsin diye ISO formatında string'e çeviriyoruz
+        TargetDate = wall.TargetDate?.ToString("yyyy-MM-ddTHH:mm:ssZ")
+    });
+}
+
     }
 }
