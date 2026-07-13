@@ -12,18 +12,29 @@ export function Home({ onLoginSuccess }: HomeProps) {
   const { id } = useParams<{ id: string }>();
   const wallIdFromUrl = Number(id);
 
+  const [manualWallId, setManualWallId] = useState('');
+
   const [statusMessage, setStatusMessage] = useState(
-    'Kapsüle erişmek ve rolünüzün belirlenmesi için lütfen Google hesabınızla tek tıkla kimliğinizi doğrulayın.'
+    wallIdFromUrl 
+      ? `Kimliğiniz doğrulandıktan sonra #${wallIdFromUrl} numaralı anı odasına giriş yapacaksınız.` 
+      : 'Kapsüle erişmek için lütfen oda kodunuzu girin ve Google hesabınızla kimliğinizi doğrulayın.'
   );
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
-    const finalWallId = wallIdFromUrl || 1; 
+    // 🚀 Kritik Düzeltme: Eğer URL'de ID varsa onu al, yoksa kullanıcının el yazısıyla yazdığı ID'yi al!
+    const finalWallId = wallIdFromUrl || Number(manualWallId);
+
+  
+    if (!finalWallId || isNaN(finalWallId)) {
+      setStatusMessage('Lütfen önce girmek istediğiniz geçerli bir oda kodu yazı!');
+      return;
+    }
 
     setStatusMessage('Google doğrulaması başarılı, güvenli çember kontrol ediliyor...');
 
     try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
-const response = await fetch(`${apiUrl}/api/auth/google-login`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+      const response = await fetch(`${apiUrl}/api/auth/google-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -36,7 +47,6 @@ const response = await fetch(`${apiUrl}/api/auth/google-login`, {
 
       if (response.ok) {
         setStatusMessage('Giriş Başarılı! Yönlendiriliyorsunuz... ✨');
-        // Giriş başarılı olunca üst katmana haber veriyoruz
         onLoginSuccess(data.role, data.title, finalWallId);
       } else {
         setStatusMessage(`Giriş Engellendi: ${data.message}`);
@@ -108,7 +118,7 @@ const response = await fetch(`${apiUrl}/api/auth/google-login`, {
           color: '#7C5858', 
           fontSize: '14.5px', 
           lineHeight: '1.6', 
-          marginBottom: '2.5rem',
+          marginBottom: '2rem',
           fontStyle: 'italic',
           textAlign: 'center',
           padding: '0 10px'
@@ -116,7 +126,33 @@ const response = await fetch(`${apiUrl}/api/auth/google-login`, {
           {statusMessage}
         </p>
 
-        {/* 🚀 Google Login Butonu Tam Merkezde */}
+        {/* 🚀 EĞER URL'DE ODA NUMARASI YOKSA KULLANICIYA KUTU GÖSTERİYORUZ */}
+        {!wallIdFromUrl && (
+          <div style={{ marginBottom: '2rem', padding: '0 10px' }}>
+            <input
+              type="number"
+              placeholder="Oda Kodunu Girin (Örn: 11)"
+              value={manualWallId}
+              onChange={(e) => setManualWallId(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.9rem 1.2rem',
+                borderRadius: '14px',
+                border: '1px solid #FECDD3',
+                outline: 'none',
+                fontSize: '15px',
+                fontFamily: 'sans-serif',
+                textAlign: 'center',
+                boxSizing: 'border-box',
+                backgroundColor: '#FFFBFB',
+                color: '#4A3E3E',
+                fontWeight: 'bold'
+              }}
+            />
+          </div>
+        )}
+
+        {/* Google Login Butonu */}
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
