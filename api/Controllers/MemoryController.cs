@@ -78,5 +78,49 @@ namespace AniDefteri.Api.Controllers
 
             return Ok(memories);
         }
+
+        //  1. ANILARI SİLME
+[HttpDelete("{id}")]
+public async Task<IActionResult> DeleteMemory(int id)
+{
+    var memory = await _context.Memories.FindAsync(id);
+    if (memory == null)
+    {
+        return NotFound(new { Message = "Silinmek istenen anı bulunamadı!" });
+    }
+
+    _context.Memories.Remove(memory);
+    await _context.SaveChangesAsync();
+
+    return Ok(new { Message = "Anı başarıyla silindi! 🗑️" });
+}
+
+//  2. ANILARI DÜZENLEME
+[HttpPut("{id}")]
+public async Task<IActionResult> UpdateMemory(int id, [FromBody] AddMemoryDto dto)
+{
+    var memory = await _context.Memories.FindAsync(id);
+    if (memory == null)
+    {
+        return NotFound(new { Message = "Düzenlenmek istenen anı bulunamadı!" });
+    }
+
+    if (string.IsNullOrWhiteSpace(dto.AuthorName) || string.IsNullOrWhiteSpace(dto.Content))
+    {
+        return BadRequest(new { Message = "İsim ve içerik alanları boş bırakılamaz!" });
+    }
+
+    // Bilgileri güncelliyoruz
+    memory.AuthorName = dto.AuthorName;
+    memory.Content = dto.Content;
+    
+    if (dto.ImageUrl != null)
+    {
+        memory.ImageUrl = dto.ImageUrl;
+    }
+
+    await _context.SaveChangesAsync();
+    return Ok(new { Message = "Anı başarıyla güncellendi! 📝" });
+}
     }
 }
