@@ -78,7 +78,6 @@ namespace AniDefteri.Api.Controllers
             if (wall.AllowedEmails != null && wall.AllowedEmails.Any(e => e.Trim().ToLower() == cleanEmail))
             {
                 return Ok(new { 
-                    // Davetli rolünü "Guest" olarak eşliyoruz
                     Role = "Guest", 
                     Title = wall.Title, 
                     WallId = wall.Id 
@@ -117,8 +116,7 @@ namespace AniDefteri.Api.Controllers
                 TargetDate = wall.TargetDate?.ToString("yyyy-MM-ddTHH:mm:ssZ")
             });
         }
-
-        // 🚀 TEK İSTEKLİ GÜVENLİ GEÇİŞ ENDPOINT'İ
+        
         [HttpPost("join")]
         public async Task<IActionResult> JoinRoom([FromBody] JoinRoomRequest request)
         {
@@ -130,7 +128,7 @@ namespace AniDefteri.Api.Controllers
             if (!int.TryParse(request.RoomCode, out int wallId))
             {
                 return BadRequest(new { success = false, message = "Oda kodu sayısal olmalıdır." });
-            }
+            }s
 
             var wall = await _context.Walls.FirstOrDefaultAsync(w => w.Id == wallId);
             if (wall == null)
@@ -155,7 +153,7 @@ namespace AniDefteri.Api.Controllers
             { 
                 success = true, 
                 isOwner = isOwner,
-                // Davetlileri sisteme Guest rolüyle bildiriyoruz
+                // Davetlileri sisteme "Guest" rolüyle bildiriyoruz
                 role = isTarget ? "Admin" : (isCreator ? "Creator" : "Guest"),
                 themeName = wall.Theme,
                 title = wall.Title
