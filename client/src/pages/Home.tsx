@@ -45,7 +45,6 @@ export function Home({ onLoginSuccess }: HomeProps) {
       return;
     }
 
-    // Kullanıcının e-postasını alıyoruz
     const decoded = parseJwt(credentialResponse.credential);
     const userEmail = decoded?.email;
 
@@ -59,7 +58,6 @@ export function Home({ onLoginSuccess }: HomeProps) {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
       
-      // Tekil endpoint isteği
       const response = await fetch(`${apiUrl}/api/wall/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -73,7 +71,6 @@ export function Home({ onLoginSuccess }: HomeProps) {
 
       if (response.ok && data.success) {
         setStatusMessage('Giriş Başarılı! Yönlendiriliyorsunuz... ✨');
-        // Başarı durumunda rol ve başlığı üst bileşene bildiriyoruz
         onLoginSuccess(data.role, data.title, finalWallId);
       } else {
         setStatusMessage(`Giriş Engellendi: ${data.message || 'Erişim izniniz bulunmuyor!'}`);
@@ -124,12 +121,10 @@ export function Home({ onLoginSuccess }: HomeProps) {
         boxSizing: 'border-box'
       }}>
         
-        {/* Üst Güvenlik İkonu */}
         <div style={{ marginBottom: '1.5rem' }}>
           <span style={{ fontSize: '54px', display: 'block', filter: 'drop-shadow(0 10px 12px rgba(160, 43, 106, 0.1))' }}>🔐</span>
         </div>
 
-        {/* Başlık */}
         <h3 style={{ 
           fontSize: '24px', 
           fontStyle: 'italic', 
@@ -140,7 +135,6 @@ export function Home({ onLoginSuccess }: HomeProps) {
           Güvenli Geçiş Kapısı
         </h3>
 
-        {/* Dinamik Durum ve Bilgi Metni */}
         <p style={{ 
           color: '#7C5858', 
           fontSize: '14.5px', 
@@ -178,7 +172,6 @@ export function Home({ onLoginSuccess }: HomeProps) {
           </div>
         )}
 
-        {/* Google Login Butonu */}
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}

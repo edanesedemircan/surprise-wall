@@ -115,7 +115,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     return () => clearInterval(interval);
   }, [targetDate, role]);
 
-  // --- 3. Google Giriş Entegrasyonu (Sadece linkle doğrudan gelen ve yetkisi olmayanlar için mor sayfa tetiklendiğinde) ---
+  // --- 3. Google Giriş Entegrasyonu (Yalnızca doğrudan URL ile dışarıdan gelenler için mor doğrulama ekranı) ---
   useEffect(() => {
     if (role !== 'Guest' || isLoggedIn) return; 
 
