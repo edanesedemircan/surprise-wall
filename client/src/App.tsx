@@ -6,7 +6,6 @@ import { WallDetail } from './pages/WallDetail';
 import { Welcome } from './pages/Welcome';
 
 function App() {
-
   const [userAuth, setUserAuth] = useState<{ role: string; title: string; wallId: number } | null>(() => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -22,21 +21,21 @@ function App() {
     <Router>
       <div style={{ minHeight: '100vh', backgroundColor: '#FFF5F5', fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
         <Routes>
-          {/* Giriş Sayfası / Karşılama */}
+          {/* İlk Giriş Karşılama Ekranı */}
           <Route path="/" element={<Welcome />} />
           
-          {/* Güvenli Geçiş Kapısı */}
+          {/* Güvenli Geçiş Kapısı (Giriş yaptıysa doğrudan odasına fırlatır) */}
           <Route 
             path="/login" 
             element={
-              userAuth ? <Navigate to={`/wall/${userAuth.wallId}`} /> : <Home onLoginSuccess={handleLoginSuccess} />
+              userAuth ? <Navigate to={`/wall/${userAuth.wallId}`} replace /> : <Home onLoginSuccess={handleLoginSuccess} />
             } 
           />
           
-          {/* Oda Oluşturma Ekranı */}
+          {/* Oda Oluşturma */}
           <Route path="/create" element={<CreateWall />} />
           
-          {/* Oda Detay / Duvar Ekranı */}
+          {/* Oda Detayı: "Guest" veya diğer rollere göre kendi içinden kararı verir */}
           <Route 
             path="/wall/:id" 
             element={
