@@ -6,7 +6,6 @@ import { MemoryWallGrid } from './MemoryWallGrid';
 interface WallDetailProps {
   role: string;
   title: string;
-  onLoginSuccess: (role: string, title: string, wallId: number) => void;
 }
 
 const themeStyles: Record<string, { bg: string, primary: string, border: string, text: string, badge: string }> = {
@@ -17,7 +16,7 @@ const themeStyles: Record<string, { bg: string, primary: string, border: string,
   funny: { bg: '#FCE7F3', primary: '#db2777', border: '#FBCFE8', text: '#4D072B', badge: '#FCE7F3' }
 };
 
-export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
+export function WallDetail({ role, title }: WallDetailProps) {
   const { id } = useParams<{ id: string }>(); 
   const wallId = Number(id);
 

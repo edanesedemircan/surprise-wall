@@ -41,7 +41,6 @@ function App() {
               <WallDetail 
                 role={userAuth?.role || 'Guest'} 
                 title={userAuth?.title || 'Yükleniyor...'} 
-                onLoginSuccess={handleLoginSuccess}
               />
             } 
           />
