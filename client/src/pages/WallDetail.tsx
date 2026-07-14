@@ -1,8 +1,6 @@
 // Asıl Anı Duvarı / Oda Sayfası
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
-// 🚀 Premium anı grid sayfamız:
 import { MemoryWallGrid } from './MemoryWallGrid'; 
 
 interface WallDetailProps {
@@ -24,25 +22,14 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   const wallId = Number(id);
 
   // --- State Yönetimi ---
-  const [statusMessage, setStatusMessage] = useState('İçerde neler döndüğünü görmek için kimliğinizi doğrulayın.');
   const [wallTitle, setWallTitle] = useState(title || 'Yükleniyor...');
   const [wallTheme, setWallTheme] = useState('birthday'); 
   const [targetDate, setTargetDate] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  
-  // Eğer prop olarak gelen rol Guest dışında geçerli bir rol ise doğrudan doğrulanmış kabul ediyoruz
-  const [isLoggedIn, setIsLoggedIn] = useState(role !== 'Guest' && role !== 'Yükleniyor...');
 
   const normalizedTheme = (wallTheme || 'birthday').toLowerCase();
   const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
-
-  // Prop rolü değiştiğinde giriş durumunu da senkronize ediyoruz
-  useEffect(() => {
-    if (role !== 'Guest' && role !== 'Yükleniyor...') {
-      setIsLoggedIn(true);
-    }
-  }, [role]);
 
   // --- 1. Odanın Genel Özelliklerini Çekme ---
   useEffect(() => {
@@ -80,7 +67,7 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
           const nativeDate = new Date(year, month - 1, day, hour || 0, minute || 0, second || 0);
           rawMs = nativeDate.getTime();
         } catch (e) {
-          console.error("Manuel tarih parçalama da başarısız oldu kanka:", e);
+          console.error("Manuel tarih parçalama da başarısız oldu :", e);
         }
       }
       return rawMs;
@@ -115,73 +102,13 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     return () => clearInterval(interval);
   }, [targetDate, role]);
 
-  // --- 3. Google Giriş Entegrasyonu (Yalnızca doğrudan URL ile dışarıdan gelenler için mor doğrulama ekranı) ---
-  useEffect(() => {
-    if (role !== 'Guest' || isLoggedIn) return; 
-
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true; script.defer = true;
-    document.head.appendChild(script);
-
-    script.onload = () => {
-      const anyWindow = window as any;
-      if (anyWindow.google?.accounts?.id) {
-        anyWindow.google.accounts.id.initialize({
-          client_id: '200628903576-matrf8d1fosen9d64ralgu3fetpltcmh.apps.googleusercontent.com',
-          callback: async (response: any) => {
-            setStatusMessage('Güvenli çember kontrol ediliyor...');
-            try {
-              const res = await fetch(`${apiUrl}/api/auth/google-login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ wallId, idToken: response.credential }),
-              });
-
-              if (!res.ok) {
-                setStatusMessage(`Giriş Engellendi (Kod: ${res.status}). Çember dışındasınız.`);
-                return;
-              }
-
-              const data = await res.json();
-              setIsLoggedIn(true); 
-              onLoginSuccess(data.role, data.title, wallId);
-            } catch (error) {
-              setStatusMessage('API bağlantı hatası oluştu !');
-            }
-          }
-        });
-
-        anyWindow.google.accounts.id.renderButton(
-          document.getElementById('googleBtn'),
-          { theme: 'outline', size: 'large', width: 320 }
-        );
-      }
-    };
-    return () => { if (document.head.contains(script)) document.head.removeChild(script); };
-  }, [role, wallId, apiUrl, onLoginSuccess, isLoggedIn]);
-
   const sharedBackgroundStyle: React.CSSProperties = {
     minHeight: '100vh', width: '100%', backgroundColor: currentTheme.bg,
     display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
     boxSizing: 'border-box', padding: '2rem', position: 'relative'
   };
 
-  // 🔐 SENARYO 1: Giriş Yapmamış Davetli (Role Guest ve henüz login tetiklenmemiş)
-  if (role === 'Guest' && !isLoggedIn) {
-    return (
-      <div style={sharedBackgroundStyle}>
-        <style>{`body, html, #root { margin:0; padding:0; width:100%; height:100%; }`}</style>
-        <div style={{ backgroundColor: '#ffffff', padding: '4rem 3rem', borderRadius: '28px', boxShadow: '0 25px 60px rgba(0, 0, 0, 0.04)', border: `1px solid ${currentTheme.border}`, textAlign: 'center', maxWidth: '500px', width: '100%' }}>
-          <div style={{ marginBottom: '1.5rem', fontSize: '64px' }}>🔒</div>
-          <h2 style={{ fontSize: '22px', fontFamily: '"Georgia", serif', fontStyle: 'italic', fontWeight: '700', color: currentTheme.primary, marginBottom: '2.5rem' }}>{statusMessage}</h2>
-          <div style={{ display: 'flex', justifyContent: 'center' }}><div id="googleBtn"></div></div>
-        </div>
-      </div>
-    );
-  }
-
-  // 🎁 SENARYO 2: Başrol (Admin) -> Sadece Sayacı Görür
+  // 🎁 SENARYO 1: Başrol (Admin) -> Sadece Sayacı Görür
   if (role === 'Admin') {
     return (
       <div style={sharedBackgroundStyle}>
@@ -203,8 +130,8 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
     );
   }
 
-  // 🧱 SENARYO 3: Giriş Yapmış Davetli (Role Guest ve login doğrulanmış) veya Creator -> Yeni Büyük Duvarı Görür
-  if (role === 'Creator' || (role === 'Guest' && isLoggedIn)) {
+  // 🧱 SENARYO 2: Giriş Yapmış Davetli (Guest) veya Creator
+  if (role === 'Creator' || role === 'Guest') {
     return (
       <MemoryWallGrid 
         wallId={wallId} 
