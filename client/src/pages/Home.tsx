@@ -44,7 +44,7 @@ export function Home({ onLoginSuccess }: HomeProps) {
       return;
     }
 
-    // Google'dan gelen token'ı decode edip kullanıcının e-postasını alıyoruz
+    // kullanıcının e-postasını alıyoruz
     const decoded = parseJwt(credentialResponse.credential);
     const userEmail = decoded?.email;
 
@@ -58,7 +58,7 @@ export function Home({ onLoginSuccess }: HomeProps) {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
       
-      // 🚀 YENİ TEKİL ENDPOINT: join isteğini atıyoruz
+      // YENİ TEKİL ENDPOINT: join isteğini atıyoruz
       const response = await fetch(`${apiUrl}/api/wall/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
