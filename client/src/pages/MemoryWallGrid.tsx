@@ -164,7 +164,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
     } catch (error) { console.error(error); }
   };
 
-  const handleQuizSubmit = async (e: React.FormEvent) => {
+ const handleQuizSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const isEditing = editingQuizId !== null;
@@ -173,16 +173,32 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       const response = await fetch(url, {
         method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wallId, questionText, optionA, optionB, optionC, optionD, correctOption, creatorName: creatorName || 'Anonim' })
+        body: JSON.stringify({ 
+          wallId, 
+          questionText, 
+          optionA, 
+          optionB, 
+          optionC, 
+          optionD, 
+          correctOption, 
+          creatorName: creatorName || 'Anonim' 
+        })
       });
+
       if (response.ok) {
-        
         setQuestionText(''); setOptionA(''); setOptionB(''); setOptionC(''); setOptionD(''); setCreatorName(''); setCorrectOption('A');
         setEditingQuizId(null);
-        setIsQuizPanelOpen(false);
-        loadAllData(); 
+        setIsQuizPanelOpen(false); 
+        
+      
+        await loadAllData(); 
+      } else {
+        alert("Soru kaydedilirken backend hata döndürdü!");
       }
-    } catch (error) { console.error(error); }
+    } catch (error) { 
+      console.error("Soru gönderim hatası:", error);
+      setIsQuizPanelOpen(false);
+    }
   };
 
   const gridPatternStyle = `linear-gradient(to right, ${colors.gridLine} 1px, transparent 1px), linear-gradient(to bottom, ${colors.gridLine} 1px, transparent 1px)`;
@@ -244,7 +260,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               return (
                 <div key={`quiz-${item.id}-${index}`} style={{ backgroundColor: colors.cardBg, border: `2.5px dashed ${colors.accent}`, borderRadius: '24px', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative', boxShadow: '0 12px 30px rgba(0,0,0,0.02)' }}>
                   
-                  {/* Soru Kartı Silme ve Düzenleme Butonları kanka */}
+                  {/* Soru Kartı Silme ve Düzenleme Butonları */}
                   <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '8px', zIndex: 10, backgroundColor: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '20px', border: `1px solid ${colors.border}` }}>
                     <button onClick={() => startEditQuiz(item)} title="Soruyu Düzenle" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>✏️</button>
                     <button onClick={() => handleDeleteQuiz(item.id)} title="Soruyu Sil" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>🗑️</button>

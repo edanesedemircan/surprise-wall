@@ -7,6 +7,22 @@ import { GoogleLogin } from '@react-oauth/google';
 interface HomeProps {
   onLoginSuccess: (role: string, title: string, wallId: number) => void;
 }
+function parseJwt(token: string) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
 
 export function Home({ onLoginSuccess }: HomeProps) {
   const { id } = useParams<{ id: string }>();
@@ -23,9 +39,17 @@ export function Home({ onLoginSuccess }: HomeProps) {
   const handleGoogleSuccess = async (credentialResponse: any) => {
     const finalWallId = wallIdFromUrl || Number(manualWallId);
 
-  
     if (!finalWallId || isNaN(finalWallId)) {
-      setStatusMessage('Lütfen önce girmek istediğiniz geçerli bir oda kodu yazı!');
+      setStatusMessage('Lütfen önce girmek istediğiniz geçerli bir oda kodu yazın!');
+      return;
+    }
+
+    // Google'dan gelen token'ı decode edip kullanıcının e-postasını alıyoruz
+    const decoded = parseJwt(credentialResponse.credential);
+    const userEmail = decoded?.email;
+
+    if (!userEmail) {
+      setStatusMessage('Google hesabından e-posta adresi alınamadı!');
       return;
     }
 
@@ -33,22 +57,26 @@ export function Home({ onLoginSuccess }: HomeProps) {
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
-      const response = await fetch(`${apiUrl}/api/auth/google-login`, {
+      
+      // 🚀 YENİ TEKİL ENDPOINT: join isteğini atıyoruz
+      const response = await fetch(`${apiUrl}/api/wall/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          wallId: finalWallId,
-          idToken: credentialResponse.credential
+          roomCode: finalWallId.toString(),
+          email: userEmail
         }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.ok && data.success) {
         setStatusMessage('Giriş Başarılı! Yönlendiriliyorsunuz... ✨');
+        // Backend'den gelen rol (role), oda başlığı (title) ve kod ile başarı fonksiyonunu tetikliyoruz
+        // Bu tetikleme App.tsx'teki yönlendirme mantığına gidecek
         onLoginSuccess(data.role, data.title, finalWallId);
       } else {
-        setStatusMessage(`Giriş Engellendi: ${data.message}`);
+        setStatusMessage(`Giriş Engellendi: ${data.message || 'Erişim izniniz bulunmuyor!'}`);
       }
     } catch (error) {
       setStatusMessage('API bağlantı hatası oluştu!');
