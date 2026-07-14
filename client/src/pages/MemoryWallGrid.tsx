@@ -26,7 +26,7 @@ interface QuizQuestion {
 interface MemoryWallGridProps {
   wallId: number;
   wallTitle: string;
-  themeName: 'birthday' | 'romantic' | 'graduation' | 'job' | 'funny';
+  themeName: 'birthday' | 'romantic' | 'graduation' | 'job' | 'funny' | string; 
   apiUrl: string;
 }
 
@@ -40,7 +40,8 @@ const themeStyles = {
 };
 
 export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryWallGridProps) {
-  const colors = themeStyles[themeName] || themeStyles.graduation;
+  
+  const colors = themeStyles[themeName as keyof typeof themeStyles] || themeStyles.graduation;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [combinedItems, setCombinedItems] = useState<any[]>([]);
@@ -115,7 +116,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
     } catch (error) { console.error(error); }
   };
 
-  // SORU SİLME AKSİYONU
+  // Soru Silme
   const handleDeleteQuiz = async (id: number) => {
     if (!window.confirm("Bu sürpriz dostluk testini kalıcı olarak silmek istediğine emin misin? 🧠💣")) return;
     try {
@@ -133,7 +134,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
     setIsAnıModalOpen(true);
   };
 
-  // SORU DÜZENLEME BAŞLATMA
+  // Soru Düzenleme Başlat
   const startEditQuiz = (quiz: QuizQuestion) => {
     setEditingQuizId(quiz.id);
     setCreatorName(quiz.creatorName);
@@ -164,7 +165,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
     } catch (error) { console.error(error); }
   };
 
- const handleQuizSubmit = async (e: React.FormEvent) => {
+  const handleQuizSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const isEditing = editingQuizId !== null;
@@ -189,8 +190,6 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         setQuestionText(''); setOptionA(''); setOptionB(''); setOptionC(''); setOptionD(''); setCreatorName(''); setCorrectOption('A');
         setEditingQuizId(null);
         setIsQuizPanelOpen(false); 
-        
-      
         await loadAllData(); 
       } else {
         alert("Soru kaydedilirken backend hata döndürdü!");
@@ -208,7 +207,6 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       <style>{`
         body, html, #root { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; background-color: ${colors.pageBg} !important; }
       `}</style>
-      
       
       <div style={{ 
         width: '280px', 
@@ -250,17 +248,11 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
       {/* Sağ Taraf: Akışkan Anı Kartları Listesi */}
       <div style={{ flex: 1, marginLeft: '280px', padding: '4rem 3rem', boxSizing: 'border-box' }}>
-        
-        {/* 🚀 3 & 4) HARMANLANMIŞ GRID (Sorular da birer anı kartı gibi silme/düzenlemeyle yan yana!) */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
           {combinedItems.map((item, index) => {
-            
-            // 🧠 SORU KARTI DURUMU:
             if (item.isQuiz) {
               return (
                 <div key={`quiz-${item.id}-${index}`} style={{ backgroundColor: colors.cardBg, border: `2.5px dashed ${colors.accent}`, borderRadius: '24px', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative', boxShadow: '0 12px 30px rgba(0,0,0,0.02)' }}>
-                  
-                  {/* Soru Kartı Silme ve Düzenleme Butonları */}
                   <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '8px', zIndex: 10, backgroundColor: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '20px', border: `1px solid ${colors.border}` }}>
                     <button onClick={() => startEditQuiz(item)} title="Soruyu Düzenle" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>✏️</button>
                     <button onClick={() => handleDeleteQuiz(item.id)} title="Soruyu Sil" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>🗑️</button>
@@ -289,7 +281,6 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               );
             }
 
-            // ✍️ NORMAL ANI KARTI DURUMU:
             const imageSource = item.imageUrl || item.ImageUrl;
             return (
               <div key={`mem-${item.id}-${index}`} style={{ backgroundColor: colors.cardBg, border: `2px solid ${colors.border}`, borderRadius: '24px', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative', boxShadow: '0 10px 30px rgba(0,0,0,0.01)' }}>
@@ -313,7 +304,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         </div>
       </div>
 
-      {/* 🧠 SAĞDAN KAYARAK AÇILAN EKOSELİ BAĞIMSIZ SORU PANELİ */}
+      {/* Soru Paneli */}
       {isQuizPanelOpen && (
         <div style={{ position: 'fixed', top: 0, right: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.2)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'flex-end', zIndex: 99999 }}>
           <div style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '460px', height: '100vh', padding: '2.5rem', boxSizing: 'border-box', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxShadow: '-10px 0 35px rgba(0,0,0,0.05)', borderLeft: `2px solid ${colors.border}`, backgroundImage: gridPatternStyle, backgroundSize: '20px 20px' }}>
@@ -348,7 +339,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         </div>
       )}
 
-      {/* ✨ ANI MODALI */}
+      {/* Anı Modali */}
       {isAnıModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.3)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
           <div style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '500px', borderRadius: '28px', padding: '2.5rem', position: 'relative', border: `2px solid ${colors.border}`, boxShadow: '0 25px 50px rgba(0,0,0,0.08)' }}>
