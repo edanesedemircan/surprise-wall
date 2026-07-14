@@ -1,7 +1,7 @@
 // Odaya girmek isteyenler (Davetliler veya Başrol) Ekranı
 
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // 🚀 useNavigate'i buraya ekledik!
 import { GoogleLogin } from '@react-oauth/google';
 
 interface HomeProps {
@@ -28,6 +28,7 @@ function parseJwt(token: string) {
 export function Home({ onLoginSuccess }: HomeProps) {
   const { id } = useParams<{ id: string }>();
   const wallIdFromUrl = Number(id);
+  const navigate = useNavigate(); // 🚀 useNavigate kancasını tanımladık!
 
   const [manualWallId, setManualWallId] = useState('');
 
@@ -71,7 +72,15 @@ export function Home({ onLoginSuccess }: HomeProps) {
 
       if (response.ok && data.success) {
         setStatusMessage('Giriş Başarılı! Yönlendiriliyorsunuz... ✨');
+        
+        // 1. App.tsx'e başarılı girişi bildiriyoruz
         onLoginSuccess(data.role, data.title, finalWallId);
+        
+        // 2. 🚀 Kullanıcıyı dinamik olarak o girdiğiniz oda ID'sine anında uçuruyoruz!
+        setTimeout(() => {
+          navigate(`/wall/${finalWallId}`);
+        }, 800); // Küçük bir gecikme koyduk ki kullanıcı o tatlı başarı mesajını görebilsin
+        
       } else {
         setStatusMessage(`Giriş Engellendi: ${data.message || 'Erişim izniniz bulunmuyor!'}`);
       }
