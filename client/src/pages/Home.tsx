@@ -7,6 +7,7 @@ import { GoogleLogin } from '@react-oauth/google';
 interface HomeProps {
   onLoginSuccess: (role: string, title: string, wallId: number) => void;
 }
+
 function parseJwt(token: string) {
   try {
     const base64Url = token.split('.')[1];
@@ -44,7 +45,7 @@ export function Home({ onLoginSuccess }: HomeProps) {
       return;
     }
 
-    // kullanıcının e-postasını alıyoruz
+    // Kullanıcının e-postasını alıyoruz
     const decoded = parseJwt(credentialResponse.credential);
     const userEmail = decoded?.email;
 
@@ -58,7 +59,7 @@ export function Home({ onLoginSuccess }: HomeProps) {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
       
-      // YENİ TEKİL ENDPOINT: join isteğini atıyoruz
+      // Tekil endpoint isteği
       const response = await fetch(`${apiUrl}/api/wall/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -72,8 +73,7 @@ export function Home({ onLoginSuccess }: HomeProps) {
 
       if (response.ok && data.success) {
         setStatusMessage('Giriş Başarılı! Yönlendiriliyorsunuz... ✨');
-        // Backend'den gelen rol (role), oda başlığı (title) ve kod ile başarı fonksiyonunu tetikliyoruz
-        // Bu tetikleme App.tsx'teki yönlendirme mantığına gidecek
+        // Başarı durumunda rol ve başlığı üst bileşene bildiriyoruz
         onLoginSuccess(data.role, data.title, finalWallId);
       } else {
         setStatusMessage(`Giriş Engellendi: ${data.message || 'Erişim izniniz bulunmuyor!'}`);

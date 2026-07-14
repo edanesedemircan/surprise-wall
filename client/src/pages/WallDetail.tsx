@@ -30,87 +30,92 @@ export function WallDetail({ role, title, onLoginSuccess }: WallDetailProps) {
   const [targetDate, setTargetDate] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   
-  // 🔑 Kullanıcı Google butonuyla başarıyla giriş yaptı mı kontrolü
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Eğer prop olarak gelen rol Guest dışında geçerli bir rol ise doğrudan doğrulanmış kabul ediyoruz
+  const [isLoggedIn, setIsLoggedIn] = useState(role !== 'Guest' && role !== 'Yükleniyor...');
 
   const normalizedTheme = (wallTheme || 'birthday').toLowerCase();
   const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
 
-// --- 1. Odanın Genel Özelliklerini Çekme ---
-useEffect(() => {
-  const fetchWallSpecs = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/api/wall/${wallId}`);
-      if (response.ok) {
-        const data = await response.json();
-        
-        const incomingTargetDate = data.targetDate || data.TargetDate || null;
-
-        setWallTitle(data.title || data.Title || 'Yükleniyor...');
-        setWallTheme((data.theme || data.Theme || 'birthday').toLowerCase());
-        setTargetDate(incomingTargetDate); 
-      }
-    } catch (error) {
-      console.error('Oda bilgileri sunucudan alınamadı:', error);
+  // Prop rolü değiştiğinde giriş durumunu da senkronize ediyoruz
+  useEffect(() => {
+    if (role !== 'Guest' && role !== 'Yükleniyor...') {
+      setIsLoggedIn(true);
     }
-  };
-  if (wallId) fetchWallSpecs();
-}, [wallId, apiUrl]);
+  }, [role]);
 
-
-// --- 2. Başrol (Admin) İçin Geri Sayım Sayacı ---
-useEffect(() => {
-  if (role !== 'Admin' || !targetDate) return;
-  const getSafeTargetMs = (dateStr: string): number => {
-    let rawMs = Date.parse(dateStr);
-    if (isNaN(rawMs)) {
+  // --- 1. Odanın Genel Özelliklerini Çekme ---
+  useEffect(() => {
+    const fetchWallSpecs = async () => {
       try {
-        const cleanStr = dateStr.replace('T', ' ').trim();
-        const [datePart, timePart] = cleanStr.split(' ');
-        const [year, month, day] = datePart.split('-').map(Number);
-        const [hour, minute, second] = timePart.split(':').map(Number);
+        const response = await fetch(`${apiUrl}/api/wall/${wallId}`);
+        if (response.ok) {
+          const data = await response.json();
+          
+          const incomingTargetDate = data.targetDate || data.TargetDate || null;
 
-
-        const nativeDate = new Date(year, month - 1, day, hour || 0, minute || 0, second || 0);
-        rawMs = nativeDate.getTime();
-      } catch (e) {
-        console.error("Manuel tarih parçalama da başarısız oldu kanka:", e);
+          setWallTitle(data.title || data.Title || 'Yükleniyor...');
+          setWallTheme((data.theme || data.Theme || 'birthday').toLowerCase());
+          setTargetDate(incomingTargetDate); 
+        }
+      } catch (error) {
+        console.error('Oda bilgileri sunucudan alınamadı:', error);
       }
-    }
-    return rawMs;
-  };
-
-  const targetMs = getSafeTargetMs(targetDate);
-  const calculateTimeLeft = () => {
-    if (isNaN(targetMs) || targetMs <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    const nowMs = new Date().getTime();
-    const difference = targetMs - nowMs;
-
-    if (difference <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
     };
-  };
+    if (wallId) fetchWallSpecs();
+  }, [wallId, apiUrl]);
 
-  setTimeLeft(calculateTimeLeft());
-  const interval = setInterval(() => {
+  // --- 2. Başrol (Admin) İçin Geri Sayım Sayacı ---
+  useEffect(() => {
+    if (role !== 'Admin' || !targetDate) return;
+    const getSafeTargetMs = (dateStr: string): number => {
+      let rawMs = Date.parse(dateStr);
+      if (isNaN(rawMs)) {
+        try {
+          const cleanStr = dateStr.replace('T', ' ').trim();
+          const [datePart, timePart] = cleanStr.split(' ');
+          const [year, month, day] = datePart.split('-').map(Number);
+          const [hour, minute, second] = timePart.split(':').map(Number);
+
+          const nativeDate = new Date(year, month - 1, day, hour || 0, minute || 0, second || 0);
+          rawMs = nativeDate.getTime();
+        } catch (e) {
+          console.error("Manuel tarih parçalama da başarısız oldu kanka:", e);
+        }
+      }
+      return rawMs;
+    };
+
+    const targetMs = getSafeTargetMs(targetDate);
+    const calculateTimeLeft = () => {
+      if (isNaN(targetMs) || targetMs <= 0) {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+
+      const nowMs = new Date().getTime();
+      const difference = targetMs - nowMs;
+
+      if (difference <= 0) {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+
+      return {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    };
+
     setTimeLeft(calculateTimeLeft());
-  }, 1000);
+    const interval = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
 
-  return () => clearInterval(interval);
-}, [targetDate, role]);
+    return () => clearInterval(interval);
+  }, [targetDate, role]);
 
-  // --- 3. Google Giriş Entegrasyonu ---
+  // --- 3. Google Giriş Entegrasyonu (Sadece linkle doğrudan gelen ve yetkisi olmayanlar için mor sayfa tetiklendiğinde) ---
   useEffect(() => {
     if (role !== 'Guest' || isLoggedIn) return; 
 
@@ -198,8 +203,8 @@ useEffect(() => {
     );
   }
 
-  // 🧱 SENARYO 3: Giriş Yapmış Davetli (Role Guest ve login doğrulanmış) -> Yeni Büyük Duvarı Görür
-  if (role === 'Guest' && isLoggedIn) {
+  // 🧱 SENARYO 3: Giriş Yapmış Davetli (Role Guest ve login doğrulanmış) veya Creator -> Yeni Büyük Duvarı Görür
+  if (role === 'Creator' || (role === 'Guest' && isLoggedIn)) {
     return (
       <MemoryWallGrid 
         wallId={wallId} 
