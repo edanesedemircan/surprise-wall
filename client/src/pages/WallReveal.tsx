@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-// Temalarımız 
+// Temalarımız - 🌸 Romantik pembe pötikare konseptine göre güncellendi kanka!
 const themes: Record<string, any> = {
   default: {
-    pageBg: '#FFEBF0',      // Yumuşacık tatlı pembe zemin
+    pageBg: '#ffffff',      // Görseldeki gibi tertemiz beyaz zemin
     cardBg: '#ffffff',      // Beyaz şık kartlar
-    border: '#F2E8E8',      // Kart sınırları için pastel pembe tonu
+    border: '#FFEBF0',      // Ekose karelerinin o tatlı pembe tonu
     text: '#7C5858',        // Karakteristik tatlı kahve-pembe yazı rengi
     heroText: '#5A3E3E',    // Başlıklar için edebi koyu ton
     badge: '#F7EFEF',       // İsimlikler için hafif pembe badge
@@ -43,9 +43,10 @@ export default function WallReveal() {
     return saved ? JSON.parse(saved) : {};
   });
 
+  // 🌸 Görseldeki o meşhur dikey ve yatay pembe pötikare şeritlerin kesişim formülü!
   const gridPatternStyle = `
-    linear-gradient(90deg, rgba(255, 255, 255, 0.8) 50%, transparent 50%),
-    linear-gradient(rgba(255, 255, 255, 0.8) 50%, transparent 50%)
+    linear-gradient(90deg, rgba(255, 235, 240, 0.7) 50%, transparent 50%),
+    linear-gradient(rgba(255, 235, 240, 0.7) 50%, transparent 50%)
   `;
 
   useEffect(() => {
@@ -58,7 +59,6 @@ export default function WallReveal() {
         
         if (wallData.title) setWallTitle(wallData.title);
         
-      
         const matchedTheme = themes[wallData.theme?.toLowerCase()] || themes.default;
         setCurrentTheme(matchedTheme);
 
@@ -67,7 +67,6 @@ export default function WallReveal() {
         const memoriesRes = await fetch(`/api/Memory/wall/${id}?userEmail=${encodeURIComponent(userEmail)}`);
         if (memoriesRes.ok) {
           const memoriesData = await memoriesRes.json();
-          // Hepsini tarihe göre sıralayarak akışa diziyoruz
           const sorted = memoriesData.sort((a: any, b: any) => 
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
@@ -85,7 +84,6 @@ export default function WallReveal() {
 
   // 🎯 Şık tıklandığında çalışan interaktif quiz fonksiyonu
   const handleOptionClick = (questionId: number, selectedOption: string) => {
-    // 🔐 HİLE KORUMASI: Eğer bu soru zaten cevaplandıysa tıklamayı yok say!
     if (answers[questionId]) return;
 
     const newAnswers = { ...answers, [questionId]: selectedOption };
@@ -101,7 +99,7 @@ export default function WallReveal() {
     );
   }
 
- 
+  // 🚨 Ekranın en sağına ve en soluna sıfırlanan, o siyah barları yok eden full-width stil:
   const sharedBackgroundStyle: React.CSSProperties = {
     minHeight: '100vh', 
     width: '100vw',
@@ -109,7 +107,7 @@ export default function WallReveal() {
     marginRight: 'calc(-50vw + 50%)',
     backgroundColor: currentTheme.pageBg, 
     backgroundImage: gridPatternStyle,
-    backgroundSize: '80px 80px', 
+    backgroundSize: '80px 80px', // Görseldeki ekose büyüklüğüyle birebir aynı kanka!
     padding: '4rem 2rem', 
     boxSizing: 'border-box', 
     fontFamily: '"Georgia", serif', 
@@ -152,7 +150,7 @@ export default function WallReveal() {
               return (
                 <div 
                   key={`quiz-${item.id}-${index}`} 
-                  onClick={() => setSelectedItem(item)} // Tıklanınca büyüteç modalı açılacak 
+                  onClick={() => setSelectedItem(item)} 
                   style={{ 
                     backgroundColor: currentTheme.cardBg, 
                     border: isAnswered 
@@ -199,7 +197,7 @@ export default function WallReveal() {
             return (
               <div 
                 key={`mem-${item.id}-${index}`} 
-                onClick={() => setSelectedItem(item)} // Tıklanınca modal açılacak 
+                onClick={() => setSelectedItem(item)} 
                 style={{ 
                   backgroundColor: currentTheme.cardBg, 
                   border: `2px solid ${currentTheme.border}`, 
@@ -233,7 +231,7 @@ export default function WallReveal() {
         </div>
       </div>
 
-      {/* 🌌 BÜYÜTEÇ MODÜLÜ (Anı / Soru Detay ve İnteraktif Çözüm Ekranı) */}
+      {/* 🌌 BÜYÜTEÇ MODÜLÜ */}
       {selectedItem && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 99999 }}>
           <div style={{ 
@@ -263,7 +261,7 @@ export default function WallReveal() {
                 const qId = selectedItem.id;
                 const isAns = !!answers[qId];
                 const userChoice = answers[qId];
-                const correctChoice = selectedItem.correctOption; // Backend'deki doğru şık harfi
+                const correctChoice = selectedItem.correctOption;
 
                 return (
                   <>
@@ -291,19 +289,16 @@ export default function WallReveal() {
                         const optionText = selectedItem[`option${optionKey}`];
                         if (!optionText) return null;
 
-                        // Şıkların dinamik renk stillerini belirliyoruz 
                         let optionBg = currentTheme.badge;
                         let optionBorder = currentTheme.border;
                         let optionTextColor = currentTheme.text;
 
                         if (isAns) {
                           if (optionKey === correctChoice) {
-                            // Doğru olan şık her zaman yeşil yanar
                             optionBg = '#D1FAE5'; 
                             optionBorder = currentTheme.success;
                             optionTextColor = '#065F46';
                           } else if (optionKey === userChoice && userChoice !== correctChoice) {
-                            // Eğer yanlış şık seçildiyse o kırmızı yanar
                             optionBg = '#FEE2E2'; 
                             optionBorder = currentTheme.danger;
                             optionTextColor = '#991B1B';
@@ -361,7 +356,6 @@ export default function WallReveal() {
                       })}
                     </div>
 
-                    {/* Eğlenceli geri bildirim mesajları */}
                     {isAns && (
                       <div style={{
                         marginTop: '1rem',
@@ -372,8 +366,7 @@ export default function WallReveal() {
                         textAlign: 'center',
                         fontWeight: 'bold',
                         fontStyle: 'italic',
-                        fontSize: '15px',
-                        animation: 'fadeIn 0.5s'
+                        fontSize: '15px'
                       }}>
                         {userChoice === correctChoice 
                           ? '🎉 Vay be! Seni gerçekten çok iyi tanıyorlar, helal olsun! 🥳' 

@@ -10,11 +10,11 @@ interface WallDetailProps {
 
 // 🌸 Temaları tamamen o tatlı, romantik pembe ekose konseptine sabitledik kanka!
 const themeStyles: Record<string, { bg: string, primary: string, border: string, text: string, badge: string }> = {
-  birthday: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
-  romantic: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
-  graduation: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
-  job: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
-  funny: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' }
+  birthday: { bg: '#ffffff', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
+  romantic: { bg: '#ffffff', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
+  graduation: { bg: '#ffffff', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
+  job: { bg: '#ffffff', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
+  funny: { bg: '#ffffff', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' }
 };
 
 export function WallDetail({ role, title }: WallDetailProps) {
@@ -32,10 +32,10 @@ export function WallDetail({ role, title }: WallDetailProps) {
   const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
 
-  // --- 🌸 İlk görseldeki birebir pembe-beyaz Pötikare (Gingham) Ekose Deseni ---
+  // --- 🌸 Görseldeki o meşhur dikey ve yatay pembe-beyaz pötikare (gingham) kesişimi ---
   const gridPatternStyle = `
-    linear-gradient(90deg, rgba(255, 255, 255, 0.8) 50%, transparent 50%),
-    linear-gradient(rgba(255, 255, 255, 0.8) 50%, transparent 50%)
+    linear-gradient(90deg, rgba(255, 235, 240, 0.7) 50%, transparent 50%),
+    linear-gradient(rgba(255, 235, 240, 0.7) 50%, transparent 50%)
   `;
 
   // --- 1. Odanın Genel Özelliklerini Çekme ---
@@ -59,7 +59,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
     if (wallId) fetchWallSpecs();
   }, [wallId, apiUrl]);
 
-  // --- 2. Başrol (Admin) İçin Geri Sayım Sayacı ---
+  // --- 2. Geri Sayım Sayacı ---
   useEffect(() => {
     if (role !== 'Admin' || !targetDate) return;
     const getSafeTargetMs = (dateStr: string): number => {
@@ -109,27 +109,27 @@ export function WallDetail({ role, title }: WallDetailProps) {
     return () => clearInterval(interval);
   }, [targetDate, role]);
 
+  // 🚨 KENARLIKLARI VE BOŞLUKLARI SIFIRLAYIP TAM EKRAN YAPAN STİL
   const sharedBackgroundStyle: React.CSSProperties = {
     minHeight: '100vh', 
-    // 🚨 KENARLARIN TAM OLMAMA HATASINI SIFIRLAYAN MÜKEMMEL CSS TRICK:
     width: '100vw',
     marginLeft: 'calc(-50vw + 50%)',
     marginRight: 'calc(-50vw + 50%)',
     backgroundColor: currentTheme.bg,
     backgroundImage: gridPatternStyle, 
-    backgroundSize: '80px 80px', // İlk görseldeki pötikare büyüklüğü kanka
+    backgroundSize: '80px 80px', // Tam görseldeki kare büyüklüğü
     display: 'flex', 
     flexDirection: 'column', 
     justifyContent: 'center', 
     alignItems: 'center',
     boxSizing: 'border-box', 
     padding: '2rem', 
-    position: 'relative'
+    position: 'relative',
+    margin: 0
   };
 
   // 🎁 SENARYO 1: Başrol (Admin) -> Süre Bitmediyse Sayacı, Bittiyse "Keşfet" Butonunu Görür
   if (role === 'Admin') {
-    // Süre sıfırlandı mı?
     const isTimeUp = 
       timeLeft.days === 0 && 
       timeLeft.hours === 0 && 
@@ -142,12 +142,13 @@ export function WallDetail({ role, title }: WallDetailProps) {
           backgroundColor: '#ffffff', 
           padding: '4rem 3rem', 
           borderRadius: '28px', 
-          border: `1px solid ${currentTheme.border}`, 
+          border: `1.5px solid ${currentTheme.border}`, 
           textAlign: 'center', 
           maxWidth: '550px', 
           width: '100%', 
           boxShadow: '0 20px 50px rgba(0,0,0,0.02)',
-          animation: 'fadeIn 0.8s ease-out'
+          animation: 'fadeIn 0.8s ease-out',
+          zIndex: 10
         }}>
           
           {!isTimeUp ? (
@@ -192,7 +193,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
               </p>
               
               <button 
-                onClick={() => navigate(`/wall/${id}/reveal`)} // Başrolü yeni keşif sayfasına yönlendiriyoruz
+                onClick={() => navigate(`/wall/${id}/reveal`)} 
                 style={{
                   width: '100%',
                   padding: '1.2rem',
