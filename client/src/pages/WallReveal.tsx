@@ -112,15 +112,15 @@ export default function WallReveal() {
         }
       `}</style>
 
-        {/* 🌊 ÜST KISIM: Tam çizdiğin gibi kavisli/dalgalı (Wave) şık arka plan alanı */}
+        {/* 👑 ÜST KISIM: Tam çizdiğin gibi kavisli, oval, beyaz ve gölgeli dalga bloğu kanka! */}
       <div style={{
         position: 'relative',
         width: '100%',
-        backgroundColor: '#ffffff', // Dalga bloğunun ana rengi kar beyazı
-        padding: '5rem 2rem 6rem 2rem', // Başlığı ortalayacak konforlu boşluklar
-        borderBottomLeftRadius: '50% 12%', // Sol kavis başlangıcı kanka
-        borderBottomRightRadius: '50% 12%', // Sağ kavis bitişi (Tam çizdiğin o oval kavis!)
-        boxShadow: `0 15px 35px rgba(0, 0, 0, 0.02), 0 5px 15px ${currentTheme.badge}`, // Hafif ve temaya uygun yumuşacık gölge
+        backgroundColor: '#ffffff', // Dalga bloğunun rengi kar beyazı
+        padding: '5rem 2rem 6.5rem 2rem', 
+        borderBottomLeftRadius: '50% 18%', // O tatlı dalga kavisi
+        borderBottomRightRadius: '50% 18%', // O tatlı dalga kavisi
+        boxShadow: `0 12px 30px rgba(0, 0, 0, 0.03), 0 4px 12px ${currentTheme.badge}`, // Hafif ve mürdüm alt tonlu gölge
         textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
@@ -129,7 +129,7 @@ export default function WallReveal() {
         marginBottom: '5rem',
         boxSizing: 'border-box'
       }}>
-        {/* Üstte parıldayan o tatlı küçük rozet */}
+        {/* Üstte parıldayan küçük rozet */}
         <div style={{
           backgroundColor: currentTheme.badge,
           color: currentTheme.heroText,
@@ -140,15 +140,15 @@ export default function WallReveal() {
           fontStyle: 'italic',
           letterSpacing: '0.5px',
           border: `1px solid ${currentTheme.border}`,
-          marginBottom: '0.5rem',
+          marginBottom: '0.75rem',
           display: 'inline-block'
         }}>
           ✨ Zaman Kapsülü Açıldı
         </div>
 
-        {/* Edebi asil başlığımız */}
+        {/* Başlığımız */}
         <h1 style={{ 
-          fontSize: '48px', 
+          fontSize: '52px', 
           fontStyle: 'italic', 
           fontWeight: '900', 
           color: currentTheme.heroText, 
@@ -163,7 +163,7 @@ export default function WallReveal() {
           color: currentTheme.text,
           fontSize: '15px',
           fontStyle: 'italic',
-          margin: '0 auto',
+          margin: '0.5rem auto 0 auto',
           maxWidth: '600px',
           opacity: 0.8,
           lineHeight: '1.6'
