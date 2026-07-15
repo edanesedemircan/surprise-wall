@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-// Temalarımız
+// Temalarımız 
 const themes: Record<string, any> = {
   default: {
-    pageBg: '#FAF5F5',
-    cardBg: '#ffffff',
-    border: '#F2E8E8',
-    text: '#5c4848',
-    heroText: '#2D3E50',
-    badge: '#F7EFEF',
-    accent: '#0D80BF',
-    success: '#10B981', // Doğru şık yeşili
-    danger: '#EF4444',   // Yanlış şık kırmızısı
+    pageBg: '#FFEBF0',      // Yumuşacık tatlı pembe zemin
+    cardBg: '#ffffff',      // Beyaz şık kartlar
+    border: '#F2E8E8',      // Kart sınırları için pastel pembe tonu
+    text: '#7C5858',        // Karakteristik tatlı kahve-pembe yazı rengi
+    heroText: '#5A3E3E',    // Başlıklar için edebi koyu ton
+    badge: '#F7EFEF',       // İsimlikler için hafif pembe badge
+    accent: '#BFA7A7',      // Sorular ve özel sınırlar için pastel ton
+    success: '#10B981',     // Doğru şık yeşili
+    danger: '#EF4444',      // Yanlış şık kırmızısı
   },
   purple: {
     pageBg: '#f8f5fa',
@@ -43,8 +43,10 @@ export default function WallReveal() {
     return saved ? JSON.parse(saved) : {};
   });
 
-  // Arka plandaki o şık ekose kare desenli kağıt yapısı
-  const gridPatternStyle = `radial-gradient(${currentTheme.border} 1.5px, transparent 1.5px)`;
+  const gridPatternStyle = `
+    linear-gradient(90deg, rgba(255, 255, 255, 0.8) 50%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.8) 50%, transparent 50%)
+  `;
 
   useEffect(() => {
     const fetchWallData = async () => {
@@ -56,7 +58,7 @@ export default function WallReveal() {
         
         if (wallData.title) setWallTitle(wallData.title);
         
-        // Temayı eşleştiriyoruz
+      
         const matchedTheme = themes[wallData.theme?.toLowerCase()] || themes.default;
         setCurrentTheme(matchedTheme);
 
@@ -99,21 +101,26 @@ export default function WallReveal() {
     );
   }
 
+ 
+  const sharedBackgroundStyle: React.CSSProperties = {
+    minHeight: '100vh', 
+    width: '100vw',
+    marginLeft: 'calc(-50vw + 50%)',
+    marginRight: 'calc(-50vw + 50%)',
+    backgroundColor: currentTheme.pageBg, 
+    backgroundImage: gridPatternStyle,
+    backgroundSize: '80px 80px', 
+    padding: '4rem 2rem', 
+    boxSizing: 'border-box', 
+    fontFamily: '"Georgia", serif', 
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: 0 
+  };
+
   return (
-    <div style={{ 
-      width: '100%', 
-      minHeight: '100vh', 
-      backgroundColor: currentTheme.pageBg, 
-      backgroundImage: gridPatternStyle,
-      backgroundSize: '24px 24px',
-      padding: '4rem 2rem', 
-      boxSizing: 'border-box', 
-      fontFamily: '"Georgia", serif', 
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      margin: 0 
-    }}>
+    <div style={sharedBackgroundStyle}>
       
       {/* 👑 1 NUMARALI ÜST KISIM: Sadece Odana Ait O Edebi Şık Başlık */}
       <div style={{ textAlign: 'center', maxWidth: '800px', marginBottom: '4rem', animation: 'fadeIn 1s ease-out' }}>
@@ -180,7 +187,7 @@ export default function WallReveal() {
                     "{item.questionText}"
                   </h4>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '0.8rem', marginTop: 'auto' }}>
-                    <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.heroText, border: `1px solid ${currentTheme.border}` }}>❓ {item.creatorName}</span>
+                    <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>❓ {item.creatorName}</span>
                     <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
                   </div>
                 </div>
@@ -217,7 +224,7 @@ export default function WallReveal() {
                   "{item.content}"
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '1rem', marginTop: 'auto' }}>
-                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.heroText, border: `1px solid ${currentTheme.border}` }}>✍️ {item.authorName}</span>
+                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>✍️ {item.authorName}</span>
                   <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
                 </div>
               </div>
@@ -375,7 +382,7 @@ export default function WallReveal() {
                     )}
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '1.2rem', marginTop: '1rem' }}>
-                      <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.heroText, border: `1px solid ${currentTheme.border}` }}>❓ {selectedItem.creatorName}</span>
+                      <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>❓ {selectedItem.creatorName}</span>
                       <span style={{ fontSize: '12px', color: '#BFA7A7', fontWeight: 'bold' }}>{new Date(selectedItem.createdAt).toLocaleDateString('tr-TR')}</span>
                     </div>
                   </>
@@ -401,7 +408,7 @@ export default function WallReveal() {
                   "{selectedItem.content}"
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '1.2rem' }}>
-                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.heroText, border: `1px solid ${currentTheme.border}` }}>✍️ {selectedItem.authorName}</span>
+                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>✍️ {selectedItem.authorName}</span>
                   <span style={{ fontSize: '12px', color: '#BFA7A7', fontWeight: 'bold' }}>{new Date(selectedItem.createdAt).toLocaleDateString('tr-TR')}</span>
                 </div>
               </>
