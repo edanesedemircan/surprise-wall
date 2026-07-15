@@ -207,7 +207,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
             /* 🎉 SÜRE BİTTİYSE: Büyük Keşif Butonu */
             <div style={{ animation: 'fadeIn 1s ease-out' }}>
               <div style={{ marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '54px', display: 'block', filter: 'drop-shadow(0 10px 12px rgba(160, 43, 106, 0.1))' }}>✨</span>
+                <span style={{ fontSize: '54px', display: 'block', filter: 'drop-shadow(0 10px 12px rgba(160, 43, 106, 0.1))' }}>🎁</span>
               </div>
 
               <h3 style={{ 
@@ -218,7 +218,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
                 margin: '0 0 1.25rem 0',
                 lineHeight: '1.3'
               }}>
-                Her şeyi görmenin vakti geldi!
+                Her şey hazır!
               </h3>
 
               <p style={{ 
@@ -230,7 +230,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
                 textAlign: 'center',
                 padding: '0 10px'
               }}>
-                Senin için biriktirilen tüm anılar ve sorular açılmaya hazır. Her şeyi görmenin vakti geldi!
+                Senin için biriktirilen tüm anılar ve soruları görmenin vakti geldi!
               </p>
               
               <div style={{ padding: '0 10px' }}>
