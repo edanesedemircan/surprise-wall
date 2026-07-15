@@ -8,7 +8,7 @@ interface WallDetailProps {
   title: string;
 }
 
-// 🌸 Temaları tamamen o tam istediğin pürüzsüz pötikare zemin rengine kilitledik kanka!
+//  Temalar
 const themeStyles: Record<string, { bg: string, primary: string, border: string, text: string, badge: string }> = {
   birthday: { bg: '#ffffff', primary: '#5A3E3E', border: '#FFEBF0', text: '#7C5858', badge: '#F7EFEF' },
   romantic: { bg: '#ffffff', primary: '#5A3E3E', border: '#FFEBF0', text: '#7C5858', badge: '#F7EFEF' },
@@ -32,12 +32,34 @@ export function WallDetail({ role, title }: WallDetailProps) {
   const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
 
-  // 🎯 İŞTE O İSTEDİĞİN GERÇEK PÖTİKARE (GINGHAM) FORMÜLÜ KANKA!
-  // Şeffaf pembe katmanlar üst üste biniyor ve kesişim noktalarında o koyu tatlı kareleri otomatik oluşturuyor.
+  // 🎯 GERÇEK PÖTİKARE (GINGHAM) FORMÜLÜ
   const gridPatternStyle = `
     linear-gradient(90deg, rgba(255, 214, 224, 0.4) 50%, transparent 50%),
     linear-gradient(rgba(255, 214, 224, 0.4) 50%, transparent 50%)
   `;
+
+  // --- 🚨 0. GÜVENLİK KAPISI (GİRİŞ KONTROLÜ) ---
+  // Eğer kullanıcının yetkisi yoksa veya farklı odaya girmeye çalışıyorsa direkt Güvenli Giriş Kapısına şutluyoruz!
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    
+    if (savedUser) {
+      try {
+        const authData = JSON.parse(savedUser);
+        
+        // Tarayıcıdaki oturum oda ID'si ile girmeye çalıştığı URL'deki oda ID'si farklıysa:
+        if (Number(authData.wallId) !== wallId) {
+          localStorage.removeItem('user'); // Eski yetkiyi sıfırla
+          navigate(`/login?id=${wallId}`); // Doğru odanın kapısına yönlendir
+        }
+      } catch (e) {
+        localStorage.removeItem('user');
+        navigate(`/login?id=${wallId}`);
+      }
+    } else {
+      navigate(`/login?id=${wallId}`);
+    }
+  }, [wallId, navigate]);
 
   // --- 1. Odanın Genel Özelliklerini Çekme ---
   useEffect(() => {
@@ -60,7 +82,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
     if (wallId) fetchWallSpecs();
   }, [wallId, apiUrl]);
 
-  // --- 2. Başrol (Admin) İçin Geri Sayım Sayacı ---
+  // --- 2. Geri Sayım Sayacı ---
   useEffect(() => {
     if (role !== 'Admin' || !targetDate) return;
     const getSafeTargetMs = (dateStr: string): number => {
@@ -110,7 +132,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
     return () => clearInterval(interval);
   }, [targetDate, role]);
 
-  // 🚨 Siyah barları yok eden ve arka planı mühürleyen container stili
+  // Siyah barları yok eden ve arka planı mühürleyen container stili
   const sharedBackgroundStyle: React.CSSProperties = {
     minHeight: '100vh', 
     width: '100vw',
@@ -118,7 +140,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
     marginRight: 'calc(-50vw + 50%)',
     backgroundColor: currentTheme.bg,
     backgroundImage: gridPatternStyle, 
-    backgroundSize: '60px 60px', // Karelerin o tatlı pürüzsüz boyutu kanka!
+    backgroundSize: '60px 60px', 
     display: 'flex', 
     flexDirection: 'column', 
     justifyContent: 'center', 
@@ -129,7 +151,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
     margin: 0
   };
 
- // 🎁 SENARYO 1: Başrol (Admin) -> Süre Bitmediyse Sayacı, Bittiyse "Keşfet" Butonunu Görür
+  // 🎁 SENARYO 1: Başrol (Admin) -> Süre Bitmediyse Sayacı, Bittiyse "Keşfet" Butonunu Görür
   if (role === 'Admin') {
     const isTimeUp = 
       timeLeft.days === 0 && 
@@ -140,7 +162,6 @@ export function WallDetail({ role, title }: WallDetailProps) {
     return (
       <div style={sharedBackgroundStyle}>
         
-        {/* Tarayıcı varsayılan boşluklarını sıfırlayan dahili stil */}
         <style>{`
           body, html, #root { 
             margin: 0 !important; 
@@ -151,16 +172,15 @@ export function WallDetail({ role, title }: WallDetailProps) {
           }
         `}</style>
 
-        {/* 🌸 Home.tsx'teki orijinal kart boyutu, çevresi, sınırları ve gölgeleri ile merkez beyaz kartı */}
         <div style={{ 
           backgroundColor: '#ffffff', 
           padding: '4rem 3rem', 
           borderRadius: '28px', 
-          border: '1px solid #FECDD3', // Home.tsx sınır rengi
+          border: '1px solid #FECDD3', 
           textAlign: 'center', 
-          maxWidth: '500px', // Home.tsx ile tam aynı genişlik
+          maxWidth: '500px', 
           width: '100%', 
-          boxShadow: '0 25px 60px rgba(160, 43, 106, 0.08)', // Home.tsx'teki mor-pembe asil gölge
+          boxShadow: '0 25px 60px rgba(160, 43, 106, 0.08)', 
           boxSizing: 'border-box',
           animation: 'fadeIn 0.8s ease-out'
         }}>
@@ -176,7 +196,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
                 fontSize: '24px', 
                 fontStyle: 'italic', 
                 fontWeight: '700', 
-                color: '#a02b6a', // Mürdüm başlık rengi
+                color: '#a02b6a', 
                 margin: '0 0 1.25rem 0' 
               }}>
                 Biraz Sabret!
@@ -204,7 +224,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
               </div>
             </>
           ) : (
-            /* 🎉 SÜRE BİTTİYSE: Büyük Keşif Butonu */
+            /* 🎉 SÜRE BİTMEDİYSE: Büyük Keşif Butonu */
             <div style={{ animation: 'fadeIn 1s ease-out' }}>
               <div style={{ marginBottom: '1.5rem' }}>
                 <span style={{ fontSize: '54px', display: 'block', filter: 'drop-shadow(0 10px 12px rgba(160, 43, 106, 0.1))' }}>🎁</span>
@@ -214,7 +234,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
                 fontSize: '24px', 
                 fontStyle: 'italic', 
                 fontWeight: '700', 
-                color: '#a02b6a', // Mürdüm başlık rengi
+                color: '#a02b6a', 
                 margin: '0 0 1.25rem 0',
                 lineHeight: '1.3'
               }}>
@@ -240,7 +260,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
                     width: '100%',
                     padding: '1rem',
                     borderRadius: '14px',
-                    backgroundColor: '#a02b6a', // Mürdüm buton rengi
+                    backgroundColor: '#a02b6a', 
                     color: '#ffffff',
                     border: 'none',
                     fontWeight: 'bold',
