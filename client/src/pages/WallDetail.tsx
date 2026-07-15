@@ -1,7 +1,7 @@
 // Asıl Anı Duvarı / Oda Sayfası
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { MemoryWallGrid } from './MemoryWallGrid'; 
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface WallDetailProps {
   role: string;
@@ -18,6 +18,7 @@ const themeStyles: Record<string, { bg: string, primary: string, border: string,
 
 export function WallDetail({ role, title }: WallDetailProps) {
   const { id } = useParams<{ id: string }>(); 
+  const navigate = useNavigate();
   const wallId = Number(id);
 
   // --- State Yönetimi ---
@@ -107,27 +108,104 @@ export function WallDetail({ role, title }: WallDetailProps) {
     boxSizing: 'border-box', padding: '2rem', position: 'relative'
   };
 
-  // 🎁 SENARYO 1: Başrol (Admin) -> Sadece Sayacı Görür
-  if (role === 'Admin') {
-    return (
-      <div style={sharedBackgroundStyle}>
-        <div style={{ backgroundColor: '#ffffff', padding: '4rem 3rem', borderRadius: '28px', border: `1px solid ${currentTheme.border}`, textAlign: 'center', maxWidth: '550px', width: '100%', boxShadow: '0 20px 50px rgba(0,0,0,0.02)' }}>
-          <div style={{ fontSize: '64px', marginBottom: '1rem' }}>🎁</div>
-          <h1 style={{ fontSize: '36px', fontFamily: '"Georgia", serif', fontStyle: 'italic', color: currentTheme.primary, fontWeight: '700', margin: 0 }}>Şşşşt!</h1>
-          <h2 style={{ color: '#7C5858', fontFamily: '"Georgia", serif', fontStyle: 'italic', fontSize: '20px', marginTop: '10px' }}>{wallTitle}</h2>
-          <p style={{ color: '#7C5858', fontSize: '15px', marginTop: '20px' }}>Kapsülün Açılmasına Kalan Süre:</p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginTop: '1.5rem' }}>
-            {[{ label: 'Gün', val: timeLeft.days }, { label: 'Saat', val: timeLeft.hours }, { label: 'Dak', val: timeLeft.minutes }, { label: 'Sn', val: timeLeft.seconds }].map((item, i) => (
-              <div key={i} style={{ minWidth: '60px', padding: '0.75rem 1rem', backgroundColor: currentTheme.badge, borderRadius: '12px', border: `1px solid ${currentTheme.border}` }}>
-                <div style={{ fontSize: '22px', fontWeight: 'bold', color: currentTheme.primary }}>{item.val}</div>
-                <div style={{ fontSize: '12px', color: '#BFA7A7', marginTop: '4px' }}>{item.label}</div>
-              </div>
-            ))}
+  // 🎁 SENARYO 1: Başrol (Admin) -> Süre Bitmediyse Sayacı, Bittiyse "Keşfet" Butonunu Görür
+if (role === 'Admin') {
+  // Süre sıfırlandı mı?
+  const isTimeUp = 
+    timeLeft.days === 0 && 
+    timeLeft.hours === 0 && 
+    timeLeft.minutes === 0 && 
+    timeLeft.seconds === 0;
+
+  return (
+    <div style={sharedBackgroundStyle}>
+      <div style={{ 
+        backgroundColor: '#ffffff', 
+        padding: '4rem 3rem', 
+        borderRadius: '28px', 
+        border: `1px solid ${currentTheme.border}`, 
+        textAlign: 'center', 
+        maxWidth: '550px', 
+        width: '100%', 
+        boxShadow: '0 20px 50px rgba(0,0,0,0.02)',
+        animation: 'fadeIn 0.8s ease-out'
+      }}>
+        
+        {!isTimeUp ? (
+          /* ⏳ SÜRE BİTMEDİYSE: Klasik Geri Sayım Ekranı */
+          <>
+            <div style={{ fontSize: '64px', marginBottom: '1rem' }}>🎁</div>
+            <h1 style={{ fontSize: '36px', fontFamily: '"Georgia", serif', fontStyle: 'italic', color: currentTheme.primary, fontWeight: '700', margin: 0 }}>Daha Zamanı Değil!</h1>
+            <h2 style={{ color: '#7C5858', fontFamily: '"Georgia", serif', fontStyle: 'italic', fontSize: '20px', marginTop: '10px' }}>Biraz Sabret</h2>
+            <p style={{ color: '#7C5858', fontSize: '15px', marginTop: '20px' }}>Kapsülün Açılmasına Kalan Süre:</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginTop: '1.5rem' }}>
+              {[{ label: 'Gün', val: timeLeft.days }, { label: 'Saat', val: timeLeft.hours }, { label: 'Dak', val: timeLeft.minutes }, { label: 'Sn', val: timeLeft.seconds }].map((item, i) => (
+                <div key={i} style={{ minWidth: '60px', padding: '0.75rem 1rem', backgroundColor: currentTheme.badge, borderRadius: '12px', border: `1px solid ${currentTheme.border}` }}>
+                  <div style={{ fontSize: '22px', fontWeight: 'bold', color: currentTheme.primary }}>{item.val}</div>
+                  <div style={{ fontSize: '12px', color: '#BFA7A7', marginTop: '4px' }}>{item.label}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          /* 🎉 SÜRE BİTTİYSE: Büyük Keşif Butonu */
+          <div style={{ animation: 'fadeIn 1s ease-out' }}>
+            <div style={{ fontSize: '72px', marginBottom: '1.5rem', animation: 'bounce 2s infinite' }}>🗝️✨</div>
+            <h1 style={{ 
+              fontSize: '32px', 
+              fontFamily: '"Georgia", serif', 
+              fontStyle: 'italic', 
+              color: currentTheme.primary, 
+              fontWeight: '900', 
+              margin: '0 0 10px 0',
+              lineHeight: '1.3'
+            }}>
+              Ve O Büyük Gün Geldi!
+            </h1>
+            <p style={{ 
+              color: '#7C5858', 
+              fontFamily: '"Georgia", serif', 
+              fontStyle: 'italic',
+              fontSize: '16px', 
+              lineHeight: '1.6',
+              margin: '0 0 2rem 0' 
+            }}>
+              Senin için biriktirilen tüm sırlar, anılar ve sürpriz sorular açılmaya hazır. Her şeyi görmenin vakti geldi! 💖
+            </p>
+            
+           <button 
+              onClick={() => navigate(`/wall/${id}/reveal`)} // Başrolü yeni keşif sayfasına yönlendiriyoruz
+              style={{
+                width: '100%',
+                padding: '1.2rem',
+                borderRadius: '16px',
+                backgroundColor: currentTheme.primary, 
+                color: '#ffffff',
+                border: 'none',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.08)',
+                transition: 'transform 0.2s, opacity 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)';
+                e.currentTarget.style.opacity = '0.95';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.opacity = '1';
+              }}
+            >
+              🎉 Kapsülü Aç ve Keşfet!
+            </button>
           </div>
-        </div>
+        )}
+
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   // 🧱 SENARYO 2: Giriş Yapmış Davetli (Guest) veya Creator
   if (role === 'Creator' || role === 'Guest') {

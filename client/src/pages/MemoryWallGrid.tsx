@@ -393,7 +393,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} 
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            {isDeleting ? 'İmha Ediliyor...' : '💥 Kapsülü İmha Et'}
+            {isDeleting ? 'İmha Ediliyor...' : '💣 Kapsülü İmha Et'}
           </button>
         </div>
 
