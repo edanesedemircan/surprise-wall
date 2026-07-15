@@ -112,48 +112,46 @@ export default function WallReveal() {
         }
       `}</style>
 
-        {/* 👑 ÜST KISIM: Sadece başlık ve tam çizdiğin o asil, ince kavisli çizgi */}
-      <div style={{ 
-        position: 'relative',
-        width: '100%', 
-        textAlign: 'center', 
-        padding: '3rem 2rem 5rem 2rem', 
+        {/* 👑 ÜST KISIM: Tam tarif ettiğin gibi, sayfa rengiyle bütünleşik, ince bordo sınır çizgili asil panel! */}
+      <div style={{
+        width: '100%',
+        maxWidth: '800px', // Panel genişliği
+        backgroundColor: currentTheme.pageBg, // Arka planla tamamen AYNI renk kanka!
+        border: `1.5px solid ${currentTheme.border}`, // Sadece kenarlarından geçen o incecik tatlı sınır çizgisi
+        borderRadius: '24px', // Yumuşacık köşeler
+        padding: '3rem 2rem',
+        textAlign: 'center',
+        marginTop: '2rem',
+        marginBottom: '4rem',
         boxSizing: 'border-box',
-        marginBottom: '3rem'
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem'
       }}>
-        {/* Edebi asil başlığımız */}
+        {/* Başlığımız */}
         <h1 style={{ 
-          fontSize: '48px', 
+          fontSize: '44px', 
           fontStyle: 'italic', 
           fontWeight: '900', 
-          color: currentTheme.heroText, 
-          margin: '0 0 1.5rem 0',
+          color: currentTheme.heroText, // Temanın o koyu asil rengi
+          margin: 0,
           lineHeight: '1.2',
           fontFamily: '"Georgia", serif'
         }}>
           {wallTitle}
         </h1>
 
-        {/* 🌊 Tam çizdiğin o incecik, yumuşak kavisli ayırıcı çizgi */}
-        <svg 
-          viewBox="0 0 1200 120" 
-          style={{ 
-            position: 'absolute', 
-            bottom: 0, 
-            left: 0, 
-            width: '100%', 
-            height: '40px', 
-            pointerEvents: 'none' 
-          }}
-        >
-          <path 
-            d="M 0,40 Q 600,120 1200,40" 
-            fill="none" 
-            stroke={currentTheme.heroText} 
-            strokeWidth="2.5" 
-            opacity="0.25" 
-          />
-        </svg>
+        {/* Panel içi incecik, narin süs çizgisi */}
+        <div style={{ 
+          width: '50px', 
+          height: '2px', 
+          backgroundColor: currentTheme.heroText, 
+          marginTop: '0.75rem', 
+          borderRadius: '1px', 
+          opacity: 0.25 
+        }} />
       </div>
 
       {/* 📌 AKIŞKAN GRİD ALANI */}
