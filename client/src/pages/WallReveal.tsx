@@ -129,7 +129,6 @@ export default function WallReveal() {
         }
       `}</style>
 
-        // Üst Başlık
        <div style={{
   width: '100%',
   textAlign: 'center',
