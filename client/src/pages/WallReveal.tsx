@@ -97,68 +97,54 @@ export default function WallReveal() {
     );
   }
 
-  // 🚨 SOLDAKİ SİYAH MENÜYÜ EZEN TAM EKRAN VE DÜZ TEMA RENKLİ CONTAINER STİLİ
-  const fullScreenStyle: React.CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    overflowY: 'auto', 
-    zIndex: 9999, 
-    backgroundColor: currentTheme.pageBg, // Tam istediğin gibi düz tema rengi kanka!
-    backgroundImage: 'none', // Ekose veya grid tamamen kaldırıldı
-    padding: '4rem 2rem', 
-    boxSizing: 'border-box', 
-    fontFamily: '"Georgia", serif', 
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  };
-
-  return (
-    <div style={fullScreenStyle}>
-      
-      <style>{`
-        body, html, #root { 
-          margin: 0 !important; 
-          padding: 0 !important; 
-          width: 100% !important; 
-          height: 100% !important; 
-          overflow-x: hidden !important; 
-        }
-      `}</style>
-
-       <div style={{
-  width: '100%',
+  {/* 🛡️ ULTRA MİNİMALİST VE ŞIK ÜST PANEL (Sıfır Rüküşlük!) */}
+<div style={{
+  width: '100vw',
+  marginLeft: 'calc(-50vw + 50%)',
+  marginRight: 'calc(-50vw + 50%)',
+  marginTop: '-2rem', // Üst boşluğu tamamen sıfırlar
+  
   textAlign: 'center',
-  padding: '4rem 1rem 3rem 1rem', // Yukarıdan ve aşağıdan tatlı bir nefes alma boşluğu
-  
-  // 🎨 Saniyede o asil ekose (gingham) desenini oluşturan CSS sihrimiz:
-  backgroundColor: '#FFF0F2', // Ekosenin altındaki o çok tatlı açık pembe/krem tonu
-  backgroundImage: `
-    linear-gradient(90deg, rgba(160, 43, 106, 0.07) 50%, transparent 50%),
-    linear-gradient(rgba(160, 43, 106, 0.07) 50%, transparent 50%)
-  `,
-  backgroundSize: '40px 40px', // Karelerin o pürüzsüz ve sık dokulu boyutu kanka!
-  
-  borderBottom: '1px solid #FBCFE8', // Alt kısma çok hafif, yumuşak bir sınır çizgisi
-  boxShadow: 'inset 0 -10px 20px rgba(160, 43, 106, 0.02)', // Hafif bir derinlik hissi
+  padding: '2rem 1rem 1.8rem 1rem', // Gereksiz büyük boşlukları daralttık kanka
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  boxSizing: 'border-box',
+
+  // 🎨 Temaya göre sadece çok hafif, pürüzsüz ve düz bir arka plan rengi veriyoruz (Desensiz!)
+  backgroundColor: 
+    normalizedTheme === 'romantic' ? '#FFF5F6' : 
+    normalizedTheme === 'graduation' ? '#F4F9FF' : 
+    normalizedTheme === 'job' ? '#F4FDF7' : 
+    normalizedTheme === 'funny' ? '#FFFDF0' : 
+    '#FFF8F8', // Birthday / Varsayılan
+
+  // Altına sadece çok ama çok ince, hissettirmeyen yumuşak bir sınır çizgisi:
+  borderBottom: `1px solid ${
+    normalizedTheme === 'romantic' ? '#FFE4E6' :
+    normalizedTheme === 'graduation' ? '#E0F2FE' :
+    normalizedTheme === 'job' ? '#DCFCE7' :
+    normalizedTheme === 'funny' ? '#FEF9C3' :
+    '#FFE4E6'
+  }`,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.01)'
 }}>
-  {/* ✍️ Oda başlığımız, ekose arka planın üstünde çok net okunsun diye rengini biraz koyulaştırdık */}
+  
+  {/* ✍️ Sadece zarif, tırnak içinde ve asil oda başlığı */}
   <h1 style={{
     fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif',
-    fontSize: '34px',
+    fontSize: '28px', // Boyutu da kibarlaştırdık, göze batmıyor
     fontStyle: 'italic',
-    fontWeight: '850',
-    color: '#631D42', // Okunabilirliği yüksek, çok asil koyu bir mürdüm tonu
+    fontWeight: '700',
+    color: 
+      normalizedTheme === 'romantic' ? '#5A2A42' :
+      normalizedTheme === 'graduation' ? '#1E3A8A' :
+      normalizedTheme === 'job' ? '#14532D' :
+      normalizedTheme === 'funny' ? '#713F12' :
+      '#4A2E2E', // birthday
     margin: 0,
-    textShadow: '1px 1px 0px rgba(255, 255, 255, 0.8)', // Arka plandaki çizgilerden etkilenmesin diye arkasına hafif beyaz gölge
-    letterSpacing: '-0.5px'
+    letterSpacing: '-0.3px'
   }}>
     "{wallTitle || 'Yükleniyor...'}"
   </h1>
