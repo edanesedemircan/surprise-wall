@@ -79,123 +79,123 @@ namespace AniDefteri.Api.Controllers
             return Ok(memories);
         }
 
-        //  1. ANILARI SİLME
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteMemory(int id)
-{
-    var memory = await _context.Memories.FindAsync(id);
-    if (memory == null)
-    {
-        return NotFound(new { Message = "Silinmek istenen anı bulunamadı!" });
-    }
-
-    _context.Memories.Remove(memory);
-    await _context.SaveChangesAsync();
-
-    return Ok(new { Message = "Anı başarıyla silindi! 🗑️" });
-}
-
-//  2. ANILARI DÜZENLEME
-[HttpPut("{id}")]
-public async Task<IActionResult> UpdateMemory(int id, [FromBody] AddMemoryDto dto)
-{
-    var memory = await _context.Memories.FindAsync(id);
-    if (memory == null)
-    {
-        return NotFound(new { Message = "Düzenlenmek istenen anı bulunamadı!" });
-    }
-
-    if (string.IsNullOrWhiteSpace(dto.AuthorName) || string.IsNullOrWhiteSpace(dto.Content))
-    {
-        return BadRequest(new { Message = "İsim ve içerik alanları boş bırakılamaz!" });
-    }
-
-    // Bilgileri güncelliyoruz
-    memory.AuthorName = dto.AuthorName;
-    memory.Content = dto.Content;
-    
-    if (dto.ImageUrl != null)
-    {
-        memory.ImageUrl = dto.ImageUrl;
-    }
-
-    await _context.SaveChangesAsync();
-    return Ok(new { Message = "Anı başarıyla güncellendi! 📝" });
-}
-
-  [HttpDelete("api/memory/wall/{id}")]
-public async Task<IActionResult> DeleteWall(int id)
-{
-    var wall = await _context.Walls.FindAsync(id);
-    if (wall == null)
-    {
-        return NotFound(new { message = "Oda bulunamadı!" });
-    }
-
-    try
-    {
-        var memories = _context.Memories.Where(m => m.WallId == id);
-        _context.Memories.RemoveRange(memories);
-
-        var quizzes = _context.Quizzes.Where(q => q.WallId == id);
-        _context.Quizzes.RemoveRange(quizzes);
-
-        _context.Walls.Remove(wall);
-
-        await _context.SaveChangesAsync();
-        return Ok(new { message = "Zaman kapsülü ve içindeki tüm veriler başarıyla imha edildi." });
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, new { message = "İmha işlemi sırasında bir hata oluştu.", error = ex.Message });
-    }
-}
-
-    [HttpPost("api/memory/wall/{id}/co-creator")] 
-public async Task<IActionResult> AddCoCreator(int id, [FromBody] CoCreatorRequest request)
-{
-    if (string.IsNullOrEmpty(request.Email))
-    {
-        return BadRequest(new { message = "E-posta adresi boş olamaz!" });
-    }
-
-    // 1. Böyle bir oda var mı?
-    var wall = await _context.Walls.FindAsync(id);
-    if (wall == null)
-    {
-        return NotFound(new { message = "Oda bulunamadı!" });
-    }
-
-    // 2. Bu mail adresi bu oda için daha önce eklenmiş mi?
-    var alreadyExists = await _context.WallCoCreators.AnyAsync(wcc => 
-        wcc.WallId == id && 
-        wcc.Email.ToLower() == request.Email.Trim().ToLower());
-
-    if (alreadyExists)
-    {
-        return BadRequest(new { message = "Bu e-posta adresi zaten bu odada yetkili!" });
-    }
-
-    try
-    {
-       
-        var newCoCreator = new WallCoCreator
+        // 1. ANILARI SİLME
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMemory(int id)
         {
-            WallId = id,
-            Email = request.Email.Trim().ToLower()
-        };
+            var memory = await _context.Memories.FindAsync(id);
+            if (memory == null)
+            {
+                return NotFound(new { Message = "Silinmek istenen anı bulunamadı!" });
+            }
 
-        _context.WallCoCreators.Add(newCoCreator);
-        await _context.SaveChangesAsync();
+            _context.Memories.Remove(memory);
+            await _context.SaveChangesAsync();
 
-        return Ok(new { message = "Yeni yetkili başarıyla kapsüle eklendi." });
+            return Ok(new { Message = "Anı başarıyla silindi! 🗑️" });
+        }
+
+        // 2. ANILARI DÜZENLEME
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMemory(int id, [FromBody] AddMemoryDto dto)
+        {
+            var memory = await _context.Memories.FindAsync(id);
+            if (memory == null)
+            {
+                return NotFound(new { Message = "Düzenlenmek istenen anı bulunamadı!" });
+            }
+
+            if (string.IsNullOrWhiteSpace(dto.AuthorName) || string.IsNullOrWhiteSpace(dto.Content))
+            {
+                return BadRequest(new { Message = "İsim ve içerik alanları boş bırakılamaz!" });
+            }
+
+            // Bilgileri güncelliyoruz
+            memory.AuthorName = dto.AuthorName;
+            memory.Content = dto.Content;
+            
+            if (dto.ImageUrl != null)
+            {
+                memory.ImageUrl = dto.ImageUrl;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { Message = "Anı başarıyla güncellendi! 📝" });
+        }
+
+        // 3. KAPSÜLÜ İMHA ETME (Quizzes çakışması giderilmiş temiz sürüm!)
+        [HttpDelete("/api/memory/wall/{id}")]
+        public async Task<IActionResult> DeleteWall(int id)
+        {
+            var wall = await _context.Walls.FindAsync(id);
+            if (wall == null)
+            {
+                return NotFound(new { message = "Oda bulunamadı!" });
+            }
+
+            try
+            {
+                // 1. Önce bu odaya (WallId) bağlı tüm anıları siliyoruz
+                var memories = _context.Memories.Where(m => m.WallId == id);
+                _context.Memories.RemoveRange(memories);
+
+                // 2. Ardından odanın kendisini siliyoruz (Quizzes kısmı çıkarıldı kanka!)
+                _context.Walls.Remove(wall);
+
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "Zaman kapsülü ve içindeki tüm veriler başarıyla imha edildi." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "İmha işlemi sırasında bir hata oluştu.", error = ex.Message });
+            }
+        }
+
+    // 4. DAVETLİ EKLEME (Senin AllowedEmails listenle entegre ettik kanka!)
+        [HttpPost("/api/memory/wall/{id}/co-creator")] 
+        public async Task<IActionResult> AddCoCreator(int id, [FromBody] CoCreatorRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Email))
+            {
+                return BadRequest(new { message = "E-posta adresi boş olamaz!" });
+            }
+
+            // 1. Böyle bir oda (Wall) var mı?
+            var wall = await _context.Walls.FirstOrDefaultAsync(w => w.Id == id);
+            if (wall == null)
+            {
+                return NotFound(new { message = "Oda bulunamadı!" });
+            }
+
+            var emailToAdd = request.Email.Trim().ToLower();
+
+            // Bu mail adresi zaten listeye eklenmiş mi?
+            if (wall.AllowedEmails.Contains(emailToAdd))
+            {
+                return BadRequest(new { message = "Bu e-posta adresi zaten davetliler listesinde ekli!" });
+            }
+
+            try
+            {
+                
+                wall.AllowedEmails.Add(emailToAdd);
+                
+                _context.Entry(wall).State = EntityState.Modified;
+                
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Davetli başarıyla kapsüle eklendi! ✨" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Davetli eklenirken bir hata oluştu.", error = ex.Message });
+            }
+        }
     }
-    catch (Exception ex)
+
+    // İsteği karşılayan minik sınıf
+    public class CoCreatorRequest
     {
-        return StatusCode(500, new { message = "Yetkili eklenirken bir hata oluştu.", error = ex.Message });
-    }
-}
-
-
+        public string Email { get; set; }
     }
 }
