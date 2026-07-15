@@ -129,7 +129,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
     margin: 0
   };
 
-  // 🎁 SENARYO 1: Başrol (Admin) -> Süre Bitmediyse Sayacı, Bittiyse "Keşfet" Butonunu Görür
+ // 🎁 SENARYO 1: Başrol (Admin) -> Süre Bitmediyse Sayacı, Bittiyse "Keşfet" Butonunu Görür
   if (role === 'Admin') {
     const isTimeUp = 
       timeLeft.days === 0 && 
@@ -139,30 +139,66 @@ export function WallDetail({ role, title }: WallDetailProps) {
 
     return (
       <div style={sharedBackgroundStyle}>
+        
+        {/* Tarayıcı varsayılan boşluklarını sıfırlayan dahili stil */}
+        <style>{`
+          body, html, #root { 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            width: 100% !important; 
+            height: 100% !important; 
+            overflow-x: hidden !important; 
+          }
+        `}</style>
+
+        {/* 🌸 Home.tsx'teki orijinal kart boyutu, çevresi, sınırları ve gölgeleri ile merkez beyaz kartı */}
         <div style={{ 
           backgroundColor: '#ffffff', 
           padding: '4rem 3rem', 
           borderRadius: '28px', 
-          border: `1px solid ${currentTheme.border}`, 
+          border: '1px solid #FECDD3', // Home.tsx sınır rengi
           textAlign: 'center', 
-          maxWidth: '550px', 
+          maxWidth: '500px', // Home.tsx ile tam aynı genişlik
           width: '100%', 
-          boxShadow: '0 20px 50px rgba(0,0,0,0.02)',
+          boxShadow: '0 25px 60px rgba(160, 43, 106, 0.08)', // Home.tsx'teki mor-pembe asil gölge
+          boxSizing: 'border-box',
           animation: 'fadeIn 0.8s ease-out'
         }}>
           
           {!isTimeUp ? (
             /* ⏳ SÜRE BİTMEDİYSE: Klasik Geri Sayım Ekranı */
             <>
-              <div style={{ fontSize: '64px', marginBottom: '1rem' }}>🎁</div>
-              <h1 style={{ fontSize: '36px', fontFamily: '"Georgia", serif', fontStyle: 'italic', color: currentTheme.primary, fontWeight: '700', margin: 0 }}>Daha Zamanı Değil!</h1>
-              <h2 style={{ color: '#7C5858', fontFamily: '"Georgia", serif', fontStyle: 'italic', fontSize: '20px', marginTop: '10px' }}>Biraz Sabret</h2>
-              <p style={{ color: '#7C5858', fontSize: '15px', marginTop: '20px' }}>Kapsülün Açılmasına Kalan Süre:</p>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginTop: '1.5rem' }}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <span style={{ fontSize: '54px', display: 'block', filter: 'drop-shadow(0 10px 12px rgba(160, 43, 106, 0.1))' }}>🎁</span>
+              </div>
+              
+              <h3 style={{ 
+                fontSize: '24px', 
+                fontStyle: 'italic', 
+                fontWeight: '700', 
+                color: '#a02b6a', // Mürdüm başlık rengi
+                margin: '0 0 1.25rem 0' 
+              }}>
+                Daha Zamanı Değil!
+              </h3>
+              
+              <p style={{ 
+                color: '#7C5858', 
+                fontSize: '14.5px', 
+                lineHeight: '1.6', 
+                marginBottom: '1.5rem',
+                fontStyle: 'italic',
+                textAlign: 'center',
+                padding: '0 10px'
+              }}>
+                Kapsülün Açılmasına Kalan Süre:
+              </p>
+
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginTop: '1.5rem', padding: '0 10px' }}>
                 {[{ label: 'Gün', val: timeLeft.days }, { label: 'Saat', val: timeLeft.hours }, { label: 'Dak', val: timeLeft.minutes }, { label: 'Sn', val: timeLeft.seconds }].map((item, i) => (
-                  <div key={i} style={{ minWidth: '60px', padding: '0.75rem 1rem', backgroundColor: currentTheme.badge, borderRadius: '12px', border: `1px solid ${currentTheme.border}` }}>
-                    <div style={{ fontSize: '22px', fontWeight: 'bold', color: currentTheme.primary }}>{item.val}</div>
-                    <div style={{ fontSize: '12px', color: '#BFA7A7', marginTop: '4px' }}>{item.label}</div>
+                  <div key={i} style={{ minWidth: '60px', padding: '0.75rem 1rem', backgroundColor: '#FFFBFB', borderRadius: '14px', border: '1px solid #FECDD3' }}>
+                    <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#a02b6a' }}>{item.val}</div>
+                    <div style={{ fontSize: '12px', color: '#BFA7A7', marginTop: '4px', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{item.label}</div>
                   </div>
                 ))}
               </div>
@@ -170,54 +206,62 @@ export function WallDetail({ role, title }: WallDetailProps) {
           ) : (
             /* 🎉 SÜRE BİTTİYSE: Büyük Keşif Butonu */
             <div style={{ animation: 'fadeIn 1s ease-out' }}>
-              <h1 style={{ 
-                fontSize: '32px', 
-                fontFamily: '"Georgia", serif', 
+              <div style={{ marginBottom: '1.5rem' }}>
+                <span style={{ fontSize: '54px', display: 'block', filter: 'drop-shadow(0 10px 12px rgba(160, 43, 106, 0.1))' }}>✨</span>
+              </div>
+
+              <h3 style={{ 
+                fontSize: '24px', 
                 fontStyle: 'italic', 
-                color: currentTheme.primary, 
-                fontWeight: '900', 
-                margin: '0 0 10px 0',
+                fontWeight: '700', 
+                color: '#a02b6a', // Mürdüm başlık rengi
+                margin: '0 0 1.25rem 0',
                 lineHeight: '1.3'
               }}>
                 Her şeyi görmenin vakti geldi!
-              </h1>
+              </h3>
+
               <p style={{ 
                 color: '#7C5858', 
-                fontFamily: '"Georgia", serif', 
+                fontSize: '14.5px', 
+                lineHeight: '1.6', 
+                marginBottom: '2rem',
                 fontStyle: 'italic',
-                fontSize: '16px', 
-                lineHeight: '1.6',
-                margin: '0 0 2rem 0' 
+                textAlign: 'center',
+                padding: '0 10px'
               }}>
                 Senin için biriktirilen tüm anılar ve sorular açılmaya hazır. Her şeyi görmenin vakti geldi!
               </p>
               
-              <button 
-                onClick={() => navigate(`/wall/${id}/reveal`)} 
-                style={{
-                  width: '100%',
-                  padding: '1.2rem',
-                  borderRadius: '16px',
-                  backgroundColor: currentTheme.primary, 
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.08)',
-                  transition: 'transform 0.2s, opacity 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.02)';
-                  e.currentTarget.style.opacity = '0.95';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.opacity = '1';
-                }}
-              >
-                Kapsülü Aç ve Keşfet!
-              </button>
+              <div style={{ padding: '0 10px' }}>
+                <button 
+                  onClick={() => navigate(`/wall/${id}/reveal`)} 
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    borderRadius: '14px',
+                    backgroundColor: '#a02b6a', // Mürdüm buton rengi
+                    color: '#ffffff',
+                    border: 'none',
+                    fontWeight: 'bold',
+                    fontSize: '15px',
+                    fontFamily: 'sans-serif',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 20px rgba(160, 43, 106, 0.15)',
+                    transition: 'transform 0.2s, opacity 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.opacity = '0.95';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.opacity = '1';
+                  }}
+                >
+                  Kapsülü Aç ve Keşfet!
+                </button>
+              </div>
             </div>
           )}
 
