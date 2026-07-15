@@ -159,6 +159,81 @@ namespace AniDefteri.Api.Controllers
                 title = wall.Title
             });
         }
+
+    [HttpDelete("{id}")]
+public async Task<IActionResult> DeleteWall(int id)
+{
+    var wall = await _context.Walls.FindAsync(id);
+    if (wall == null)
+    {
+        return NotFound(new { message = "Oda bulunamadı!" });
+    }
+
+    try
+    {
+        var memories = _context.Memories.Where(m => m.WallId == id);
+        _context.Memories.RemoveRange(memories);
+
+        var quizzes = _context.Quizzes.Where(q => q.WallId == id);
+        _context.Quizzes.RemoveRange(quizzes);
+
+        _context.Walls.Remove(wall);
+
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Zaman kapsülü ve içindeki tüm veriler başarıyla imha edildi." });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "İmha işlemi sırasında bir hata oluştu.", error = ex.Message });
+    }
+}
+
+    [HttpPost("{id}/co-creator")] 
+public async Task<IActionResult> AddCoCreator(int id, [FromBody] CoCreatorRequest request)
+{
+    if (string.IsNullOrEmpty(request.Email))
+    {
+        return BadRequest(new { message = "E-posta adresi boş olamaz!" });
+    }
+
+    // 1. Böyle bir oda var mı?
+    var wall = await _context.Walls.FindAsync(id);
+    if (wall == null)
+    {
+        return NotFound(new { message = "Oda bulunamadı!" });
+    }
+
+    // 2. Bu mail adresi bu oda için daha önce eklenmiş mi?
+    var alreadyExists = await _context.WallCoCreators.AnyAsync(wcc => 
+        wcc.WallId == id && 
+        wcc.Email.ToLower() == request.Email.Trim().ToLower());
+
+    if (alreadyExists)
+    {
+        return BadRequest(new { message = "Bu e-posta adresi zaten bu odada yetkili!" });
+    }
+
+    try
+    {
+       
+        var newCoCreator = new WallCoCreator
+        {
+            WallId = id,
+            Email = request.Email.Trim().ToLower()
+        };
+
+        _context.WallCoCreators.Add(newCoCreator);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Yeni yetkili başarıyla kapsüle eklendi." });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "Yetkili eklenirken bir hata oluştu.", error = ex.Message });
+    }
+}
+
+
     }
 
     public class JoinRoomRequest
