@@ -205,7 +205,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
     }
   };
 
-  // 💣 Kapsülü İmha Etme Aksiyonu
+  // Kapsülü İmha Etme Fonksiyonu
   const handleDestroyWall = async () => {
     const firstConfirm = window.confirm(
       "DİKKAT! Bu zaman kapsülünü ve içindeki tüm anıları/soruları kalıcı olarak silmek istediğinize emin misiniz? 💣"
@@ -219,7 +219,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`${apiUrl}/api/wall/${wallId}`, {
+      const response = await fetch(`${apiUrl}/api/memory/${wallId}`, {
         method: 'DELETE',
       });
 
@@ -238,14 +238,14 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
     }
   };
 
-  // Yeni Yetkili Ekleme Aksiyonu
+  // Yeni Davetli Ekleme Fonksiyonu
   const handleAddCoCreator = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!coCreatorEmail.trim()) return;
 
     setIsAddingCreator(true);
     try {
-      const response = await fetch(`${apiUrl}/api/wall/${wallId}/co-creator`, {
+      const response = await fetch(`${apiUrl}/api/memory/${wallId}/co-creator`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: coCreatorEmail.trim() })
@@ -328,11 +328,11 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             ⚙️ KAPSÜL YÖNETİMİ
           </span>
 
-          {/* Yetkili Ekleme Formu */}
+          {/* Davetli Ekleme Formu */}
           <form onSubmit={handleAddCoCreator} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <input 
               type="email" 
-              placeholder="Yetkili E-posta..." 
+              placeholder="Davetli E-posta..." 
               value={coCreatorEmail}
               onChange={(e) => setCoCreatorEmail(e.target.value)}
               required
@@ -369,7 +369,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} 
               onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             >
-              {isAddingCreator ? 'Ekleniyor...' : '➕ Yetkili Ekle'}
+              {isAddingCreator ? 'Ekleniyor...' : '➕ Davetli Ekle'}
             </button>
           </form>
 
@@ -378,16 +378,16 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             onClick={handleDestroyWall} 
             disabled={isDeleting}
             style={{ 
-              width: '100%', 
+              width: '80%', 
               padding: '0.75rem', 
               borderRadius: '10px', 
-              backgroundColor: '#EF4444', 
+              backgroundColor: '#401111', 
               color: '#ffffff', 
               border: 'none', 
               fontWeight: 'bold', 
               fontSize: '12px', 
               cursor: 'pointer',
-              boxShadow: '0 4px 10px rgba(239, 68, 68, 0.15)',
+              boxShadow: '0 4px 10px rgba(128, 24, 24, 0.15)',
               transition: 'transform 0.1s',
               fontFamily: 'sans-serif'
             }} 
