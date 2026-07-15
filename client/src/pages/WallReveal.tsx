@@ -112,64 +112,48 @@ export default function WallReveal() {
         }
       `}</style>
 
-        {/* 👑 ÜST KISIM: Tam çizdiğin gibi kavisli, oval, beyaz ve gölgeli dalga bloğu kanka! */}
-      <div style={{
+        {/* 👑 ÜST KISIM: Sadece başlık ve tam çizdiğin o asil, ince kavisli çizgi */}
+      <div style={{ 
         position: 'relative',
-        width: '100%',
-        backgroundColor: '#ffffff', // Dalga bloğunun rengi kar beyazı
-        padding: '5rem 2rem 6.5rem 2rem', 
-        borderBottomLeftRadius: '50% 18%', // O tatlı dalga kavisi
-        borderBottomRightRadius: '50% 18%', // O tatlı dalga kavisi
-        boxShadow: `0 12px 30px rgba(0, 0, 0, 0.03), 0 4px 12px ${currentTheme.badge}`, // Hafif ve mürdüm alt tonlu gölge
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: '5rem',
-        boxSizing: 'border-box'
+        width: '100%', 
+        textAlign: 'center', 
+        padding: '3rem 2rem 5rem 2rem', 
+        boxSizing: 'border-box',
+        marginBottom: '3rem'
       }}>
-        {/* Üstte parıldayan küçük rozet */}
-        <div style={{
-          backgroundColor: currentTheme.badge,
-          color: currentTheme.heroText,
-          padding: '5px 14px',
-          borderRadius: '20px',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          fontStyle: 'italic',
-          letterSpacing: '0.5px',
-          border: `1px solid ${currentTheme.border}`,
-          marginBottom: '0.75rem',
-          display: 'inline-block'
-        }}>
-          ✨ Zaman Kapsülü Açıldı
-        </div>
-
-        {/* Başlığımız */}
+        {/* Edebi asil başlığımız */}
         <h1 style={{ 
-          fontSize: '52px', 
+          fontSize: '48px', 
           fontStyle: 'italic', 
           fontWeight: '900', 
           color: currentTheme.heroText, 
-          margin: '0.5rem 0',
+          margin: '0 0 1.5rem 0',
           lineHeight: '1.2',
           fontFamily: '"Georgia", serif'
         }}>
           {wallTitle}
         </h1>
 
-        <p style={{
-          color: currentTheme.text,
-          fontSize: '15px',
-          fontStyle: 'italic',
-          margin: '0.5rem auto 0 auto',
-          maxWidth: '600px',
-          opacity: 0.8,
-          lineHeight: '1.6'
-        }}>
-          Senin için biriktirilen tüm o değerli anılar ve sürpriz sorular...
-        </p>
+        {/* 🌊 Tam çizdiğin o incecik, yumuşak kavisli ayırıcı çizgi */}
+        <svg 
+          viewBox="0 0 1200 120" 
+          style={{ 
+            position: 'absolute', 
+            bottom: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '40px', 
+            pointerEvents: 'none' 
+          }}
+        >
+          <path 
+            d="M 0,40 Q 600,120 1200,40" 
+            fill="none" 
+            stroke={currentTheme.heroText} 
+            strokeWidth="2.5" 
+            opacity="0.25" 
+          />
+        </svg>
       </div>
 
       {/* 📌 AKIŞKAN GRİD ALANI */}
