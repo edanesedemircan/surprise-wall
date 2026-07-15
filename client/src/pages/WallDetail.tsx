@@ -179,7 +179,7 @@ export function WallDetail({ role, title }: WallDetailProps) {
                 color: '#a02b6a', // Mürdüm başlık rengi
                 margin: '0 0 1.25rem 0' 
               }}>
-                Daha Zamanı Değil!
+                Biraz Sabret!
               </h3>
               
               <p style={{ 

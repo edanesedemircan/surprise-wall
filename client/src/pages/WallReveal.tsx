@@ -1,27 +1,60 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-// Temalarımız - 🌸 Romantik pembe pötikare konseptine göre güncellendi kanka!
+// Odanın dinamik temasına göre yüklenecek renk paletleri kanka
 const themes: Record<string, any> = {
-  default: {
-    pageBg: '#ffffff',      // Görseldeki gibi tertemiz beyaz zemin
-    cardBg: '#ffffff',      // Beyaz şık kartlar
-    border: '#FFEBF0',      // Ekose karelerinin o tatlı pembe tonu
-    text: '#7C5858',        // Karakteristik tatlı kahve-pembe yazı rengi
-    heroText: '#5A3E3E',    // Başlıklar için edebi koyu ton
-    badge: '#F7EFEF',       // İsimlikler için hafif pembe badge
-    accent: '#BFA7A7',      // Sorular ve özel sınırlar için pastel ton
-    success: '#10B981',     // Doğru şık yeşili
-    danger: '#EF4444',      // Yanlış şık kırmızısı
-  },
-  purple: {
-    pageBg: '#f8f5fa',
+  birthday: {
+    pageBg: '#F3E8FF', // Mor-Pembe tatlı zemin
     cardBg: '#ffffff',
-    border: '#ebdff2',
-    text: '#4a3b54',
-    heroText: '#5e2780',
-    badge: '#f0e6f7',
-    accent: '#8a2be2',
+    border: '#E9D5FF',
+    text: '#3B0764',
+    heroText: '#6b21a8',
+    badge: '#F3E8FF',
+    accent: '#8b5cf6',
+    success: '#10B981',
+    danger: '#EF4444',
+  },
+  romantic: {
+    pageBg: '#FFF1F2', // Tatlı Gül Pembesi zemin
+    cardBg: '#ffffff',
+    border: '#FFE4E6',
+    text: '#4C0519',
+    heroText: '#9f1238',
+    badge: '#FFF1F2',
+    accent: '#f43f5e',
+    success: '#10B981',
+    danger: '#EF4444',
+  },
+  graduation: {
+    pageBg: '#F1F5F9', // Şık Gri-Mavi zemin
+    cardBg: '#ffffff',
+    border: '#E2E8F0',
+    text: '#0F172A',
+    heroText: '#0f172a',
+    badge: '#F1F5F9',
+    accent: '#475569',
+    success: '#10B981',
+    danger: '#EF4444',
+  },
+  job: {
+    pageBg: '#FEF3C7', // Sıcak Sarı-Kehribar zemin
+    cardBg: '#ffffff',
+    border: '#FDE68A',
+    text: '#451A03',
+    heroText: '#92400e',
+    badge: '#FEF3C7',
+    accent: '#d97706',
+    success: '#10B981',
+    danger: '#EF4444',
+  },
+  funny: {
+    pageBg: '#FCE7F3', // Canlı Pembe zemin
+    cardBg: '#ffffff',
+    border: '#FBCFE8',
+    text: '#4D072B',
+    heroText: '#db2777',
+    badge: '#FCE7F3',
+    accent: '#ec4899',
     success: '#10B981',
     danger: '#EF4444',
   }
@@ -30,45 +63,48 @@ const themes: Record<string, any> = {
 export default function WallReveal() {
   const { id } = useParams<{ id: string }>();
   
-  // State tanımlamalarımız
   const [wallTitle, setWallTitle] = useState<string>('Kapsülün Açıldı! ✨');
   const [combinedItems, setCombinedItems] = useState<any[]>([]);
-  const [currentTheme, setCurrentTheme] = useState<any>(themes.default);
+  const [currentTheme, setCurrentTheme] = useState<any>(themes.birthday); // Varsayılan birthday
   const [selectedItem, setSelectedItem] = useState<any | null>(null); 
   const [loading, setLoading] = useState<boolean>(true);
 
-  // 🧠 HİLE KORUMASI: Cevaplanan soruları localStorage'da mühürlüyoruz ki yenilese de gitmesin!
+  // 🧠 HİLE KORUMASI: Cevaplanan soruları localStorage'da saklıyoruz
   const [answers, setAnswers] = useState<Record<number, string>>(() => {
     const saved = localStorage.getItem(`wall_${id}_answers`);
     return saved ? JSON.parse(saved) : {};
   });
 
-  // 🌸 Görseldeki o meşhur dikey ve yatay pembe pötikare şeritlerin kesişim formülü!
-  const gridPatternStyle = `
-    linear-gradient(90deg, rgba(255, 235, 240, 0.7) 50%, transparent 50%),
-    linear-gradient(rgba(255, 235, 240, 0.7) 50%, transparent 50%)
-  `;
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
+
+  // 🌸 Arka plandaki o şık, odanın temasına uyan hafif noktalı kağıt yapısı
+  const gridPatternStyle = `radial-gradient(${currentTheme.border} 1.5px, transparent 1.5px)`;
 
   useEffect(() => {
     const fetchWallData = async () => {
       try {
-        // 1. Odanın detaylarını ve temasını çekiyoruz
-        const wallRes = await fetch(`/api/Wall/${id}`);
+        // 1. Odanın detaylarını ve asıl temasını sunucudan çekiyoruz kanka
+        const wallRes = await fetch(`${apiUrl}/api/wall/${id}`);
         if (!wallRes.ok) throw new Error('Oda yüklenemedi');
         const wallData = await wallRes.json();
         
-        if (wallData.title) setWallTitle(wallData.title);
+        if (wallData.title || wallData.Title) {
+          setWallTitle(wallData.title || wallData.Title);
+        }
         
-        const matchedTheme = themes[wallData.theme?.toLowerCase()] || themes.default;
+        // Odanın veri tabanındaki temasına göre dinamik renkleri yüklüyoruz!
+        const rawTheme = (wallData.theme || wallData.Theme || 'birthday').toLowerCase();
+        const matchedTheme = themes[rawTheme] || themes.birthday;
         setCurrentTheme(matchedTheme);
 
         // 2. Odaya yazılan tüm anı ve soruları çekiyoruz
         const userEmail = localStorage.getItem('userEmail') || '';
-        const memoriesRes = await fetch(`/api/Memory/wall/${id}?userEmail=${encodeURIComponent(userEmail)}`);
+        const memoriesRes = await fetch(`${apiUrl}/api/Memory/wall/${id}?userEmail=${encodeURIComponent(userEmail)}`);
         if (memoriesRes.ok) {
           const memoriesData = await memoriesRes.json();
+          // Hepsini tarihe göre sıralayarak akışa diziyoruz
           const sorted = memoriesData.sort((a: any, b: any) => 
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            new Date(b.createdAt || b.CreatedAt).getTime() - new Date(a.createdAt || a.CreatedAt).getTime()
           );
           setCombinedItems(sorted);
         }
@@ -79,8 +115,8 @@ export default function WallReveal() {
       }
     };
 
-    fetchWallData();
-  }, [id]);
+    if (id) fetchWallData();
+  }, [id, apiUrl]);
 
   // 🎯 Şık tıklandığında çalışan interaktif quiz fonksiyonu
   const handleOptionClick = (questionId: number, selectedOption: string) => {
@@ -99,28 +135,25 @@ export default function WallReveal() {
     );
   }
 
-  // 🚨 Ekranın en sağına ve en soluna sıfırlanan, o siyah barları yok eden full-width stil:
-  const sharedBackgroundStyle: React.CSSProperties = {
-    minHeight: '100vh', 
-    width: '100vw',
-    marginLeft: 'calc(-50vw + 50%)',
-    marginRight: 'calc(-50vw + 50%)',
-    backgroundColor: currentTheme.pageBg, 
-    backgroundImage: gridPatternStyle,
-    backgroundSize: '80px 80px', // Görseldeki ekose büyüklüğüyle birebir aynı kanka!
-    padding: '4rem 2rem', 
-    boxSizing: 'border-box', 
-    fontFamily: '"Georgia", serif', 
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    margin: 0 
-  };
-
   return (
-    <div style={sharedBackgroundStyle}>
+    <div style={{ 
+      width: '100vw', 
+      minHeight: '100vh', 
+      marginLeft: 'calc(-50vw + 50%)',
+      marginRight: 'calc(-50vw + 50%)',
+      backgroundColor: currentTheme.pageBg, 
+      backgroundImage: gridPatternStyle,
+      backgroundSize: '24px 24px',
+      padding: '4rem 2rem', 
+      boxSizing: 'border-box', 
+      fontFamily: '"Georgia", serif', 
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      margin: 0 
+    }}>
       
-      {/* 👑 1 NUMARALI ÜST KISIM: Sadece Odana Ait O Edebi Şık Başlık */}
+      {/* 👑 ÜST KISIM: Sadece Odana Ait O Edebi Şık Başlık */}
       <div style={{ textAlign: 'center', maxWidth: '800px', marginBottom: '4rem', animation: 'fadeIn 1s ease-out' }}>
         <h1 style={{ 
           fontSize: '42px', 
@@ -141,7 +174,7 @@ export default function WallReveal() {
           {combinedItems.map((item, index) => {
             
             // ❓ Soru Kartı Tasarımı
-            if (item.isQuiz || item.questionText) {
+            if (item.isQuiz || item.questionText || item.QuestionText) {
               const questionId = item.id;
               const isAnswered = !!answers[questionId];
               const userAnswer = answers[questionId];
@@ -182,11 +215,11 @@ export default function WallReveal() {
                     {isAnswered ? (isCorrect ? '🎉 DOĞRU BİLİNDİ' : '😢 MAALESEF YANLIŞ') : '✨ KAPSÜL SORUSU'}
                   </div>
                   <h4 style={{ margin: '5px 0', color: currentTheme.heroText, fontStyle: 'italic', fontSize: '18px', lineHeight: '1.5' }}>
-                    "{item.questionText}"
+                    "{item.questionText || item.QuestionText}"
                   </h4>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '0.8rem', marginTop: 'auto' }}>
-                    <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>❓ {item.creatorName}</span>
-                    <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
+                    <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>❓ {item.creatorName || item.CreatorName}</span>
+                    <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt || item.CreatedAt).toLocaleDateString('tr-TR')}</span>
                   </div>
                 </div>
               );
@@ -219,11 +252,11 @@ export default function WallReveal() {
                   </div>
                 )}
                 <p style={{ margin: 0, color: currentTheme.text, fontStyle: 'italic', lineHeight: '1.7', fontSize: '16px', whiteSpace: 'pre-wrap' }}>
-                  "{item.content}"
+                  "{item.content || item.Content}"
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '1rem', marginTop: 'auto' }}>
-                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>✍️ {item.authorName}</span>
-                  <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
+                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>✍️ {item.authorName || item.AuthorName}</span>
+                  <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt || item.CreatedAt).toLocaleDateString('tr-TR')}</span>
                 </div>
               </div>
             );
@@ -231,7 +264,7 @@ export default function WallReveal() {
         </div>
       </div>
 
-      {/* 🌌 BÜYÜTEÇ MODÜLÜ */}
+      {/* 🌌 BÜYÜTEÇ MODÜLÜ (Anı / Soru Detay ve İnteraktif Çözüm Ekranı) */}
       {selectedItem && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 99999 }}>
           <div style={{ 
@@ -255,13 +288,13 @@ export default function WallReveal() {
               ✕
             </button>
 
-            {selectedItem.isQuiz || selectedItem.questionText ? (
+            {selectedItem.isQuiz || selectedItem.questionText || selectedItem.QuestionText ? (
               /* ❓ İNTERAKTİF SORU MODAL İÇERİĞİ */
               (() => {
                 const qId = selectedItem.id;
                 const isAns = !!answers[qId];
                 const userChoice = answers[qId];
-                const correctChoice = selectedItem.correctOption;
+                const correctChoice = selectedItem.correctOption || selectedItem.CorrectOption;
 
                 return (
                   <>
@@ -280,13 +313,13 @@ export default function WallReveal() {
                     </div>
                     
                     <h3 style={{ margin: '0.5rem 0', color: currentTheme.heroText, fontStyle: 'italic', fontSize: '24px', lineHeight: '1.5', fontWeight: '800' }}>
-                      "{selectedItem.questionText}"
+                      "{selectedItem.questionText || selectedItem.QuestionText}"
                     </h3>
 
                     {/* Şıklar Listesi */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '0.5rem' }}>
                       {['A', 'B', 'C', 'D'].map((optionKey) => {
-                        const optionText = selectedItem[`option${optionKey}`];
+                        const optionText = selectedItem[`option${optionKey}`] || selectedItem[`Option${optionKey}`];
                         if (!optionText) return null;
 
                         let optionBg = currentTheme.badge;
@@ -331,8 +364,8 @@ export default function WallReveal() {
                             }}
                             onMouseLeave={(e) => {
                               if (!isAns) {
-                                e.currentTarget.style.transform = 'translateX(0)';
-                                e.currentTarget.style.borderColor = optionBorder;
+                                  e.currentTarget.style.transform = 'translateX(0)';
+                                  e.currentTarget.style.borderColor = optionBorder;
                               }
                             }}
                           >
@@ -375,8 +408,8 @@ export default function WallReveal() {
                     )}
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '1.2rem', marginTop: '1rem' }}>
-                      <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>❓ {selectedItem.creatorName}</span>
-                      <span style={{ fontSize: '12px', color: '#BFA7A7', fontWeight: 'bold' }}>{new Date(selectedItem.createdAt).toLocaleDateString('tr-TR')}</span>
+                      <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>❓ {selectedItem.creatorName || selectedItem.CreatorName}</span>
+                      <span style={{ fontSize: '12px', color: '#BFA7A7', fontWeight: 'bold' }}>{new Date(selectedItem.createdAt || selectedItem.CreatedAt).toLocaleDateString('tr-TR')}</span>
                     </div>
                   </>
                 );
@@ -398,11 +431,11 @@ export default function WallReveal() {
                   whiteSpace: 'pre-wrap',
                   textAlign: 'center' 
                 }}>
-                  "{selectedItem.content}"
+                  "{selectedItem.content || selectedItem.Content}"
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '1.2rem' }}>
-                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>✍️ {selectedItem.authorName}</span>
-                  <span style={{ fontSize: '12px', color: '#BFA7A7', fontWeight: 'bold' }}>{new Date(selectedItem.createdAt).toLocaleDateString('tr-TR')}</span>
+                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>✍️ {selectedItem.authorName || selectedItem.AuthorName}</span>
+                  <span style={{ fontSize: '12px', color: '#BFA7A7', fontWeight: 'bold' }}>{new Date(selectedItem.createdAt || selectedItem.CreatedAt).toLocaleDateString('tr-TR')}</span>
                 </div>
               </>
             )}
