@@ -129,76 +129,68 @@ export default function WallReveal() {
         }
       `}</style>
 
-      {/* 🚨 SIFIR BOŞLUKLU, İNCE KARELİ DEFTER DESENLİ VE TEMA UYUMLU ÜST PANEL */}
+      {/* 🛡️ SADECE BAŞLIK VE TEMAYA UYGUN İNCE KESİKLİ AYRIM ÇİZGİSİ */}
 <div style={{
-  // Üstü ve yanları milimetrik olarak sıfırlıyoruz:
   width: '100vw',
   marginLeft: 'calc(-50vw + 50%)',
   marginRight: 'calc(-50vw + 50%)',
-  marginTop: '-2rem', // Kapsayıcıdaki yukarı boşluğu sıfırlar kanka
+  marginTop: '-2rem', // Üst boşluğu sıfırlar
   
   textAlign: 'center',
-  padding: '4rem 1rem 3.5rem 1rem', 
+  padding: '3rem 1rem 1.5rem 1rem', // Başlık için temiz dikey hizalama
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   boxSizing: 'border-box',
-  position: 'relative',
-
-  // 🖼️ ATTIĞIN O İNCE KARELİ DEFTER DESENİ (image_67c249.png)
-  backgroundImage: `url('/src/assets/image_67c249.png')`, // 👈 Klasör yolun neyse onu yaz kanka (örn: /image_67c249.png veya /src/assets/...)
-  backgroundRepeat: 'repeat',
-  backgroundSize: '80px auto', // Çizgilerin o kibar defter boyutunda kalması için ideal boyut
-
-  // 🎨 TEMA RENKLERİNE GÖRE İNCE ÇİZGİLERİ BOYAMA SİHRİ:
-  backgroundColor: 
-    normalizedTheme === 'romantic' ? '#FFF9FA' : 
-    normalizedTheme === 'graduation' ? '#F7FAFF' : 
-    normalizedTheme === 'job' ? '#F7FDF9' : 
-    normalizedTheme === 'funny' ? '#FFFDF2' : 
-    '#FFFBFB', // Birthday / Varsayılan (Yumuşak krem/beyaz)
-
-  filter: 
-    normalizedTheme === 'romantic' ? 'hue-rotate(330deg) saturate(1.2)' : // Pembemsi mor çizgiler
-    normalizedTheme === 'graduation' ? 'hue-rotate(200deg) saturate(1)' : // Mavi çizgiler
-    normalizedTheme === 'job' ? 'hue-rotate(90deg) saturate(0.8)' : // Yeşil çizgiler
-    normalizedTheme === 'funny' ? 'hue-rotate(25deg) saturate(1.3) brightness(1.05)' : // Sıcak turuncu/sarı çizgiler
-    'none', // Orijinal asil morumsu/mavi çizgiler (Birthday için harika gider)
-
-  // Desenin bittiği yeri ayıran şık ve kesikli defter ucu çizgisi:
-  borderBottom: `2px dashed ${
-    normalizedTheme === 'romantic' ? '#FBCFE8' :
-    normalizedTheme === 'graduation' ? '#BFDBFE' :
-    normalizedTheme === 'job' ? '#BBF7D0' :
-    normalizedTheme === 'funny' ? '#FEF08A' :
-    '#FFE4E6'
-  }`,
-  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.01)'
+  
+  // Arka planı tamamen ana sayfanın arka planıyla eşitliyoruz (Gereksiz renk geçişi yok)
+  backgroundColor: 'transparent'
 }}>
   
-  {/* ✍️ Oda Başlığı */}
+  {/* ✍️ Tamamen temiz, tırnaksız ve net oda başlığı */}
   <h1 style={{
     fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif',
     fontSize: '32px',
     fontStyle: 'italic',
-    fontWeight: '800',
+    fontWeight: '700',
+    // Başlık rengi tamamen seçili temanın kendi rengini alıyor:
     color: 
-      normalizedTheme === 'romantic' ? '#631D42' :
-      normalizedTheme === 'graduation' ? '#1E3A8A' :
-      normalizedTheme === 'job' ? '#14532D' :
-      normalizedTheme === 'funny' ? '#713F12' :
-      '#4A2E2E', // birthday
+      normalizedTheme === 'romantic' ? '#a02b6a' :
+      normalizedTheme === 'graduation' ? '#1e40af' :
+      normalizedTheme === 'job' ? '#15803d' :
+      normalizedTheme === 'funny' ? '#b45309' :
+      '#5a3e3e', // birthday / varsayılan
     margin: 0,
-    textShadow: '2px 2px 0px rgba(255, 255, 255, 0.9)', // Çizgilerin üstünde harika okunsun diye kalın beyaz gölge
-    letterSpacing: '-0.5px'
+    letterSpacing: '-0.3px'
   }}>
-    "{wallTitle || 'Yükleniyor...'}"
+    {wallTitle || 'Yükleniyor...'}
   </h1>
+
+  {/* 📐 İstediğin o hafif gölgeli, temayla aynı renk ince kesikli çizgi */}
+  <div style={{
+    width: '100%',
+    marginTop: '2rem',
+    borderBottom: `2px dashed ${
+      normalizedTheme === 'romantic' ? 'rgba(160, 43, 106, 0.4)' :
+      normalizedTheme === 'graduation' ? 'rgba(30, 64, 175, 0.4)' :
+      normalizedTheme === 'job' ? 'rgba(21, 128, 61, 0.4)' :
+      normalizedTheme === 'funny' ? 'rgba(180, 83, 9, 0.4)' :
+      'rgba(90, 62, 62, 0.4)' // birthday
+    }`,
+    // Altındaki hafif gölge efekti:
+    boxShadow: `0 3px 6px ${
+      normalizedTheme === 'romantic' ? 'rgba(160, 43, 106, 0.04)' :
+      normalizedTheme === 'graduation' ? 'rgba(30, 64, 175, 0.04)' :
+      normalizedTheme === 'job' ? 'rgba(21, 128, 61, 0.04)' :
+      normalizedTheme === 'funny' ? 'rgba(180, 83, 9, 0.04)' :
+      'rgba(90, 62, 62, 0.04)'
+    }`
+  }} />
 </div>
 
-{/* 📐 KARTLARIN ÇOK YAKIN DURMAMASI İÇİN ARADAKİ NEFES ALMA BOŞLUĞU */}
-<div style={{ height: '3.5rem', width: '100%' }} />
+{/* Kartların çizginin hemen altına çok yapışmaması için küçük bir nefes boşluğu */}
+<div style={{ height: '2rem', width: '100%' }} />
       
       {/* 📌 AKIŞKAN GRİD ALANI */}
       <div style={{ width: '100%', maxWidth: '1200px' }}>
