@@ -137,7 +137,7 @@ export default function WallReveal() {
           fontWeight: '900', 
           color: currentTheme.heroText, // Temanın o koyu asil bordo/mürdüm tonu
           margin: 0,
-          lineHeight: '1.2',
+          lineHeight: '1.0',
           fontFamily: '"Georgia", serif'
         }}>
           {wallTitle}
