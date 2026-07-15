@@ -1,7 +1,7 @@
 // Odaya girmek isteyenler (Davetliler veya Başrol) Ekranı
 
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // 🚀 useNavigate'i buraya ekledik!
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'; // 🚀 useParams yerine useLocation ekledik!
 import { GoogleLogin } from '@react-oauth/google';
 
 interface HomeProps {
@@ -26,17 +26,31 @@ function parseJwt(token: string) {
 }
 
 export function Home({ onLoginSuccess }: HomeProps) {
-  const { id } = useParams<{ id: string }>();
-  const wallIdFromUrl = Number(id);
-  const navigate = useNavigate(); // 🚀 useNavigate kancasını tanımladık!
+  const navigate = useNavigate();
+  const location = useLocation(); // 🚀 URL'deki ?id=40 parametresini yakalamak için location'ı tanımladık!
+
+  // 🔎 URL sorgusundaki 'id' parametresini ayıklıyoruz
+  const queryParams = new URLSearchParams(location.search);
+  const idFromQuery = queryParams.get('id');
+  const wallIdFromUrl = idFromQuery ? Number(idFromQuery) : null;
 
   const [manualWallId, setManualWallId] = useState('');
 
+  // Başlangıçta statusMessage'ı URL'den gelen ID'ye göre dinamik kuruyoruz
   const [statusMessage, setStatusMessage] = useState(
     wallIdFromUrl 
       ? `Kimliğiniz doğrulandıktan sonra #${wallIdFromUrl} numaralı anı odasına giriş yapacaksınız.` 
       : 'Kapsüle erişmek için lütfen oda kodunuzu girin ve Google hesabınızla kimliğinizi doğrulayın.'
   );
+
+
+  useEffect(() => {
+    if (wallIdFromUrl) {
+      setStatusMessage(`Kimliğiniz doğrulandıktan sonra #${wallIdFromUrl} numaralı anı odasına giriş yapacaksınız.`);
+    } else {
+      setStatusMessage('Kapsüle erişmek için lütfen oda kodunuzu girin ve Google hesabınızla kimliğinizi doğrulayın.');
+    }
+  }, [wallIdFromUrl]);
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     const finalWallId = wallIdFromUrl || Number(manualWallId);
@@ -76,7 +90,7 @@ export function Home({ onLoginSuccess }: HomeProps) {
         // 1. App.tsx'e başarılı girişi bildiriyoruz
         onLoginSuccess(data.role, data.title, finalWallId);
         
-        // 2. 🚀 Kullanıcıyı dinamik olarak o girdiğiniz oda ID'sine anında uçuruyoruz!
+        // 2. Kullanıcıyı dinamik olarak o girdiğiniz oda ID'sine anında uçuruyoruz!
         setTimeout(() => {
           navigate(`/wall/${finalWallId}`);
         }, 800); // Küçük bir gecikme koyduk ki kullanıcı o tatlı başarı mesajını görebilsin
