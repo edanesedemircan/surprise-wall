@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+// 🎨 Diğer dosyadaki tam ve orijinal renk paletlerimiz kanka!
+const themeStyles: Record<string, any> = {
+  birthday: { pageBg: '#FDF4FF', heroText: '#701A75', heroSubtext: '#A21CAF', cardBg: '#ffffff', border: '#E9D5FF', text: '#4A044E', author: '#A21CAF', badge: '#F3E8FF', accent: '#D946EF', success: '#10B981', danger: '#EF4444' },
+  romantic: { pageBg: '#FFF5F5', heroText: '#881337', heroSubtext: '#9F1238', cardBg: '#ffffff', border: '#FECDD3', text: '#4C0519', author: '#9F1238', badge: '#FFF1F2', accent: '#E11D48', success: '#10B981', danger: '#EF4444' },
+  graduation: { pageBg: '#F8FAFC', heroText: '#0C4A6E', heroSubtext: '#0369A1', cardBg: '#ffffff', border: '#BAE6FD', text: '#0F172A', author: '#0284C7', badge: '#F0F9FF', accent: '#0284C7', success: '#10B981', danger: '#EF4444' },
+  job: { pageBg: '#FEFCE8', heroText: '#78350F', heroSubtext: '#92400E', cardBg: '#ffffff', border: '#FEF08A', text: '#451A03', author: '#B45309', badge: '#FEFCE8', accent: '#D97706', success: '#10B981', danger: '#EF4444' },
+  funny: { pageBg: '#FFF5F8', heroText: '#831843', heroSubtext: '#9D174D', cardBg: '#ffffff', border: '#FBCFE8', text: '#4D072B', author: '#C2185B', badge: '#FFF1F2', accent: '#DB2777', success: '#10B981', danger: '#EF4444' }
+};
+
 export default function WallReveal() {
   const { id } = useParams<{ id: string }>();
   
   const [wallTitle, setWallTitle] = useState<string>('Kapsülün Açıldı! ✨');
+  const [wallTheme, setWallTheme] = useState<string>('birthday');
   const [combinedItems, setCombinedItems] = useState<any[]>([]);
   const [selectedItem, setSelectedItem] = useState<any | null>(null); 
   const [loading, setLoading] = useState<boolean>(true);
 
-  // 🧠 HİLE KORUMASI: Başrolün çözdüğü soruları localStorage'da saklıyoruz
+  // 🧠 HİLE KORUMASI: Başrolün çözdüğü soruları localStorage'da mühürlüyoruz kanka
   const [answers, setAnswers] = useState<Record<number, string>>(() => {
     const saved = localStorage.getItem(`wall_${id}_answers`);
     return saved ? JSON.parse(saved) : {};
@@ -17,22 +27,27 @@ export default function WallReveal() {
 
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
 
+  const normalizedTheme = (wallTheme || 'birthday').toLowerCase();
+  const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
+
   useEffect(() => {
     const fetchWallData = async () => {
       try {
-        // 1. Oda detaylarını çekiyoruz
+        // 1. Odanın detaylarını ve asıl tema ismini çekiyoruz
         const wallRes = await fetch(`${apiUrl}/api/wall/${id}`);
         if (wallRes.ok) {
           const wallData = await wallRes.json();
           setWallTitle(wallData.title || wallData.Title || 'Anı Odası');
+          
+          const rawTheme = (wallData.theme || wallData.Theme || 'birthday').toLowerCase();
+          setWallTheme(rawTheme);
         }
 
-        // 2. Anıları ve soruları çekiyoruz
+        // 2. Anıları ve soruları birlikte çekiyoruz
         const memoriesRes = await fetch(`${apiUrl}/api/Memory/wall/${id}`);
         if (memoriesRes.ok) {
           const memoriesData = await memoriesRes.json();
-          
-          // Soruları ve anıları tarihe göre harmanlıyoruz
+          // Yeniden eskiye sıralama yapıyoruz
           const sorted = memoriesData.sort((a: any, b: any) => 
             new Date(b.createdAt || b.CreatedAt).getTime() - new Date(a.createdAt || a.CreatedAt).getTime()
           );
@@ -48,7 +63,7 @@ export default function WallReveal() {
     if (id) fetchWallData();
   }, [id, apiUrl]);
 
-  // 🎯 Soru şıkkına tıklandığında çalışan fonksiyon
+  // 🎯 Şık tıklandığında çalışan quiz mühürleme fonksiyonu
   const handleOptionClick = (questionId: number, selectedOption: string) => {
     if (answers[questionId]) return;
 
@@ -65,7 +80,7 @@ export default function WallReveal() {
     );
   }
 
-  // 🚨 SOLDAKİ SİYAH MENÜYÜ EZEN TAM EKRAN KARELİ DEFTER DESENLİ CONTAINER
+  // 🚨 SOLDAKİ SİYAH MENÜYÜ EZEN TAM EKRAN VE DÜZ TEMA RENKLİ CONTAINER STİLİ
   const fullScreenStyle: React.CSSProperties = {
     position: 'fixed',
     top: 0,
@@ -74,9 +89,8 @@ export default function WallReveal() {
     height: '100vh',
     overflowY: 'auto', 
     zIndex: 9999, 
-    backgroundColor: '#F8FAFC', 
-    backgroundImage: `linear-gradient(#E2E8F0 1px, transparent 1px), linear-gradient(90deg, #E2E8F0 1px, transparent 1px)`,
-    backgroundSize: '30px 30px', 
+    backgroundColor: currentTheme.pageBg, // Tam istediğin gibi düz tema rengi kanka!
+    backgroundImage: 'none', // Ekose veya grid tamamen kaldırıldı
     padding: '4rem 2rem', 
     boxSizing: 'border-box', 
     fontFamily: '"Georgia", serif', 
@@ -88,7 +102,6 @@ export default function WallReveal() {
   return (
     <div style={fullScreenStyle}>
       
-      {/* Sayfa kenarlarındaki boşlukları sıfırlayan global CSS */}
       <style>{`
         body, html, #root { 
           margin: 0 !important; 
@@ -99,19 +112,19 @@ export default function WallReveal() {
         }
       `}</style>
 
-      {/* 👑 ÜST KISIM: Başlık */}
+      {/* 👑 ÜST KISIM: Sadece Başlığımız */}
       <div style={{ textAlign: 'center', maxWidth: '800px', marginBottom: '4rem' }}>
         <h1 style={{ 
           fontSize: '48px', 
           fontStyle: 'italic', 
           fontWeight: '900', 
-          color: '#334155', 
+          color: currentTheme.heroText, 
           margin: '0 0 1rem 0',
           lineHeight: '1.3'
         }}>
           {wallTitle}
         </h1>
-        <div style={{ width: '80px', height: '3px', backgroundColor: '#94A3B8', margin: '1.5rem auto 0 auto', borderRadius: '2px', opacity: 0.5 }} />
+        <div style={{ width: '80px', height: '3px', backgroundColor: currentTheme.heroText, margin: '1.5rem auto 0 auto', borderRadius: '2px', opacity: 0.3 }} />
       </div>
 
       {/* 📌 AKIŞKAN GRİD ALANI */}
@@ -119,7 +132,7 @@ export default function WallReveal() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
           {combinedItems.map((item, index) => {
             
-            // ❓ Soru Kartı mı?
+            // ❓ Soru Kartı mı Kontrolü
             const isQuestion = item.isQuiz || item.questionText || item.QuestionText || item.optionA || item.OptionA || item.type === 'question' || item.Type === 'Question';
             
             if (isQuestion) {
@@ -134,10 +147,10 @@ export default function WallReveal() {
                   key={`quiz-${item.id}-${index}`} 
                   onClick={() => setSelectedItem(item)} 
                   style={{ 
-                    backgroundColor: 'rgba(255, 255, 255, 0.7)', 
+                    backgroundColor: currentTheme.cardBg, 
                     border: isAnswered 
-                      ? `2.5px solid ${isCorrect ? '#10B981' : '#EF4444'}`
-                      : '2px dashed #94A3B8', 
+                      ? `2.5px solid ${isCorrect ? currentTheme.success : currentTheme.danger}`
+                      : `2px dashed ${currentTheme.accent}`, // Temaya uygun kesikli çizgiler
                     borderRadius: '24px', 
                     padding: '1.5rem', 
                     display: 'flex', 
@@ -152,7 +165,7 @@ export default function WallReveal() {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ 
-                      backgroundColor: isAnswered ? (isCorrect ? '#10B981' : '#EF4444') : '#3B82F6', 
+                      backgroundColor: isAnswered ? (isCorrect ? currentTheme.success : currentTheme.danger) : currentTheme.accent, 
                       color: '#ffffff', 
                       padding: '4px 12px', 
                       borderRadius: '20px', 
@@ -164,23 +177,23 @@ export default function WallReveal() {
                     </div>
                   </div>
 
-                  <h4 style={{ margin: '0.5rem 0', color: '#1E293B', fontStyle: 'italic', fontSize: '18px', textAlign: 'center' }}>
+                  <h4 style={{ margin: '0.5rem 0', color: currentTheme.heroText, fontStyle: 'italic', fontSize: '18px', textAlign: 'center' }}>
                     "{item.questionText || item.QuestionText}"
                   </h4>
 
-                  {/* Şıklar */}
+                  {/* Kart üstündeki şıklar */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {['A', 'B', 'C', 'D'].map((opt) => {
                       const optText = item[`option${opt}`] || item[`Option${opt}`];
                       if (!optText) return null;
                       return (
                         <div key={opt} style={{ 
-                          border: '1px solid #E2E8F0', 
+                          border: `1px solid ${currentTheme.border}`, 
                           padding: '10px', 
                           borderRadius: '12px', 
                           textAlign: 'center', 
                           fontSize: '14px',
-                          color: '#475569',
+                          color: currentTheme.text,
                           fontFamily: 'sans-serif',
                           backgroundColor: '#ffffff'
                         }}>
@@ -191,8 +204,8 @@ export default function WallReveal() {
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
-                    <span style={{ backgroundColor: '#F1F5F9', padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: '#475569', border: '1px solid #E2E8F0' }}>❓ {item.creatorName || item.CreatorName}</span>
-                    <span style={{ fontSize: '11px', color: '#94A3B8', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt || item.CreatedAt).toLocaleDateString('tr-TR')}</span>
+                    <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.author || currentTheme.heroText, border: `1px solid ${currentTheme.border}` }}>❓ {item.creatorName || item.CreatorName}</span>
+                    <span style={{ fontSize: '11px', color: currentTheme.accent, fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt || item.CreatedAt).toLocaleDateString('tr-TR')}</span>
                   </div>
                 </div>
               );
@@ -205,8 +218,8 @@ export default function WallReveal() {
                 key={`mem-${item.id}-${index}`} 
                 onClick={() => setSelectedItem(item)} 
                 style={{ 
-                  backgroundColor: '#ffffff', 
-                  border: '1px solid #E2E8F0', 
+                  backgroundColor: currentTheme.cardBg, 
+                  border: `1px solid ${currentTheme.border}`, 
                   borderRadius: '24px', 
                   padding: '1.75rem', 
                   display: 'flex', 
@@ -224,12 +237,12 @@ export default function WallReveal() {
                     <img src={imageSource} alt="Anı" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 )}
-                <p style={{ margin: 0, color: '#475569', fontStyle: 'italic', lineHeight: '1.7', fontSize: '16px', whiteSpace: 'pre-wrap', textAlign: 'center' }}>
+                <p style={{ margin: 0, color: currentTheme.text, fontStyle: 'italic', lineHeight: '1.7', fontSize: '16px', whiteSpace: 'pre-wrap', textAlign: 'center' }}>
                   "{item.content || item.Content}"
                 </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed #E2E8F0', paddingTop: '1rem', marginTop: 'auto' }}>
-                  <span style={{ backgroundColor: '#FFF7ED', padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: '#9A3412', border: '1px solid #FFEDD5' }}>✍️ {item.authorName || item.AuthorName}</span>
-                  <span style={{ fontSize: '11px', color: '#94A3B8', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt || item.CreatedAt).toLocaleDateString('tr-TR')}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '1rem', marginTop: 'auto' }}>
+                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: currentTheme.author || currentTheme.heroText, border: `1px solid ${currentTheme.border}` }}>✍️ {item.authorName || item.AuthorName}</span>
+                  <span style={{ fontSize: '11px', color: currentTheme.accent, fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt || item.CreatedAt).toLocaleDateString('tr-TR')}</span>
                 </div>
               </div>
             );
@@ -237,7 +250,7 @@ export default function WallReveal() {
         </div>
       </div>
 
-      {/* 🌌 BÜYÜTEÇ MODÜLÜ */}
+      {/* 🌌 BÜYÜTEÇ MODÜLÜ (Modal - Soru Çözme ve Büyük Anı Ekranı) */}
       {selectedItem && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100000 }}>
           <div style={{ 
@@ -265,12 +278,12 @@ export default function WallReveal() {
               (() => {
                 const qId = selectedItem.id;
                 const isAns = !!answers[qId];
-                const userChoice = answers[qId];
+                const userChoice = answers[qId]; // 🚨 İsmi userChoice olarak mühürlendi, hata vermez!
                 const correctChoice = selectedItem.correctOption || selectedItem.CorrectOption;
 
                 return (
                   <>
-                    <h3 style={{ margin: '0.5rem 0', color: '#1E293B', fontStyle: 'italic', fontSize: '26px', lineHeight: '1.5', fontWeight: '800', textAlign: 'center' }}>
+                    <h3 style={{ margin: '0.5rem 0', color: currentTheme.heroText, fontStyle: 'italic', fontSize: '26px', lineHeight: '1.5', fontWeight: '800', textAlign: 'center' }}>
                       "{selectedItem.questionText || selectedItem.QuestionText}"
                     </h3>
 
@@ -286,11 +299,11 @@ export default function WallReveal() {
                         if (isAns) {
                           if (optionKey === correctChoice) {
                             optionBg = '#D1FAE5'; 
-                            optionBorder = '#10B981';
+                            optionBorder = currentTheme.success;
                             optionTextColor = '#065F46';
                           } else if (optionKey === userChoice && userChoice !== correctChoice) {
                             optionBg = '#FEE2E2'; 
-                            optionBorder = '#EF4444';
+                            optionBorder = currentTheme.danger;
                             optionTextColor = '#991B1B';
                           }
                         }
@@ -314,7 +327,7 @@ export default function WallReveal() {
                               fontFamily: 'sans-serif'
                             }}
                           >
-                            <span style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: isAns && optionKey === correctChoice ? '#10B981' : (isAns && optionKey === userChoice ? '#EF4444' : '#94A3B8'), color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                            <span style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: isAns && optionKey === correctChoice ? currentTheme.success : (isAns && optionKey === userChoice ? currentTheme.danger : '#94A3B8'), color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>
                               {optionKey}
                             </span>
                             {optionText}
@@ -339,11 +352,11 @@ export default function WallReveal() {
                     <img src={selectedItem.imageUrl || selectedItem.ImageUrl} alt="Anı" style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#F8FAFC' }} />
                   </div>
                 )}
-                <p style={{ margin: '1rem 0', color: '#334155', fontStyle: 'italic', lineHeight: '1.8', fontSize: '20px', whiteSpace: 'pre-wrap', textAlign: 'center' }}>
+                <p style={{ margin: '1rem 0', color: currentTheme.text, fontStyle: 'italic', lineHeight: '1.8', fontSize: '20px', whiteSpace: 'pre-wrap', textAlign: 'center' }}>
                   "{selectedItem.content || selectedItem.Content}"
                 </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed #E2E8F0', paddingTop: '1.2rem' }}>
-                  <span style={{ backgroundColor: '#FFF7ED', padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: '#9A3412', border: '1px solid #FFEDD5' }}>✍️ {selectedItem.authorName || selectedItem.AuthorName}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${currentTheme.border}`, paddingTop: '1.2rem' }}>
+                  <span style={{ backgroundColor: currentTheme.badge, padding: '0.5rem 1rem', borderRadius: '12px', fontWeight: '800', fontSize: '13px', color: currentTheme.text, border: `1px solid ${currentTheme.border}` }}>✍️ {selectedItem.authorName || selectedItem.AuthorName}</span>
                 </div>
               </>
             )}
