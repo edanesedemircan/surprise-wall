@@ -97,54 +97,89 @@ export default function WallReveal() {
     );
   }
 
-  {/* 🛡️ ULTRA MİNİMALİST VE ŞIK ÜST PANEL (Sıfır Rüküşlük!) */}
+  // 🚨 SOLDAKİ SİYAH MENÜYÜ EZEN TAM EKRAN VE DÜZ TEMA RENKLİ CONTAINER STİLİ
+  const fullScreenStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    overflowY: 'auto', 
+    zIndex: 9999, 
+    backgroundColor: currentTheme.pageBg, // Tam istediğin gibi düz tema rengi kanka!
+    backgroundImage: 'none', // Ekose veya grid tamamen kaldırıldı
+    padding: '4rem 2rem', 
+    boxSizing: 'border-box', 
+    fontFamily: '"Georgia", serif', 
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  };
+
+  return (
+    <div style={fullScreenStyle}>
+      
+      <style>{`
+        body, html, #root { 
+          margin: 0 !important; 
+          padding: 0 !important; 
+          width: 100% !important; 
+          height: 100% !important; 
+          overflow-x: hidden !important; 
+        }
+      `}</style>
+
+      {/* 🚨 SIFIR BOŞLUKLU, ORİJİNAL EKOSE DESENLİ VE TEMAYA GÖRE RENKLENEN BAŞLIK ALANI */}
 <div style={{
+  // 📐 Kenarlara, üste ve alta jilet gibi sıfır yapıştırma formülü:
   width: '100vw',
   marginLeft: 'calc(-50vw + 50%)',
   marginRight: 'calc(-50vw + 50%)',
-  marginTop: '-2rem', // Üst boşluğu tamamen sıfırlar
+  marginTop: '-2rem', // Üstteki o gıcık boşluğu sıfırlayıp en tepeye yapıştırır
   
   textAlign: 'center',
-  padding: '2rem 1rem 1.8rem 1rem', // Gereksiz büyük boşlukları daralttık kanka
+  padding: '4.5rem 1rem 3.5rem 1rem', // Başlık için ekose üzerinde asil bir dikey genişlik
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   boxSizing: 'border-box',
 
-  // 🎨 Temaya göre sadece çok hafif, pürüzsüz ve düz bir arka plan rengi veriyoruz (Desensiz!)
-  backgroundColor: 
-    normalizedTheme === 'romantic' ? '#FFF5F6' : 
-    normalizedTheme === 'graduation' ? '#F4F9FF' : 
-    normalizedTheme === 'job' ? '#F4FDF7' : 
-    normalizedTheme === 'funny' ? '#FFFDF0' : 
-    '#FFF8F8', // Birthday / Varsayılan
+  // 🖼️ SENİN ATTIĞIN O GÜZELİM EKOSE GÖRSELİ (Arka planı tekrarlayan desen yapıyoruz)
+  backgroundImage: `url('/src/assets/image_5d49bb.png')`, // 👈 Buraya projendeki ekose görselinin tam yolunu yaz kanka
+  backgroundRepeat: 'repeat',
+  backgroundSize: '160px auto', // Yumuşak kare boyutunu buradan ayarlayabilirsin
 
-  // Altına sadece çok ama çok ince, hissettirmeyen yumuşak bir sınır çizgisi:
+  // 🎨 TEMA RENKLERİNE GÖRE EKOSEYİ BOYAMA SİHRİ (Filter ile orijinal dokuyu hiç bozmadan renklendirir!)
+  filter: 
+    normalizedTheme === 'graduation' ? 'hue-rotate(180deg) saturate(0.6)' : // Maviye çalar
+    normalizedTheme === 'job' ? 'hue-rotate(90deg) saturate(0.5)' : // Yeşile çalar
+    normalizedTheme === 'funny' ? 'hue-rotate(40deg) saturate(0.8) brightness(1.1)' : // Tatlı bir sarı/kavuniçi
+    'none', // romantic ve birthday için senin o orijinal tatlı pembe/gül kurusu ekosen kalır!
+
   borderBottom: `1px solid ${
-    normalizedTheme === 'romantic' ? '#FFE4E6' :
-    normalizedTheme === 'graduation' ? '#E0F2FE' :
-    normalizedTheme === 'job' ? '#DCFCE7' :
-    normalizedTheme === 'funny' ? '#FEF9C3' :
+    normalizedTheme === 'romantic' ? '#FBCFE8' :
+    normalizedTheme === 'graduation' ? '#BFDBFE' :
+    normalizedTheme === 'job' ? '#BBF7D0' :
+    normalizedTheme === 'funny' ? '#FEF08A' :
     '#FFE4E6'
   }`,
-  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.01)'
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.03)'
 }}>
   
-  {/* ✍️ Sadece zarif, tırnak içinde ve asil oda başlığı */}
+  {/* ✍️ Oda Başlığı (İçeriğin filter'dan etkilenip renginin bozulmaması için ters renk filtresi uyguluyoruz) */}
   <h1 style={{
     fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif',
-    fontSize: '28px', // Boyutu da kibarlaştırdık, göze batmıyor
+    fontSize: '34px',
     fontStyle: 'italic',
-    fontWeight: '700',
-    color: 
-      normalizedTheme === 'romantic' ? '#5A2A42' :
-      normalizedTheme === 'graduation' ? '#1E3A8A' :
-      normalizedTheme === 'job' ? '#14532D' :
-      normalizedTheme === 'funny' ? '#713F12' :
-      '#4A2E2E', // birthday
+    fontWeight: '850',
+    color: '#5A2E2E', // Asil koyu ton
     margin: 0,
-    letterSpacing: '-0.3px'
+    textShadow: '1px 1px 0px rgba(255, 255, 255, 0.9)',
+    letterSpacing: '-0.5px',
+    
+    // Başlık yazısının rengi arka plan filtresinden etkilenmesin, hep net kalsın diye:
+    filter: 'none' 
   }}>
     "{wallTitle || 'Yükleniyor...'}"
   </h1>
