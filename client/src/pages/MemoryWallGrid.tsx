@@ -64,6 +64,11 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
   const [optionD, setOptionD] = useState('');
   const [correctOption, setCorrectOption] = useState('A');
 
+  // ⚙️ Oda Yönetim State'leri
+  const [coCreatorEmail, setCoCreatorEmail] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isAddingCreator, setIsAddingCreator] = useState(false);
+
   const fetchMemories = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/memory/wall/${wallId}`);
@@ -118,7 +123,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
   // Soru Silme
   const handleDeleteQuiz = async (id: number) => {
-    if (!window.confirm("Bu sürpriz dostluk testini kalıcı olarak silmek istediğine emin misin? 🧠💣")) return;
+    if (!window.confirm("Bu soruyu kalıcı olarak silmek istediğine emin misin? 🧠💣")) return;
     try {
       const response = await fetch(`${apiUrl}/api/quiz/${id}`, { method: 'DELETE' });
       if (response.ok) loadAllData();
@@ -200,6 +205,68 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
     }
   };
 
+  // 💣 Kapsülü İmha Etme Aksiyonu
+  const handleDestroyWall = async () => {
+    const firstConfirm = window.confirm(
+      "DİKKAT! Bu zaman kapsülünü ve içindeki tüm anıları/soruları kalıcı olarak silmek istediğinize emin misiniz? 💣"
+    );
+    if (!firstConfirm) return;
+
+    const secondConfirm = window.confirm(
+      "Bu işlem GERİ ALINAMAZ! Veritabanındaki her şey sıfırlanacak. Son kararınız mı?"
+    );
+    if (!secondConfirm) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`${apiUrl}/api/wall/${wallId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert("Zaman kapsülü ve bağlı tüm veriler başarıyla imha edildi. Ana sayfaya yönlendiriliyorsunuz.");
+        window.location.href = '/'; 
+      } else {
+        const errData = await response.json();
+        alert(errData.message || "Kapsül imha edilirken bir hata meydana geldi.");
+      }
+    } catch (error) {
+      console.error("İmha hatası:", error);
+      alert("API bağlantı hatası oluştu.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // Yeni Yetkili Ekleme Aksiyonu
+  const handleAddCoCreator = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!coCreatorEmail.trim()) return;
+
+    setIsAddingCreator(true);
+    try {
+      const response = await fetch(`${apiUrl}/api/wall/${wallId}/co-creator`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: coCreatorEmail.trim() })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Yetkili e-posta adresi başarıyla kapsüle eklendi! ✨");
+        setCoCreatorEmail(''); 
+      } else {
+        alert(data.message || "Yetkili eklenirken bir hata oluştu.");
+      }
+    } catch (error) {
+      console.error("Yetkili ekleme hatası:", error);
+      alert("API bağlantı hatası oluştu.");
+    } finally {
+      setIsAddingCreator(false);
+    }
+  };
+
   const gridPatternStyle = `linear-gradient(to right, ${colors.gridLine} 1px, transparent 1px), linear-gradient(to bottom, ${colors.gridLine} 1px, transparent 1px)`;
 
   return (
@@ -208,6 +275,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         body, html, #root { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; background-color: ${colors.pageBg} !important; }
       `}</style>
       
+      {/* SOL PANEL (SIDEBAR) */}
       <div style={{ 
         width: '280px', 
         height: '100vh', 
@@ -241,8 +309,97 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           </button>
         </div>
 
-        <p style={{ marginTop: 'auto', fontSize: '12px', color: colors.heroSubtext, fontFamily: '"Segoe UI", sans-serif', lineHeight: '1.5', fontStyle: 'italic', fontWeight: '500' }}>
-          Sevdiklerinize notlar bırakın ve Arife için harika sürpriz test soruları hazırlayın! ❤️
+        {/* ⚙️ YÖNETİM PANELİ (Sol Dikey Menünün Alt Kısmı) */}
+        <div style={{ 
+          marginTop: 'auto', 
+          paddingTop: '1.5rem', 
+          borderTop: `2px dashed ${colors.border}`,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem'
+        }}>
+          <span style={{ 
+            fontSize: '12px', 
+            fontWeight: 'bold', 
+            color: colors.heroText, 
+            letterSpacing: '0.5px',
+            fontFamily: 'sans-serif'
+          }}>
+            ⚙️ KAPSÜL YÖNETİMİ
+          </span>
+
+          {/* Yetkili Ekleme Formu */}
+          <form onSubmit={handleAddCoCreator} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <input 
+              type="email" 
+              placeholder="Yetkili E-posta..." 
+              value={coCreatorEmail}
+              onChange={(e) => setCoCreatorEmail(e.target.value)}
+              required
+              style={{ 
+                width: '100%', 
+                padding: '0.65rem 0.8rem', 
+                borderRadius: '10px', 
+                border: `1.5px solid ${colors.border}`, 
+                fontSize: '12px',
+                outline: 'none',
+                backgroundColor: colors.badge,
+                color: colors.text,
+                boxSizing: 'border-box',
+                fontFamily: 'sans-serif',
+                fontWeight: '500'
+              }} 
+            />
+            <button 
+              type="submit" 
+              disabled={isAddingCreator}
+              style={{ 
+                width: '100%', 
+                padding: '0.65rem', 
+                borderRadius: '10px', 
+                backgroundColor: colors.heroText, 
+                color: '#ffffff', 
+                border: 'none', 
+                fontWeight: 'bold', 
+                fontSize: '12px', 
+                cursor: 'pointer',
+                transition: 'opacity 0.2s',
+                fontFamily: 'sans-serif'
+              }} 
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} 
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              {isAddingCreator ? 'Ekleniyor...' : '➕ Yetkili Ekle'}
+            </button>
+          </form>
+
+          {/* Kapsülü İmha Et Butonu */}
+          <button 
+            onClick={handleDestroyWall} 
+            disabled={isDeleting}
+            style={{ 
+              width: '100%', 
+              padding: '0.75rem', 
+              borderRadius: '10px', 
+              backgroundColor: '#EF4444', 
+              color: '#ffffff', 
+              border: 'none', 
+              fontWeight: 'bold', 
+              fontSize: '12px', 
+              cursor: 'pointer',
+              boxShadow: '0 4px 10px rgba(239, 68, 68, 0.15)',
+              transition: 'transform 0.1s',
+              fontFamily: 'sans-serif'
+            }} 
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} 
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            {isDeleting ? 'İmha Ediliyor...' : '💣 Kapsülü İmha Et'}
+          </button>
+        </div>
+
+        <p style={{ fontSize: '12px', color: colors.heroSubtext, fontFamily: '"Segoe UI", sans-serif', lineHeight: '1.5', fontStyle: 'italic', fontWeight: '500', margin: 0 }}>
+          Sevdiklerinize notlar bırakın ve onun için harika sürpriz test soruları hazırlayın! ❤️
         </p>
       </div>
 
@@ -259,7 +416,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
                   </div>
 
                   <div style={{ display: 'inline-block', alignSelf: 'flex-start', backgroundColor: colors.accent, color: '#ffffff', padding: '2px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', fontFamily: 'sans-serif' }}>
-                    🧠 DOSTLUK TESTİ
+                    ✨ KAPSÜL SORUSU
                   </div>
                   
                   <h4 style={{ margin: '5px 0', color: colors.heroText, fontStyle: 'italic', fontSize: '18px', lineHeight: '1.5' }}>
@@ -346,8 +503,8 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             <button onClick={() => { setIsAnıModalOpen(false); setSelectedImage(null); setEditingMemoryId(null); setAuthorName(''); setContent(''); }} style={{ position: 'absolute', top: '24px', right: '24px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontSize: '18px', color: '#94A3B8' }}>✕</button>
             <h3 style={{ margin: '0 0 1.75rem 0', fontStyle: 'italic', color: colors.heroText, fontSize: '24px', fontWeight: '800' }}>{editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}</h3>
             <form onSubmit={handleAnıSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, outline: 'none', fontSize: '15px' }} />
-              <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5' }} />
+              <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px' }} />
+              <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5' }} />
               <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} />
               {!selectedImage ? (
                 <div onClick={() => fileInputRef.current?.click()} style={{ padding: '1.5rem', border: `2px dashed ${colors.accent}`, borderRadius: '14px', textAlign: 'center', cursor: 'pointer', backgroundColor: colors.badge, fontStyle: 'italic', fontSize: '14px', color: colors.heroText, fontWeight: 'bold' }}>📸 Fotoğraf Ekle / Değiştir</div>
