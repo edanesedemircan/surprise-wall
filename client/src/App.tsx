@@ -32,6 +32,14 @@ function App() {
             } 
           />
           
+            {/*Linkle ID geldiğinde Güvenli Geçiş Kapısını açar*/}
+          <Route 
+            path="/login/:id" 
+            element={
+              <Home onLoginSuccess={handleLoginSuccess} />
+            } 
+          />
+
           {/* Oda Oluşturma */}
           <Route path="/create" element={<CreateWall />} />
           
