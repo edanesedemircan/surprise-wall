@@ -129,62 +129,77 @@ export default function WallReveal() {
         }
       `}</style>
 
-      {/* 🚨 SIFIR BOŞLUKLU, ORİJİNAL EKOSE DESENLİ VE TEMAYA GÖRE RENKLENEN BAŞLIK ALANI */}
+      {/* 🚨 SIFIR BOŞLUKLU, İNCE KARELİ DEFTER DESENLİ VE TEMA UYUMLU ÜST PANEL */}
 <div style={{
-  // 📐 Kenarlara, üste ve alta jilet gibi sıfır yapıştırma formülü:
+  // Üstü ve yanları milimetrik olarak sıfırlıyoruz:
   width: '100vw',
   marginLeft: 'calc(-50vw + 50%)',
   marginRight: 'calc(-50vw + 50%)',
-  marginTop: '-2rem', // Üstteki o gıcık boşluğu sıfırlayıp en tepeye yapıştırır
+  marginTop: '-2rem', // Kapsayıcıdaki yukarı boşluğu sıfırlar kanka
   
   textAlign: 'center',
-  padding: '4.5rem 1rem 3.5rem 1rem', // Başlık için ekose üzerinde asil bir dikey genişlik
+  padding: '4rem 1rem 3.5rem 1rem', 
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   boxSizing: 'border-box',
+  position: 'relative',
 
-  // 🖼️ SENİN ATTIĞIN O GÜZELİM EKOSE GÖRSELİ (Arka planı tekrarlayan desen yapıyoruz)
-  backgroundImage: `url('/src/assets/image_5d49bb.png')`, // 👈 Buraya projendeki ekose görselinin tam yolunu yaz kanka
+  // 🖼️ ATTIĞIN O İNCE KARELİ DEFTER DESENİ (image_67c249.png)
+  backgroundImage: `url('/src/assets/image_67c249.png')`, // 👈 Klasör yolun neyse onu yaz kanka (örn: /image_67c249.png veya /src/assets/...)
   backgroundRepeat: 'repeat',
-  backgroundSize: '160px auto', // Yumuşak kare boyutunu buradan ayarlayabilirsin
+  backgroundSize: '80px auto', // Çizgilerin o kibar defter boyutunda kalması için ideal boyut
 
-  // 🎨 TEMA RENKLERİNE GÖRE EKOSEYİ BOYAMA SİHRİ (Filter ile orijinal dokuyu hiç bozmadan renklendirir!)
+  // 🎨 TEMA RENKLERİNE GÖRE İNCE ÇİZGİLERİ BOYAMA SİHRİ:
+  backgroundColor: 
+    normalizedTheme === 'romantic' ? '#FFF9FA' : 
+    normalizedTheme === 'graduation' ? '#F7FAFF' : 
+    normalizedTheme === 'job' ? '#F7FDF9' : 
+    normalizedTheme === 'funny' ? '#FFFDF2' : 
+    '#FFFBFB', // Birthday / Varsayılan (Yumuşak krem/beyaz)
+
   filter: 
-    normalizedTheme === 'graduation' ? 'hue-rotate(180deg) saturate(0.6)' : // Maviye çalar
-    normalizedTheme === 'job' ? 'hue-rotate(90deg) saturate(0.5)' : // Yeşile çalar
-    normalizedTheme === 'funny' ? 'hue-rotate(40deg) saturate(0.8) brightness(1.1)' : // Tatlı bir sarı/kavuniçi
-    'none', // romantic ve birthday için senin o orijinal tatlı pembe/gül kurusu ekosen kalır!
+    normalizedTheme === 'romantic' ? 'hue-rotate(330deg) saturate(1.2)' : // Pembemsi mor çizgiler
+    normalizedTheme === 'graduation' ? 'hue-rotate(200deg) saturate(1)' : // Mavi çizgiler
+    normalizedTheme === 'job' ? 'hue-rotate(90deg) saturate(0.8)' : // Yeşil çizgiler
+    normalizedTheme === 'funny' ? 'hue-rotate(25deg) saturate(1.3) brightness(1.05)' : // Sıcak turuncu/sarı çizgiler
+    'none', // Orijinal asil morumsu/mavi çizgiler (Birthday için harika gider)
 
-  borderBottom: `1px solid ${
+  // Desenin bittiği yeri ayıran şık ve kesikli defter ucu çizgisi:
+  borderBottom: `2px dashed ${
     normalizedTheme === 'romantic' ? '#FBCFE8' :
     normalizedTheme === 'graduation' ? '#BFDBFE' :
     normalizedTheme === 'job' ? '#BBF7D0' :
     normalizedTheme === 'funny' ? '#FEF08A' :
     '#FFE4E6'
   }`,
-  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.03)'
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.01)'
 }}>
   
-  {/* ✍️ Oda Başlığı (İçeriğin filter'dan etkilenip renginin bozulmaması için ters renk filtresi uyguluyoruz) */}
+  {/* ✍️ Oda Başlığı */}
   <h1 style={{
     fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif',
-    fontSize: '34px',
+    fontSize: '32px',
     fontStyle: 'italic',
-    fontWeight: '850',
-    color: '#5A2E2E', // Asil koyu ton
+    fontWeight: '800',
+    color: 
+      normalizedTheme === 'romantic' ? '#631D42' :
+      normalizedTheme === 'graduation' ? '#1E3A8A' :
+      normalizedTheme === 'job' ? '#14532D' :
+      normalizedTheme === 'funny' ? '#713F12' :
+      '#4A2E2E', // birthday
     margin: 0,
-    textShadow: '1px 1px 0px rgba(255, 255, 255, 0.9)',
-    letterSpacing: '-0.5px',
-    
-    // Başlık yazısının rengi arka plan filtresinden etkilenmesin, hep net kalsın diye:
-    filter: 'none' 
+    textShadow: '2px 2px 0px rgba(255, 255, 255, 0.9)', // Çizgilerin üstünde harika okunsun diye kalın beyaz gölge
+    letterSpacing: '-0.5px'
   }}>
     "{wallTitle || 'Yükleniyor...'}"
   </h1>
 </div>
 
+{/* 📐 KARTLARIN ÇOK YAKIN DURMAMASI İÇİN ARADAKİ NEFES ALMA BOŞLUĞU */}
+<div style={{ height: '3.5rem', width: '100%' }} />
+      
       {/* 📌 AKIŞKAN GRİD ALANI */}
       <div style={{ width: '100%', maxWidth: '1200px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
