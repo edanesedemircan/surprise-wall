@@ -150,7 +150,6 @@ if (role === 'Admin') {
         ) : (
           /* 🎉 SÜRE BİTTİYSE: Büyük Keşif Butonu */
           <div style={{ animation: 'fadeIn 1s ease-out' }}>
-            <div style={{ fontSize: '72px', marginBottom: '1.5rem', animation: 'bounce 2s infinite' }}>🗝️✨</div>
             <h1 style={{ 
               fontSize: '32px', 
               fontFamily: '"Georgia", serif', 
@@ -160,7 +159,7 @@ if (role === 'Admin') {
               margin: '0 0 10px 0',
               lineHeight: '1.3'
             }}>
-              Ve O Büyük Gün Geldi!
+              Her şeyi görmenin vakti geldi!
             </h1>
             <p style={{ 
               color: '#7C5858', 
@@ -170,7 +169,7 @@ if (role === 'Admin') {
               lineHeight: '1.6',
               margin: '0 0 2rem 0' 
             }}>
-              Senin için biriktirilen tüm sırlar, anılar ve sürpriz sorular açılmaya hazır. Her şeyi görmenin vakti geldi! 💖
+              Senin için biriktirilen tüm anılar ve sorular açılmaya hazır. Her şeyi görmenin vakti geldi!
             </p>
             
            <button 
@@ -197,7 +196,7 @@ if (role === 'Admin') {
                 e.currentTarget.style.opacity = '1';
               }}
             >
-              🎉 Kapsülü Aç ve Keşfet!
+               Kapsülü Aç ve Keşfet!
             </button>
           </div>
         )}
