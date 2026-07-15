@@ -33,28 +33,45 @@ export default function WallReveal() {
   useEffect(() => {
     const fetchWallData = async () => {
       try {
-        // 1. Odanın detaylarını ve asıl tema ismini çekiyoruz
+        // 1. Odanın detaylarını ve temasını çekiyoruz
         const wallRes = await fetch(`${apiUrl}/api/wall/${id}`);
         if (wallRes.ok) {
           const wallData = await wallRes.json();
           setWallTitle(wallData.title || wallData.Title || 'Anı Odası');
-          
           const rawTheme = (wallData.theme || wallData.Theme || 'birthday').toLowerCase();
           setWallTheme(rawTheme);
         }
 
-        // 2. Anıları ve soruları birlikte çekiyoruz
-        const memoriesRes = await fetch(`${apiUrl}/api/Memory/wall/${id}`);
+        // 🚨 2. HEM ANILARI HEM DE SORULARI AYRI API'LERDEN ÇEKİP BİRLEŞTİRİYORUZ kanka!
+        const [memoriesRes, quizRes] = await Promise.all([
+          fetch(`${apiUrl}/api/Memory/wall/${id}`),
+          fetch(`${apiUrl}/api/Quiz/wall/${id}`) // C# QuizController endpoint'in
+        ]);
+
+        let memoriesList: any[] = [];
+        let quizList: any[] = [];
+
         if (memoriesRes.ok) {
-          const memoriesData = await memoriesRes.json();
-          // Yeniden eskiye sıralama yapıyoruz
-          const sorted = memoriesData.sort((a: any, b: any) => 
-            new Date(b.createdAt || b.CreatedAt).getTime() - new Date(a.createdAt || a.CreatedAt).getTime()
-          );
-          setCombinedItems(sorted);
+          memoriesList = await memoriesRes.json();
         }
+
+        if (quizRes.ok) {
+          quizList = await quizRes.json();
+          // Soruları ayırt edebilmek için her soru objesine isQuiz bayrağı takıyoruz kanka
+          quizList = quizList.map(item => ({ ...item, isQuiz: true }));
+        }
+
+        // İki farklı API listesini tek bir array içinde birleştiriyoruz
+        const mergedList = [...memoriesList, ...quizList];
+
+        // Hepsini tarihlerine göre yeniden eskiye harmanlayarak sıralıyoruz
+        const sorted = mergedList.sort((a: any, b: any) => 
+          new Date(b.createdAt || b.CreatedAt).getTime() - new Date(a.createdAt || a.CreatedAt).getTime()
+        );
+
+        setCombinedItems(sorted);
       } catch (err) {
-        console.error('Veriler çekilirken hata oluştu:', err);
+        console.error('Veriler çekilirken hata oluştu kanka:', err);
       } finally {
         setLoading(false);
       }
@@ -114,11 +131,11 @@ export default function WallReveal() {
 
         {/* 👑 ÜST KISIM: Yukarıya, sola ve sağa tamamen sıfırlanan, alt köşeleri kıvrımlı asil panel kuşağı! */}
       <div style={{
-        width: '100%', // Sağa ve sola tamamen dayansın diye kanka
+        width: '100%', 
         backgroundColor: currentTheme.pageBg, // Arka planla tamamen AYNI renk!
         borderBottom: `1.5px solid ${currentTheme.border}`, // Bordo/mavi ince sınır çizgimiz
-        borderBottomLeftRadius: '24px', // 🚨 Sol alt köşeyi kıvırdık kanka!
-        borderBottomRightRadius: '24px', // 🚨 Sağ alt köşeyi kıvırdık kanka!
+        borderBottomLeftRadius: '30px', 
+        borderBottomRightRadius: '30px', 
         padding: '3.5rem 2rem', // Başlığın dikeyde rahat etmesi için tatlı bir dolgu
         textAlign: 'center',
         marginTop: 0, // Üstte hiçbir boşluk kalmasın, sıfırlansın
@@ -135,9 +152,9 @@ export default function WallReveal() {
           fontSize: '44px', 
           fontStyle: 'italic', 
           fontWeight: '900', 
-          color: currentTheme.heroText, // Temanın o koyu asil bordo/mürdüm tonu
+          color: currentTheme.heroText, 
           margin: 0,
-          lineHeight: '1.0',
+          lineHeight: '1.2',
           fontFamily: '"Georgia", serif'
         }}>
           {wallTitle}
