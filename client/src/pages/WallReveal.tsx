@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-// Temalarımız - MemoryWallGrid ile birebir aynı renkler ve arka plan stilleri!
+// Temalarımız - Renk paletleri tamamen o asil tonlarda kilitli kanka
 const themes: Record<string, any> = {
   birthday: {
     pageBg: '#FFEBF0',
@@ -69,7 +69,7 @@ export default function WallReveal() {
   const [selectedItem, setSelectedItem] = useState<any | null>(null); 
   const [loading, setLoading] = useState<boolean>(true);
 
-  // 🧠 HİLE KORUMASI: Başrolün çözdüğü soruları localStorage'da mühürlüyoruz ki yenilese de gitmesin!
+  // 🧠 HİLE KORUMASI: Başrolün çözdüğü soruları localStorage'da mühürlüyoruz kanka
   const [answers, setAnswers] = useState<Record<number, string>>(() => {
     const saved = localStorage.getItem(`wall_${id}_answers`);
     return saved ? JSON.parse(saved) : {};
@@ -80,7 +80,7 @@ export default function WallReveal() {
   const normalizedTheme = (wallTheme || 'birthday').toLowerCase();
   const currentTheme = themes[normalizedTheme] || themes.birthday;
 
-  // 🎯 Görseldeki o nokta desenli kağıt yapısı
+  // 🎯 İSTEDİĞİN GİBİ SADECE NOKTALI KAĞIT DESENİ: Ekose çizgileri tamamen uçtu kanka!
   const dotPatternStyle = `radial-gradient(${currentTheme.border} 2px, transparent 2px)`;
 
   useEffect(() => {
@@ -94,11 +94,10 @@ export default function WallReveal() {
           setWallTheme((wallData.theme || wallData.Theme || 'birthday').toLowerCase());
         }
 
-        // 2. Sadece anıları ve soruları çekiyoruz
+        // 2. Anıları ve soruları çekiyoruz
         const memoriesRes = await fetch(`${apiUrl}/api/Memory/wall/${id}`);
         if (memoriesRes.ok) {
           const memoriesData = await memoriesRes.json();
-          // Tarihe göre sıralıyoruz
           const sorted = memoriesData.sort((a: any, b: any) => 
             new Date(b.createdAt || b.CreatedAt).getTime() - new Date(a.createdAt || a.CreatedAt).getTime()
           );
@@ -116,7 +115,7 @@ export default function WallReveal() {
 
   // 🎯 Şık tıklandığında çalışan interaktif quiz fonksiyonu
   const handleOptionClick = (questionId: number, selectedOption: string) => {
-    if (answers[questionId]) return; // Zaten cevaplandıysa durdur
+    if (answers[questionId]) return;
 
     const newAnswers = { ...answers, [questionId]: selectedOption };
     setAnswers(newAnswers);
@@ -132,14 +131,13 @@ export default function WallReveal() {
   }
 
   return (
+    /* 🚨 SOLDAKİ SİYAH BARI YOK EDEN, GENİŞLİĞİ LAYOUT'A UYDURAN GÜVENLİ CONTAINER: */
     <div style={{ 
-      width: '100vw', 
+      width: '100%', 
       minHeight: '100vh', 
-      marginLeft: 'calc(-50vw + 50%)',
-      marginRight: 'calc(-50vw + 50%)',
       backgroundColor: currentTheme.pageBg, 
       backgroundImage: dotPatternStyle,
-      backgroundSize: '24px 24px', 
+      backgroundSize: '24px 24px', // Görseldeki o tatlı ve sık noktacıklar
       padding: '4rem 2rem', 
       boxSizing: 'border-box', 
       fontFamily: '"Georgia", serif', 
@@ -208,7 +206,7 @@ export default function WallReveal() {
                     fontWeight: 'bold', 
                     fontFamily: 'sans-serif' 
                   }}>
-                    {isAnswered ? (isCorrect ? '🎉 DOĞRU BİLİNDİ' : '😢 MAALESEF YANLIŞ') : '✨ SÜRPRİZ KAPSÜL SORUSU'}
+                    {isAnswered ? (isCorrect ? '🎉 DOĞRU BİLİNDİ' : '😢 MAALESEF YANLIŞ') : '✨ KAPSÜL SORUSU'}
                   </div>
                   <h4 style={{ margin: '5px 0', color: currentTheme.heroText, fontStyle: 'italic', fontSize: '18px', lineHeight: '1.5' }}>
                     "{item.questionText || item.QuestionText}"
