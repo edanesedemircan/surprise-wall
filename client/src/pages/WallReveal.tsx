@@ -112,17 +112,15 @@ export default function WallReveal() {
         }
       `}</style>
 
-        {/* 👑 ÜST KISIM: Tam tarif ettiğin gibi, sayfa rengiyle bütünleşik, ince bordo sınır çizgili asil panel! */}
+        {/* 👑 ÜST KISIM: Yukarıya, sola ve sağa tamamen sıfırlanan asil panel kuşağı! */}
       <div style={{
-        width: '100%',
-        maxWidth: '800px', // Panel genişliği
-        backgroundColor: currentTheme.pageBg, // Arka planla tamamen AYNI renk kanka!
-        border: `1.5px solid ${currentTheme.border}`, // Sadece kenarlarından geçen o incecik tatlı sınır çizgisi
-        borderRadius: '24px', // Yumuşacık köşeler
-        padding: '3rem 2rem',
+        width: '100%', // Sağa ve sola tamamen dayansın diye kanka
+        backgroundColor: currentTheme.pageBg, // Arka planla tamamen AYNI renk!
+        borderBottom: `1.5px solid ${currentTheme.border}`, // Sadece alt kenarında o incecik sınır çizgisi kalıyor
+        padding: '3.5rem 2rem', // İçerideki başlığın dikeyde rahat etmesi için tatlı bir dolgu
         textAlign: 'center',
-        marginTop: '2rem',
-        marginBottom: '4rem',
+        marginTop: 0, // Üstte hiçbir boşluk kalmasın, sıfırlansın
+        marginBottom: '4rem', // Alttaki anı kartlarıyla arasındaki o konforlu mesafe
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
@@ -135,7 +133,7 @@ export default function WallReveal() {
           fontSize: '44px', 
           fontStyle: 'italic', 
           fontWeight: '900', 
-          color: currentTheme.heroText, // Temanın o koyu asil rengi
+          color: currentTheme.heroText, // Temanın o koyu asil bordo/mürdüm tonu
           margin: 0,
           lineHeight: '1.2',
           fontFamily: '"Georgia", serif'
