@@ -129,39 +129,61 @@ export default function WallReveal() {
         }
       `}</style>
 
-        {/* 👑 ÜST KISIM: Yukarıya, sola ve sağa tamamen sıfırlanan, alt köşeleri kıvrımlı asil panel kuşağı! */}
-      <div style={{
-        width: '100%', 
-        backgroundColor: currentTheme.pageBg, // Arka planla tamamen AYNI renk!
-        borderBottom: `1.5px solid ${currentTheme.border}`, // Bordo/mavi ince sınır çizgimiz
-        borderBottomLeftRadius: '30px', 
-        borderBottomRightRadius: '30px', 
-        padding: '3.5rem 2rem', // Başlığın dikeyde rahat etmesi için tatlı bir dolgu
-        textAlign: 'center',
-        marginTop: 0, // Üstte hiçbir boşluk kalmasın, sıfırlansın
-        marginBottom: '4rem', // Alttaki anı kartlarıyla arasındaki o konforlu mesafe
-        boxSizing: 'border-box',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem'
-      }}>
-        {/* Başlığımız */}
-        <h1 style={{ 
-          fontSize: '44px', 
-          fontStyle: 'italic', 
-          fontWeight: '900', 
-          color: currentTheme.heroText, 
-          margin: 0,
-          lineHeight: '1.2',
-          fontFamily: '"Georgia", serif'
-        }}>
-          {wallTitle}
-        </h1>
+       <div style={{
+  width: '100%',
+  textAlign: 'center',
+  padding: '3rem 1rem 2rem 1rem',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '0.75rem',
+  animation: 'fadeInDown 0.8s ease-out'
+}}>
+  {/* 🌸 Tatlı dinamik bir emoji alanı */}
+  <div style={{ 
+    fontSize: '50px', 
+    lineHeight: '1',
+    filter: 'drop-shadow(0 10px 15px rgba(160, 43, 106, 0.15))',
+    animation: 'bounce 2s infinite'
+  }}>
+    🎉
+  </div>
 
-        {/* Başlığın altındaki o ufak gereksiz çizgiyi tamamen uçurduk kanka! */}
-      </div>
+  {/* ✍️ Senin veritabanından gelen dinamik oda başlığın! (Hiçbir şey bozulmuyor) */}
+  <h1 style={{
+    fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif',
+    fontSize: '36px',
+    fontStyle: 'italic',
+    fontWeight: '800',
+    color: '#a02b6a', // Kartlarınla uyumlu o asil mürdüm
+    margin: 0,
+    textShadow: '0 2px 4px rgba(160, 43, 106, 0.05)',
+    letterSpacing: '-0.5px'
+  }}>
+    {/* 🚨 Senin projedeki değişken adı neyse buraya onu yaz kanka (wallTitle, title veya roomTitle) */}
+    {wallTitle || 'Yükleniyor...'}
+  </h1>
+
+  {/* 📝 Altındaki zarif çizgi ve açıklama */}
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginTop: '0.5rem'
+  }}>
+    <span style={{ width: '40px', height: '1px', backgroundColor: '#FECDD3' }} />
+    <span style={{
+      fontFamily: '"Georgia", serif',
+      fontSize: '15px',
+      color: '#7C5858',
+      fontStyle: 'italic',
+      opacity: 0.85
+    }}>
+      kapsüldeki tüm anılar ve sorular başarıyla çözüldü!
+    </span>
+    <span style={{ width: '40px', height: '1px', backgroundColor: '#FECDD3' }} />
+  </div>
+</div>
 
       {/* 📌 AKIŞKAN GRİD ALANI */}
       <div style={{ width: '100%', maxWidth: '1200px' }}>
