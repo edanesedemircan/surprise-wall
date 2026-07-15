@@ -303,7 +303,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             ✨ Anı Bırak
           </button>
           <button onClick={() => { setEditingQuizId(null); setIsQuizPanelOpen(true); }} style={{ width: '100%', padding: '1rem', borderRadius: '14px', backgroundColor: colors.heroText, color: '#ffffff', border: 'none', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', transition: 'transform 0.1s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-            ❓ Başrole Soru Sor Kartı
+            ❓ Soru Sor Kartı
           </button>
         </div>
 
@@ -368,7 +368,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} 
               onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             >
-              {isAddingCreator ? 'Ekleniyor...' : '👥 Davetli Ekle'}
+              {isAddingCreator ? 'Ekleniyor...' : '➕ Davetli Ekle'}
             </button>
           </form>
 
@@ -380,7 +380,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               width: '80%', 
               padding: '0.75rem', 
               borderRadius: '10px', 
-              backgroundColor: '#ac1b1b', 
+              backgroundColor: '#fa0b0b', 
               color: '#ffffff', 
               border: 'none', 
               fontWeight: 'bold', 
@@ -393,7 +393,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} 
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            {isDeleting ? 'İmha Ediliyor...' : '💣 Kapsülü İmha Et'}
+            {isDeleting ? 'İmha Ediliyor...' : '💥 Kapsülü İmha Et'}
           </button>
         </div>
 
@@ -449,7 +449,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             }}>
               İlk anıyı sen yazarak bu duvarı canlandırmaya ne dersin? <br /><br />
               Sol taraftaki <strong style={{ color: colors.heroText, fontStyle: 'normal' }}>"✨ Anı Bırak"</strong> veya 
-              <strong style={{ color: colors.heroText, fontStyle: 'normal' }}> "❓ Başrole Soru Sor"</strong> butonlarına basarak anılarını ekleyebilir ya da sorularını sorabilirsin.
+              <strong style={{ color: colors.heroText, fontStyle: 'normal' }}> "❓Soru Sor"</strong> butonlarına basarak anılarını ekleyebilir ya da sorularını sorabilirsin.
             </p>
           </div>
         ) : (
@@ -517,7 +517,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           <div style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '460px', height: '100vh', padding: '2.5rem', boxSizing: 'border-box', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxShadow: '-10px 0 35px rgba(0,0,0,0.05)', borderLeft: `2px solid ${colors.border}`, backgroundImage: gridPatternStyle, backgroundSize: '20px 20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `2px solid ${colors.border}`, paddingBottom: '1rem' }}>
               <h3 style={{ margin: 0, color: colors.heroText, fontStyle: 'italic', fontSize: '24px', fontWeight: '900' }}>
-                {editingQuizId ? '📝 Soruyu Düzenle' : '❓ Başrole Soru Hazırla'}
+                {editingQuizId ? '📝 Soruyu Düzenle' : '❓ Soru Hazırla'}
               </h3>
               <button onClick={() => { setIsQuizPanelOpen(false); setEditingQuizId(null); setQuestionText(''); setOptionA(''); setOptionB(''); setOptionC(''); setOptionD(''); setCreatorName(''); }} style={{ border: 'none', background: 'none', fontSize: '22px', cursor: 'pointer', color: '#94A3B8' }}>✕</button>
             </div>
@@ -553,19 +553,15 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             <button onClick={() => { setIsAnıModalOpen(false); setSelectedImage(null); setEditingMemoryId(null); setAuthorName(''); setContent(''); }} style={{ position: 'absolute', top: '24px', right: '24px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontSize: '18px', color: '#94A3B8' }}>✕</button>
             <h3 style={{ margin: '0 0 1.75rem 0', fontStyle: 'italic', color: colors.heroText, fontSize: '24px', fontWeight: '800' }}>{editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}</h3>
             <form onSubmit={handleAnıSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px' }} />
+              <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px',  boxSizing: 'border-box'}} />
               <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5', boxSizing: 'border-box'}} />
-              <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} style={{ width: '100%', 
-                  padding: '0.95rem 1.25rem', 
-                  borderRadius: '14px', 
-                  border: `2px solid ${colors.border}`, 
-                  color: colors.text, 
-                  backgroundColor: colors.badge, 
-                  outline: 'none', 
-                  fontSize: '15px', 
-                  resize: 'none', 
-                  lineHeight: '1.5',
-                  boxSizing: 'border-box' }} />
+              <input 
+  type="file" 
+  accept="image/*" 
+  ref={fileInputRef} 
+  onChange={handleImageChange} 
+  style={{ display: 'none' }} // <-- Bütün o gereksiz stilleri silip sadece bunu bıraktık!
+/>
               {!selectedImage ? (
                 <div onClick={() => fileInputRef.current?.click()} style={{ padding: '1.5rem', border: `2px dashed ${colors.accent}`, borderRadius: '14px', textAlign: 'center', cursor: 'pointer', backgroundColor: colors.badge, fontStyle: 'italic', fontSize: '14px', color: colors.heroText, fontWeight: 'bold' }}>📸 Fotoğraf Ekle / Değiştir</div>
               ) : (
@@ -575,7 +571,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
                 </div>
               )}
               <button type="submit" style={{ width: '100%', padding: '1.1rem', backgroundColor: colors.accent, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>
-                {editingMemoryId ? '💾 Değişiklikleri Kaydet' : '🖇️ Anıyı Duvara As'}
+                {editingMemoryId ? '💾 Değişiklikleri Kaydet' : '📎 Anıyı Duvara As'}
               </button>
             </form>
           </div>
