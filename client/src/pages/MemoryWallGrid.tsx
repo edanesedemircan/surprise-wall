@@ -207,8 +207,9 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
   // Kapsülü İmha Etme Fonksiyonu
   const handleDestroyWall = async () => {
+
     const firstConfirm = window.confirm(
-      "DİKKAT! Bu zaman kapsülünü ve içindeki tüm anıları/soruları kalıcı olarak silmek istediğinize emin misiniz? 💣"
+      "DİKKAT! Bu zaman kapsülünü ve içindeki tüm anıları/soruları kalıcı olarak silmek istediğinize emin misiniz? "
     );
     if (!firstConfirm) return;
 
@@ -219,7 +220,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`${apiUrl}/api/memory/${wallId}`, {
+      const response = await fetch(`${apiUrl}/api/memory/wall/${wallId}`, {
         method: 'DELETE',
       });
 
@@ -245,7 +246,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
     setIsAddingCreator(true);
     try {
-      const response = await fetch(`${apiUrl}/api/memory/${wallId}/co-creator`, {
+      const response = await fetch(`${apiUrl}/api/memory/wall/${wallId}/co-creator`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: coCreatorEmail.trim() })
@@ -295,9 +296,6 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       }}>
         <div>
           <h2 style={{ fontSize: '24px', fontStyle: 'italic', fontWeight: '900', color: colors.heroText, margin: '0 0 0.5rem 0' }}>{wallTitle}</h2>
-          <span style={{ display: 'inline-block', backgroundColor: colors.badge, color: colors.heroText, fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '11px', padding: '0.3rem 0.8rem', borderRadius: '20px', border: `1px solid ${colors.border}` }}>
-            Kapsül: #{wallId}
-          </span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
@@ -316,6 +314,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           borderTop: `2px dashed ${colors.border}`,
           display: 'flex',
           flexDirection: 'column',
+          alignItems: 'center',
           gap: '1rem'
         }}>
           <span style={{ 
@@ -381,7 +380,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               width: '80%', 
               padding: '0.75rem', 
               borderRadius: '10px', 
-              backgroundColor: '#401111', 
+              backgroundColor: '#811b1b', 
               color: '#ffffff', 
               border: 'none', 
               fontWeight: 'bold', 
