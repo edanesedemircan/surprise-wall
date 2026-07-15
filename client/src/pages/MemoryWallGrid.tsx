@@ -414,44 +414,42 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         alignItems: combinedItems.length === 0 ? 'center' : 'stretch',
         minHeight: '85vh'
       }}>
-        {combinedItems.length === 0 ? (
-          /* 🌟 BOŞ DURUM (EMPTY STATE) TASARIMI */
+       {combinedItems.length === 0 ? (
+          /* 🌟 SADE VE ELİT BOŞ DURUM METNİ */
           <div style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
-            padding: '3rem 2.5rem',
-            borderRadius: '24px',
-            border: `2.5px dashed ${colors.heroText}`,
-            boxShadow: '0 12px 35px rgba(0,0,0,0.03)',
-            maxWidth: '520px',
-            backdropFilter: 'blur(8px)',
-            margin: 'auto'
+            maxWidth: '600px',
+            margin: 'auto',
+            padding: '2rem',
+            animation: 'fadeIn 0.5s ease-out'
           }}>
-            <div style={{ fontSize: '4.5rem', marginBottom: '1.25rem' }}>✨📝</div>
             <h3 style={{ 
               color: colors.heroText, 
-              fontFamily: 'sans-serif', 
-              fontSize: '1.45rem', 
-              fontWeight: '900',
-              marginBottom: '0.85rem'
+              fontFamily: '"Georgia", serif', 
+              fontSize: '1.8rem', 
+              fontWeight: 'bold',
+              fontStyle: 'italic',
+              marginBottom: '1rem',
+              letterSpacing: '-0.5px'
             }}>
               Henüz hiç anı bırakılmamış...
             </h3>
             <p style={{ 
               color: colors.text, 
-              fontFamily: 'sans-serif', 
-              fontSize: '0.98rem', 
-              lineHeight: '1.65',
+              fontFamily: '"Georgia", serif', 
+              fontSize: '1.05rem', 
+              lineHeight: '1.8',
+              fontStyle: 'italic',
               margin: 0,
-              fontWeight: '600'
+              opacity: 0.85
             }}>
-              İlk anıyı sen yazarak bu duvarı canlandırmaya ne dersin? 😍 <br /><br />
-              Sol taraftaki <strong style={{ color: colors.heroText }}>"✨ Anı Bırak"</strong> veya 
-              <strong style={{ color: colors.heroText }}> "❓ Başrole Soru Sor"</strong> butonlarına basarak anılarını ekleyebilir ya da sorularını sorabilirsin! 💖
+              İlk anıyı sen yazarak bu duvarı canlandırmaya ne dersin? <br /><br />
+              Sol taraftaki <strong style={{ color: colors.heroText, fontStyle: 'normal' }}>"✨ Anı Bırak"</strong> veya 
+              <strong style={{ color: colors.heroText, fontStyle: 'normal' }}> "❓ Başrole Soru Sor"</strong> butonlarına basarak anılarını ekleyebilir ya da sorularını sorabilirsin.
             </p>
           </div>
         ) : (
