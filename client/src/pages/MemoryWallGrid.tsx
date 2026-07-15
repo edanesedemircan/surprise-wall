@@ -554,8 +554,18 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             <h3 style={{ margin: '0 0 1.75rem 0', fontStyle: 'italic', color: colors.heroText, fontSize: '24px', fontWeight: '800' }}>{editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}</h3>
             <form onSubmit={handleAnıSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px' }} />
-              <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5' }} />
-              <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} />
+              <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5', boxSizing: 'border-box'}} />
+              <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} style={{ width: '100%', 
+                  padding: '0.95rem 1.25rem', 
+                  borderRadius: '14px', 
+                  border: `2px solid ${colors.border}`, 
+                  color: colors.text, 
+                  backgroundColor: colors.badge, 
+                  outline: 'none', 
+                  fontSize: '15px', 
+                  resize: 'none', 
+                  lineHeight: '1.5',
+                  boxSizing: 'border-box' }} />
               {!selectedImage ? (
                 <div onClick={() => fileInputRef.current?.click()} style={{ padding: '1.5rem', border: `2px dashed ${colors.accent}`, borderRadius: '14px', textAlign: 'center', cursor: 'pointer', backgroundColor: colors.badge, fontStyle: 'italic', fontSize: '14px', color: colors.heroText, fontWeight: 'bold' }}>📸 Fotoğraf Ekle / Değiştir</div>
               ) : (
@@ -565,7 +575,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
                 </div>
               )}
               <button type="submit" style={{ width: '100%', padding: '1.1rem', backgroundColor: colors.accent, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>
-                {editingMemoryId ? '💾 Değişiklikleri Kaydet' : '🚀 Anıyı Duvara As'}
+                {editingMemoryId ? '💾 Değişiklikleri Kaydet' : '🖇️ Anıyı Duvara As'}
               </button>
             </form>
           </div>
