@@ -209,7 +209,7 @@ export default function WallReveal() {
                       fontWeight: 'bold', 
                       fontFamily: 'sans-serif' 
                     }}>
-                      {isAnswered ? (isCorrect ? '🎉 DOĞRU BİLİNDİ' : '😢 YANLIŞ CEVAP') : '✨ KAPSÜL SORUSU'}
+                      {isAnswered ? (isCorrect ? '✔️ DOĞRU CEVAP' : '✖️ YANLIŞ CEVAP') : '✨ KAPSÜL SORUSU'}
                     </div>
                   </div>
 
@@ -233,7 +233,7 @@ export default function WallReveal() {
                           fontFamily: 'sans-serif',
                           backgroundColor: '#ffffff'
                         }}>
-                          {opt}) {optText}
+                          {opt} {optText}
                         </div>
                       );
                     })}
@@ -373,9 +373,22 @@ export default function WallReveal() {
                     </div>
 
                     {isAns && (
-                      <div style={{ marginTop: '1rem', padding: '1rem', borderRadius: '14px', backgroundColor: userChoice === correctChoice ? '#ECFDF5' : '#FEF2F2', color: userChoice === correctChoice ? '#047857' : '#B91C1C', textAlign: 'center', fontWeight: 'bold', fontStyle: 'italic', fontSize: '15px' }}>
-                        {userChoice === correctChoice ? '🎉 Harika! Doğru bildin! 🥳' : `😢 Maalesef yanlış! Doğru cevap "${correctChoice}" olmalıydı. ❤️`}
-                      </div>
+                      <div style={{ 
+    marginTop: '1rem', 
+    padding: '1rem', 
+    borderRadius: '14px', 
+    backgroundColor: userChoice === correctChoice ? '#ECFDF5' : '#FEF2F2', 
+    color: userChoice === correctChoice ? '#047857' : '#B91C1C', 
+    textAlign: 'center', 
+    fontWeight: 'bold', 
+    fontStyle: 'italic', 
+    fontSize: '15px' 
+  }}>
+    {userChoice === correctChoice 
+      ? 'İşte bu ya, helal! 🥳' 
+      : `Hadi be, patladık! Doğru cevap: "${correctChoice}" 🥺` // 🚀 Backtick ve ${} kullanarak düzelttik kanka!
+    }
+  </div>
                     )}
                   </>
                 );
