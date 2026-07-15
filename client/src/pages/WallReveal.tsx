@@ -112,12 +112,14 @@ export default function WallReveal() {
         }
       `}</style>
 
-        {/* 👑 ÜST KISIM: Yukarıya, sola ve sağa tamamen sıfırlanan asil panel kuşağı! */}
+        {/* 👑 ÜST KISIM: Yukarıya, sola ve sağa tamamen sıfırlanan, alt köşeleri kıvrımlı asil panel kuşağı! */}
       <div style={{
         width: '100%', // Sağa ve sola tamamen dayansın diye kanka
         backgroundColor: currentTheme.pageBg, // Arka planla tamamen AYNI renk!
-        borderBottom: `1.5px solid ${currentTheme.border}`, // Sadece alt kenarında o incecik sınır çizgisi kalıyor
-        padding: '3.5rem 2rem', // İçerideki başlığın dikeyde rahat etmesi için tatlı bir dolgu
+        borderBottom: `1.5px solid ${currentTheme.border}`, // Bordo/mavi ince sınır çizgimiz
+        borderBottomLeftRadius: '24px', // 🚨 Sol alt köşeyi kıvırdık kanka!
+        borderBottomRightRadius: '24px', // 🚨 Sağ alt köşeyi kıvırdık kanka!
+        padding: '3.5rem 2rem', // Başlığın dikeyde rahat etmesi için tatlı bir dolgu
         textAlign: 'center',
         marginTop: 0, // Üstte hiçbir boşluk kalmasın, sıfırlansın
         marginBottom: '4rem', // Alttaki anı kartlarıyla arasındaki o konforlu mesafe
@@ -141,15 +143,7 @@ export default function WallReveal() {
           {wallTitle}
         </h1>
 
-        {/* Panel içi incecik, narin süs çizgisi */}
-        <div style={{ 
-          width: '50px', 
-          height: '2px', 
-          backgroundColor: currentTheme.heroText, 
-          marginTop: '0.75rem', 
-          borderRadius: '1px', 
-          opacity: 0.25 
-        }} />
+        {/* Başlığın altındaki o ufak gereksiz çizgiyi tamamen uçurduk kanka! */}
       </div>
 
       {/* 📌 AKIŞKAN GRİD ALANI */}
