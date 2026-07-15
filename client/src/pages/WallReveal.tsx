@@ -112,28 +112,64 @@ export default function WallReveal() {
         }
       `}</style>
 
-     {/* 👑 ÜST KISIM: Başlık (Sade, asil ve çıplaklıktan uzak) */}
-      <div style={{ textAlign: 'center', maxWidth: '800px', marginBottom: '4rem', marginTop: '1rem' }}>
+        {/* 🌊 ÜST KISIM: Tam çizdiğin gibi kavisli/dalgalı (Wave) şık arka plan alanı */}
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        backgroundColor: '#ffffff', // Dalga bloğunun ana rengi kar beyazı
+        padding: '5rem 2rem 6rem 2rem', // Başlığı ortalayacak konforlu boşluklar
+        borderBottomLeftRadius: '50% 12%', // Sol kavis başlangıcı kanka
+        borderBottomRightRadius: '50% 12%', // Sağ kavis bitişi (Tam çizdiğin o oval kavis!)
+        boxShadow: `0 15px 35px rgba(0, 0, 0, 0.02), 0 5px 15px ${currentTheme.badge}`, // Hafif ve temaya uygun yumuşacık gölge
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '5rem',
+        boxSizing: 'border-box'
+      }}>
+        {/* Üstte parıldayan o tatlı küçük rozet */}
+        <div style={{
+          backgroundColor: currentTheme.badge,
+          color: currentTheme.heroText,
+          padding: '5px 14px',
+          borderRadius: '20px',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          fontStyle: 'italic',
+          letterSpacing: '0.5px',
+          border: `1px solid ${currentTheme.border}`,
+          marginBottom: '0.5rem',
+          display: 'inline-block'
+        }}>
+          ✨ Zaman Kapsülü Açıldı
+        </div>
+
+        {/* Edebi asil başlığımız */}
         <h1 style={{ 
-          fontSize: '46px', 
+          fontSize: '48px', 
           fontStyle: 'italic', 
           fontWeight: '900', 
           color: currentTheme.heroText, 
-          margin: '0 0 0.5rem 0',
-          lineHeight: '1.3',
-          letterSpacing: '-0.5px'
+          margin: '0.5rem 0',
+          lineHeight: '1.2',
+          fontFamily: '"Georgia", serif'
         }}>
           {wallTitle}
         </h1>
-        {/* Ana sayfadan ayrıldığını belirten, uçlara doğru hafifçe silinen o şık gradyan çizgi kanka */}
-        <div style={{ 
-          width: '120px', 
-          height: '3px', 
-          background: `linear-gradient(90deg, transparent, ${currentTheme.heroText}, transparent)`, 
-          margin: '1.25rem auto 0 auto', 
-          borderRadius: '2px', 
-          opacity: 0.6 
-        }} />
+
+        <p style={{
+          color: currentTheme.text,
+          fontSize: '15px',
+          fontStyle: 'italic',
+          margin: '0 auto',
+          maxWidth: '600px',
+          opacity: 0.8,
+          lineHeight: '1.6'
+        }}>
+          Senin için biriktirilen tüm o değerli anılar ve sürpriz sorular...
+        </p>
       </div>
 
       {/* 📌 AKIŞKAN GRİD ALANI */}

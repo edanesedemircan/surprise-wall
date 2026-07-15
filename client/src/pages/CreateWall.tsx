@@ -86,29 +86,6 @@ export function CreateWall() {
   setStatusMessage('Zaman kapsülü oluşturuluyor...');
   setCreatedWallId(null); 
 
-  // Güvenlik Kilidi: Eğer loggedInUser yoksa veya email'i boşsa çökmesin, elle yazılan targetEmail'i veya geçici bir şeyi baz alsın
-  //const creatorEmailValue = loggedInUser?.email || targetEmail || "test@gmail.com";
-
-  // Tarih boşsa .NET DateTime modelinin çökmemesi için geçerli bir gelecek tarih verelim (Örn: 1 gün sonrası)
- /* let finalTargetDate = null;
-  if (isCountdownActive && targetDate) {
-    finalTargetDate = new Date(targetDate).toISOString();
-  } else {
-    // Sayaç aktif değilse bile .NET DateTime? (Nullable) değilse patlar. Garanti olsun diye bugünün tarihini ISO formatında verelim
-    finalTargetDate = new Date().toISOString();
-  }*/
-
- /* const payload = {
-    title: title || "İsimsiz Duvar",
-    theme: selectedTheme || "birthday",
-    targetEmail: targetEmail,
-    // Eğer allowedEmails array ise ve backend string[] bekliyorsa okey, ama düz string bekliyorsa .join(',') yapmak gerekir. Şimdilik array yolluyoruz:
-    allowedEmails: allowedEmails || [], 
-    creatorEmail: creatorEmailValue,
-    isCountdownActive: !!isCountdownActive,
-    targetDate: finalTargetDate
-  };*/
-
   try {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
     const response = await fetch(`${apiUrl}/api/wall/create`, {
@@ -198,7 +175,7 @@ body: JSON.stringify({
         border: '1px solid #FECDD3',
         boxSizing: 'border-box'
       }}>
-        
+  
         {/* Sayfa Başlığı */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <h2 style={{ fontSize: '36px', fontStyle: 'italic', fontWeight: '700', color: '#a02b6a', margin: '0 0 0.5rem 0' }}>
