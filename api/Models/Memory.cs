@@ -22,6 +22,7 @@ namespace AniDefteri.Api.Models
         [ForeignKey("WallId")]
         public Wall? Wall { get; set; }
 
+
         public string? ImageUrl { get; set; }
         
     }
