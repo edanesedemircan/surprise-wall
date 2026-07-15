@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-// Temalarımıza göre dinamik renk eşleştirmesi 
+// Temalarımız
 const themes: Record<string, any> = {
   default: {
     pageBg: '#FAF5F5',
@@ -29,13 +29,12 @@ const themes: Record<string, any> = {
 
 export default function WallReveal() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   
   // State tanımlamalarımız
   const [wallTitle, setWallTitle] = useState<string>('Kapsülün Açıldı! ✨');
   const [combinedItems, setCombinedItems] = useState<any[]>([]);
   const [currentTheme, setCurrentTheme] = useState<any>(themes.default);
-  const [selectedItem, setSelectedItem] = useState<any | null>(null); // Büyüteç modalı için
+  const [selectedItem, setSelectedItem] = useState<any | null>(null); 
   const [loading, setLoading] = useState<boolean>(true);
 
   // 🧠 HİLE KORUMASI: Cevaplanan soruları localStorage'da mühürlüyoruz ki yenilese de gitmesin!
@@ -83,7 +82,7 @@ export default function WallReveal() {
   }, [id]);
 
   // 🎯 Şık tıklandığında çalışan interaktif quiz fonksiyonu
-  const handleOptionClick = (questionId: number, selectedOption: string, correctOption: string) => {
+  const handleOptionClick = (questionId: number, selectedOption: string) => {
     // 🔐 HİLE KORUMASI: Eğer bu soru zaten cevaplandıysa tıklamayı yok say!
     if (answers[questionId]) return;
 
@@ -188,12 +187,12 @@ export default function WallReveal() {
               );
             }
 
-            // ✍️ Anı Kartı Tasarımı 
+            // ✍️ Anı Kartı Tasarımı
             const imageSource = item.imageUrl || item.ImageUrl;
             return (
               <div 
                 key={`mem-${item.id}-${index}`} 
-                onClick={() => setSelectedItem(item)} 
+                onClick={() => setSelectedItem(item)} // Tıklanınca modal açılacak 
                 style={{ 
                   backgroundColor: currentTheme.cardBg, 
                   border: `2px solid ${currentTheme.border}`, 
@@ -285,7 +284,7 @@ export default function WallReveal() {
                         const optionText = selectedItem[`option${optionKey}`];
                         if (!optionText) return null;
 
-                       
+                        // Şıkların dinamik renk stillerini belirliyoruz 
                         let optionBg = currentTheme.badge;
                         let optionBorder = currentTheme.border;
                         let optionTextColor = currentTheme.text;
@@ -297,7 +296,7 @@ export default function WallReveal() {
                             optionBorder = currentTheme.success;
                             optionTextColor = '#065F46';
                           } else if (optionKey === userChoice && userChoice !== correctChoice) {
-                          
+                            // Eğer yanlış şık seçildiyse o kırmızı yanar
                             optionBg = '#FEE2E2'; 
                             optionBorder = currentTheme.danger;
                             optionTextColor = '#991B1B';
@@ -307,7 +306,7 @@ export default function WallReveal() {
                         return (
                           <div 
                             key={optionKey} 
-                            onClick={() => handleOptionClick(qId, optionKey, correctChoice)}
+                            onClick={() => handleOptionClick(qId, optionKey)}
                             style={{ 
                               padding: '14px 18px', 
                               backgroundColor: optionBg, 
