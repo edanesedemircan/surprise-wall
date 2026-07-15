@@ -123,7 +123,7 @@ public async Task<IActionResult> UpdateMemory(int id, [FromBody] AddMemoryDto dt
     return Ok(new { Message = "Anı başarıyla güncellendi! 📝" });
 }
 
-  [HttpDelete("wall/{id}")]
+  [HttpDelete("api/memory/wall/{id}")]
 public async Task<IActionResult> DeleteWall(int id)
 {
     var wall = await _context.Walls.FindAsync(id);
@@ -151,7 +151,7 @@ public async Task<IActionResult> DeleteWall(int id)
     }
 }
 
-    [HttpPost("wall/{id}/co-creator")] 
+    [HttpPost("api/memory/wall/{id}/co-creator")] 
 public async Task<IActionResult> AddCoCreator(int id, [FromBody] CoCreatorRequest request)
 {
     if (string.IsNullOrEmpty(request.Email))

@@ -128,7 +128,7 @@ namespace AniDefteri.Api.Controllers
             if (!int.TryParse(request.RoomCode, out int wallId))
             {
                 return BadRequest(new { success = false, message = "Oda kodu sayısal olmalıdır." });
-            }s
+            }
 
             var wall = await _context.Walls.FirstOrDefaultAsync(w => w.Id == wallId);
             if (wall == null)
