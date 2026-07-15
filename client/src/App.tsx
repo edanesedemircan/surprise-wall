@@ -4,6 +4,7 @@ import { Home } from './pages/Home';
 import { CreateWall } from './pages/CreateWall';
 import { WallDetail } from './pages/WallDetail';
 import { Welcome } from './pages/Welcome';
+import WallReveal from './pages/WallReveal'; 
 
 function App() {
   // Giriş durumunu tarayıcıda geçici tutuyoruz ki otomatik yönlendirmeyle sabit odaya kilitlemesin
@@ -23,7 +24,7 @@ function App() {
           {/* Karşılama Ekranı */}
           <Route path="/" element={<Welcome />} />
           
-          {/* Giriş Ekranı (O meşhur Pembe Ekoseli Kapı - Her zaman doğrudan açılır!) */}
+          {/* Giriş Ekranı */}
           <Route 
             path="/login" 
             element={
@@ -43,6 +44,11 @@ function App() {
                 title={userAuth?.title || 'Yükleniyor...'} 
               />
             } 
+          />
+
+          <Route 
+            path="/wall/:id/reveal" 
+            element={<WallReveal />} 
           />
         </Routes>
       </div>
