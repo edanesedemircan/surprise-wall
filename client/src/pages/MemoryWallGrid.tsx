@@ -307,7 +307,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           </button>
         </div>
 
-        {/* ⚙️ YÖNETİM PANELİ (Sol Dikey Menünün Alt Kısmı) */}
+        {/* ⚙️ YÖNETİM PANELİ */}
         <div style={{ 
           marginTop: 'auto', 
           paddingTop: '1.5rem', 
@@ -328,7 +328,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           </span>
 
           {/* Davetli Ekleme Formu */}
-          <form onSubmit={handleAddCoCreator} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <form onSubmit={handleAddCoCreator} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '80%' }}>
             <input 
               type="email" 
               placeholder="Davetli E-posta..." 
@@ -368,7 +368,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} 
               onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             >
-              {isAddingCreator ? 'Ekleniyor...' : '➕ Davetli Ekle'}
+              {isAddingCreator ? 'Ekleniyor...' : '👥 Davetli Ekle'}
             </button>
           </form>
 
@@ -393,7 +393,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} 
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            {isDeleting ? 'İmha Ediliyor...' : ' Kapsülü İmha Et ❕'}
+            {isDeleting ? 'İmha Ediliyor...' : '💣 Kapsülü İmha Et'}
           </button>
         </div>
 
@@ -403,61 +403,114 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       </div>
 
       {/* Sağ Taraf: Akışkan Anı Kartları Listesi */}
-      <div style={{ flex: 1, marginLeft: '280px', padding: '4rem 3rem', boxSizing: 'border-box' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
-          {combinedItems.map((item, index) => {
-            if (item.isQuiz) {
+      <div style={{ 
+        flex: 1, 
+        marginLeft: '280px', 
+        padding: '4rem 3rem', 
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: combinedItems.length === 0 ? 'center' : 'flex-start',
+        alignItems: combinedItems.length === 0 ? 'center' : 'stretch',
+        minHeight: '85vh'
+      }}>
+        {combinedItems.length === 0 ? (
+          /* 🌟 BOŞ DURUM (EMPTY STATE) TASARIMI */
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            padding: '3rem 2.5rem',
+            borderRadius: '24px',
+            border: `2.5px dashed ${colors.heroText}`,
+            boxShadow: '0 12px 35px rgba(0,0,0,0.03)',
+            maxWidth: '520px',
+            backdropFilter: 'blur(8px)',
+            margin: 'auto'
+          }}>
+            <div style={{ fontSize: '4.5rem', marginBottom: '1.25rem' }}>✨📝</div>
+            <h3 style={{ 
+              color: colors.heroText, 
+              fontFamily: 'sans-serif', 
+              fontSize: '1.45rem', 
+              fontWeight: '900',
+              marginBottom: '0.85rem'
+            }}>
+              Henüz hiç anı bırakılmamış...
+            </h3>
+            <p style={{ 
+              color: colors.text, 
+              fontFamily: 'sans-serif', 
+              fontSize: '0.98rem', 
+              lineHeight: '1.65',
+              margin: 0,
+              fontWeight: '600'
+            }}>
+              İlk anıyı sen yazarak bu duvarı canlandırmaya ne dersin? 😍 <br /><br />
+              Sol taraftaki <strong style={{ color: colors.heroText }}>"✨ Anı Bırak"</strong> veya 
+              <strong style={{ color: colors.heroText }}> "❓ Başrole Soru Sor"</strong> butonlarına basarak anılarını ekleyebilir ya da sorularını sorabilirsin! 💖
+            </p>
+          </div>
+        ) : (
+          /* 📌 MEVCUT KARTLARIN GRID LİSTESİ */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+            {combinedItems.map((item, index) => {
+              if (item.isQuiz) {
+                return (
+                  <div key={`quiz-${item.id}-${index}`} style={{ backgroundColor: colors.cardBg, border: `2.5px dashed ${colors.accent}`, borderRadius: '24px', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative', boxShadow: '0 12px 30px rgba(0,0,0,0.02)' }}>
+                    <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '8px', zIndex: 10, backgroundColor: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '20px', border: `1px solid ${colors.border}` }}>
+                      <button onClick={() => startEditQuiz(item)} title="Soruyu Düzenle" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>✏️</button>
+                      <button onClick={() => handleDeleteQuiz(item.id)} title="Soruyu Sil" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>🗑️</button>
+                    </div>
+
+                    <div style={{ display: 'inline-block', alignSelf: 'flex-start', backgroundColor: colors.accent, color: '#ffffff', padding: '2px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', fontFamily: 'sans-serif' }}>
+                      ✨ KAPSÜL SORUSU
+                    </div>
+                    
+                    <h4 style={{ margin: '5px 0', color: colors.heroText, fontStyle: 'italic', fontSize: '18px', lineHeight: '1.5' }}>
+                      "{item.questionText}"
+                    </h4>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', fontFamily: 'sans-serif', fontWeight: '600' }}>
+                      <div style={{ padding: '6px 10px', backgroundColor: colors.pageBg, borderRadius: '8px', border: `1px solid ${colors.border}`, color: colors.text }}>A) {item.optionA}</div>
+                      <div style={{ padding: '6px 10px', backgroundColor: colors.pageBg, borderRadius: '8px', border: `1px solid ${colors.border}`, color: colors.text }}>B) {item.optionB}</div>
+                      <div style={{ padding: '6px 10px', backgroundColor: colors.pageBg, borderRadius: '8px', border: `1px solid ${colors.border}`, color: colors.text }}>C) {item.optionC}</div>
+                      <div style={{ padding: '6px 10px', backgroundColor: colors.pageBg, borderRadius: '8px', border: `1px solid ${colors.border}`, color: colors.text }}>D) {item.optionD}</div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${colors.border}`, paddingTop: '0.8rem', marginTop: 'auto' }}>
+                      <span style={{ backgroundColor: colors.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: colors.heroText, border: `1px solid ${colors.border}` }}>❓ {item.creatorName}</span>
+                      <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              const imageSource = item.imageUrl || item.ImageUrl;
               return (
-                <div key={`quiz-${item.id}-${index}`} style={{ backgroundColor: colors.cardBg, border: `2.5px dashed ${colors.accent}`, borderRadius: '24px', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative', boxShadow: '0 12px 30px rgba(0,0,0,0.02)' }}>
+                <div key={`mem-${item.id}-${index}`} style={{ backgroundColor: colors.cardBg, border: `2px solid ${colors.border}`, borderRadius: '24px', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative', boxShadow: '0 10px 30px rgba(0,0,0,0.01)' }}>
                   <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '8px', zIndex: 10, backgroundColor: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '20px', border: `1px solid ${colors.border}` }}>
-                    <button onClick={() => startEditQuiz(item)} title="Soruyu Düzenle" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>✏️</button>
-                    <button onClick={() => handleDeleteQuiz(item.id)} title="Soruyu Sil" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>🗑️</button>
+                    <button onClick={() => startEditMemory(item)} title="Anıyı Düzenle" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>✏️</button>
+                    <button onClick={() => handleDeleteMemory(item.id)} title="Anıyı Sil" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>🗑️</button>
                   </div>
-
-                  <div style={{ display: 'inline-block', alignSelf: 'flex-start', backgroundColor: colors.accent, color: '#ffffff', padding: '2px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', fontFamily: 'sans-serif' }}>
-                    ✨ KAPSÜL SORUSU
-                  </div>
-                  
-                  <h4 style={{ margin: '5px 0', color: colors.heroText, fontStyle: 'italic', fontSize: '18px', lineHeight: '1.5' }}>
-                    "{item.questionText}"
-                  </h4>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', fontFamily: 'sans-serif', fontWeight: '600' }}>
-                    <div style={{ padding: '6px 10px', backgroundColor: colors.pageBg, borderRadius: '8px', border: `1px solid ${colors.border}`, color: colors.text }}>A) {item.optionA}</div>
-                    <div style={{ padding: '6px 10px', backgroundColor: colors.pageBg, borderRadius: '8px', border: `1px solid ${colors.border}`, color: colors.text }}>B) {item.optionB}</div>
-                    <div style={{ padding: '6px 10px', backgroundColor: colors.pageBg, borderRadius: '8px', border: `1px solid ${colors.border}`, color: colors.text }}>C) {item.optionC}</div>
-                    <div style={{ padding: '6px 10px', backgroundColor: colors.pageBg, borderRadius: '8px', border: `1px solid ${colors.border}`, color: colors.text }}>D) {item.optionD}</div>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${colors.border}`, paddingTop: '0.8rem', marginTop: 'auto' }}>
-                    <span style={{ backgroundColor: colors.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: colors.heroText, border: `1px solid ${colors.border}` }}>❓ {item.creatorName}</span>
+                  {imageSource && (
+                    <div style={{ width: '100%', maxHeight: '240px', borderRadius: '16px', overflow: 'hidden', marginTop: '0.5rem', border: `1px solid ${colors.border}` }}>
+                      <img src={imageSource} alt="Anı" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  )}
+                  <p style={{ margin: 0, color: colors.text, fontStyle: 'italic', lineHeight: '1.7', fontSize: '16px', whiteSpace: 'pre-wrap' }}>"{item.content}"</p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${colors.border}`, paddingTop: '1rem', marginTop: 'auto' }}>
+                    <span style={{ backgroundColor: colors.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: colors.heroText, border: `1px solid ${colors.border}` }}>✍️ {item.authorName}</span>
                     <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
                   </div>
                 </div>
               );
-            }
-
-            const imageSource = item.imageUrl || item.ImageUrl;
-            return (
-              <div key={`mem-${item.id}-${index}`} style={{ backgroundColor: colors.cardBg, border: `2px solid ${colors.border}`, borderRadius: '24px', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative', boxShadow: '0 10px 30px rgba(0,0,0,0.01)' }}>
-                <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '8px', zIndex: 10, backgroundColor: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '20px', border: `1px solid ${colors.border}` }}>
-                  <button onClick={() => startEditMemory(item)} title="Anıyı Düzenle" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>✏️</button>
-                  <button onClick={() => handleDeleteMemory(item.id)} title="Anıyı Sil" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>🗑️</button>
-                </div>
-                {imageSource && (
-                  <div style={{ width: '100%', maxHeight: '240px', borderRadius: '16px', overflow: 'hidden', marginTop: '0.5rem', border: `1px solid ${colors.border}` }}>
-                    <img src={imageSource} alt="Anı" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                )}
-                <p style={{ margin: 0, color: colors.text, fontStyle: 'italic', lineHeight: '1.7', fontSize: '16px', whiteSpace: 'pre-wrap' }}>"{item.content}"</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px dashed ${colors.border}`, paddingTop: '1rem', marginTop: 'auto' }}>
-                  <span style={{ backgroundColor: colors.badge, padding: '0.4rem 0.8rem', borderRadius: '10px', fontWeight: '800', fontSize: '12px', color: colors.heroText, border: `1px solid ${colors.border}` }}>✍️ {item.authorName}</span>
-                  <span style={{ fontSize: '11px', color: '#BFA7A7', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+            })}
+          </div>
+        )}
       </div>
 
       {/* Soru Paneli */}
@@ -522,4 +575,5 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       )}
     </div>
   );
+
 }
