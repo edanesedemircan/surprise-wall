@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 export default function WallReveal() {
@@ -9,7 +9,7 @@ export default function WallReveal() {
   const [selectedItem, setSelectedItem] = useState<any | null>(null); 
   const [loading, setLoading] = useState<boolean>(true);
 
-  // 🧠 HİLE KORUMASI: Başrolün çözdüğü soruları localStorage'da mühürlüyoruz
+  // 🧠 HİLE KORUMASI: Başrolün çözdüğü soruları localStorage'da saklıyoruz
   const [answers, setAnswers] = useState<Record<number, string>>(() => {
     const saved = localStorage.getItem(`wall_${id}_answers`);
     return saved ? JSON.parse(saved) : {};
@@ -48,7 +48,7 @@ export default function WallReveal() {
     if (id) fetchWallData();
   }, [id, apiUrl]);
 
-  // 🎯 Şık tıklandığında çalışan interaktif quiz fonksiyonu (Modal içinde)
+  // 🎯 Soru şıkkına tıklandığında çalışan fonksiyon
   const handleOptionClick = (questionId: number, selectedOption: string) => {
     if (answers[questionId]) return;
 
@@ -65,18 +65,18 @@ export default function WallReveal() {
     );
   }
 
-  // 🚨 SOLDAKİ SİYAH MENÜYÜ EZİP TAM EKRAN YAPAN VE KARELİ DEFTER DESENİ VEREN STİL
+  // 🚨 SOLDAKİ SİYAH MENÜYÜ EZEN TAM EKRAN KARELİ DEFTER DESENLİ CONTAINER
   const fullScreenStyle: React.CSSProperties = {
     position: 'fixed',
     top: 0,
     left: 0,
     width: '100vw',
     height: '100vh',
-    overflowY: 'auto', // Scrollbar ekler ki anılar aşağı indikçe kaydırabilelim
-    zIndex: 9999, // Tüm layout'un üstüne çıkmak için!
-    backgroundColor: '#F8FAFC', // MemoryWallGrid ile aynı açık gri-mavi zemin
+    overflowY: 'auto', 
+    zIndex: 9999, 
+    backgroundColor: '#F8FAFC', 
     backgroundImage: `linear-gradient(#E2E8F0 1px, transparent 1px), linear-gradient(90deg, #E2E8F0 1px, transparent 1px)`,
-    backgroundSize: '30px 30px', // O muazzam kareli defter deseni
+    backgroundSize: '30px 30px', 
     padding: '4rem 2rem', 
     boxSizing: 'border-box', 
     fontFamily: '"Georgia", serif', 
@@ -88,7 +88,18 @@ export default function WallReveal() {
   return (
     <div style={fullScreenStyle}>
       
-      {/* 👑 ÜST KISIM: Sadece Başlığımız (Siyah bar tamamen yok oldu!) */}
+      {/* Sayfa kenarlarındaki boşlukları sıfırlayan global CSS */}
+      <style>{`
+        body, html, #root { 
+          margin: 0 !important; 
+          padding: 0 !important; 
+          width: 100% !important; 
+          height: 100% !important; 
+          overflow-x: hidden !important; 
+        }
+      `}</style>
+
+      {/* 👑 ÜST KISIM: Başlık */}
       <div style={{ textAlign: 'center', maxWidth: '800px', marginBottom: '4rem' }}>
         <h1 style={{ 
           fontSize: '48px', 
@@ -103,12 +114,12 @@ export default function WallReveal() {
         <div style={{ width: '80px', height: '3px', backgroundColor: '#94A3B8', margin: '1.5rem auto 0 auto', borderRadius: '2px', opacity: 0.5 }} />
       </div>
 
-      {/* 📌 AKIŞKAN GRİD ALANI (Tam istediğin gibi MemoryWallGrid klonu) */}
+      {/* 📌 AKIŞKAN GRİD ALANI */}
       <div style={{ width: '100%', maxWidth: '1200px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
           {combinedItems.map((item, index) => {
             
-            // ❓ Soru Kartı Tasarımı (Genişletilmiş if koşulu ile artık kaçamazlar!)
+            // ❓ Soru Kartı mı?
             const isQuestion = item.isQuiz || item.questionText || item.QuestionText || item.optionA || item.OptionA || item.type === 'question' || item.Type === 'Question';
             
             if (isQuestion) {
@@ -124,7 +135,9 @@ export default function WallReveal() {
                   onClick={() => setSelectedItem(item)} 
                   style={{ 
                     backgroundColor: 'rgba(255, 255, 255, 0.7)', 
-                    border: '2px dashed #94A3B8', // Fotoğraftaki kesik çizgiler!
+                    border: isAnswered 
+                      ? `2.5px solid ${isCorrect ? '#10B981' : '#EF4444'}`
+                      : '2px dashed #94A3B8', 
                     borderRadius: '24px', 
                     padding: '1.5rem', 
                     display: 'flex', 
@@ -139,7 +152,7 @@ export default function WallReveal() {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ 
-                      backgroundColor: '#3B82F6', 
+                      backgroundColor: isAnswered ? (isCorrect ? '#10B981' : '#EF4444') : '#3B82F6', 
                       color: '#ffffff', 
                       padding: '4px 12px', 
                       borderRadius: '20px', 
@@ -147,7 +160,7 @@ export default function WallReveal() {
                       fontWeight: 'bold', 
                       fontFamily: 'sans-serif' 
                     }}>
-                      ✨ KAPSÜL SORUSU
+                      {isAnswered ? (isCorrect ? '🎉 DOĞRU BİLİNDİ' : '😢 YANLIŞ CEVAP') : '✨ KAPSÜL SORUSU'}
                     </div>
                   </div>
 
@@ -155,7 +168,7 @@ export default function WallReveal() {
                     "{item.questionText || item.QuestionText}"
                   </h4>
 
-                  {/* Şıklar A, B, C, D (Görseldeki gibi kartın üstünde de gözükecek ama burada tıklanmayacak, tıklanma modalda!) */}
+                  {/* Şıklar */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {['A', 'B', 'C', 'D'].map((opt) => {
                       const optText = item[`option${opt}`] || item[`Option${opt}`];
@@ -185,7 +198,7 @@ export default function WallReveal() {
               );
             }
 
-            // ✍️ Anı Kartı Tasarımı (Fotoğraftaki Birebir Klon)
+            // ✍️ Anı Kartı Tasarımı
             const imageSource = item.imageUrl || item.ImageUrl;
             return (
               <div 
@@ -224,9 +237,9 @@ export default function WallReveal() {
         </div>
       </div>
 
-      {/* 🌌 BÜYÜTEÇ MODÜLÜ (Anı Detayı ve İnteraktif Çözümlü Soru Ekranı) */}
+      {/* 🌌 BÜYÜTEÇ MODÜLÜ */}
       {selectedItem && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 99999 }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100000 }}>
           <div style={{ 
             backgroundColor: '#ffffff', 
             width: '90%', 
@@ -247,7 +260,7 @@ export default function WallReveal() {
               ✕
             </button>
 
-            {/* Modal İçi İnteraktif Soru Kontrolü */}
+            {/* Modal İçi Soru Çözme Modülü */}
             {selectedItem.isQuiz || selectedItem.questionText || selectedItem.QuestionText || selectedItem.optionA || selectedItem.OptionA ? (
               (() => {
                 const qId = selectedItem.id;
