@@ -10,11 +10,11 @@ interface WallDetailProps {
 
 // 🌸 Temaları tamamen o tatlı, romantik pembe ekose konseptine sabitledik kanka!
 const themeStyles: Record<string, { bg: string, primary: string, border: string, text: string, badge: string }> = {
-  birthday: { bg: '#FAF5F5', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
-  romantic: { bg: '#FAF5F5', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
-  graduation: { bg: '#FAF5F5', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
-  job: { bg: '#FAF5F5', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
-  funny: { bg: '#FAF5F5', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' }
+  birthday: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
+  romantic: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
+  graduation: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
+  job: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' },
+  funny: { bg: '#FFEBF0', primary: '#5A3E3E', border: '#F2E8E8', text: '#7C5858', badge: '#F7EFEF' }
 };
 
 export function WallDetail({ role, title }: WallDetailProps) {
@@ -32,10 +32,10 @@ export function WallDetail({ role, title }: WallDetailProps) {
   const currentTheme = themeStyles[normalizedTheme] || themeStyles.birthday;
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5106';
 
-  // --- 🌸 Pembe dikey ve yatay ekose çizgileri arka plan deseni kanka ---
+  // --- 🌸 İlk görseldeki birebir pembe-beyaz Pötikare (Gingham) Ekose Deseni ---
   const gridPatternStyle = `
-    linear-gradient(90deg, rgba(242, 232, 232, 0.6) 1px, transparent 1px),
-    linear-gradient(rgba(242, 232, 232, 0.6) 1px, transparent 1px)
+    linear-gradient(90deg, rgba(255, 255, 255, 0.8) 50%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.8) 50%, transparent 50%)
   `;
 
   // --- 1. Odanın Genel Özelliklerini Çekme ---
@@ -111,10 +111,13 @@ export function WallDetail({ role, title }: WallDetailProps) {
 
   const sharedBackgroundStyle: React.CSSProperties = {
     minHeight: '100vh', 
-    width: '100%', 
+    // 🚨 KENARLARIN TAM OLMAMA HATASINI SIFIRLAYAN MÜKEMMEL CSS TRICK:
+    width: '100vw',
+    marginLeft: 'calc(-50vw + 50%)',
+    marginRight: 'calc(-50vw + 50%)',
     backgroundColor: currentTheme.bg,
-    backgroundImage: gridPatternStyle, // 🌸 Ekose deseni entegre edildi kanka
-    backgroundSize: '28px 28px',
+    backgroundImage: gridPatternStyle, 
+    backgroundSize: '80px 80px', // İlk görseldeki pötikare büyüklüğü kanka
     display: 'flex', 
     flexDirection: 'column', 
     justifyContent: 'center', 
