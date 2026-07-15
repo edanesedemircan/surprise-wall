@@ -129,60 +129,40 @@ export default function WallReveal() {
         }
       `}</style>
 
+        // Üst Başlık
        <div style={{
   width: '100%',
   textAlign: 'center',
-  padding: '3rem 1rem 2rem 1rem',
+  padding: '4rem 1rem 3rem 1rem', // Yukarıdan ve aşağıdan tatlı bir nefes alma boşluğu
+  
+  // 🎨 Saniyede o asil ekose (gingham) desenini oluşturan CSS sihrimiz:
+  backgroundColor: '#FFF0F2', // Ekosenin altındaki o çok tatlı açık pembe/krem tonu
+  backgroundImage: `
+    linear-gradient(90deg, rgba(160, 43, 106, 0.07) 50%, transparent 50%),
+    linear-gradient(rgba(160, 43, 106, 0.07) 50%, transparent 50%)
+  `,
+  backgroundSize: '40px 40px', // Karelerin o pürüzsüz ve sık dokulu boyutu kanka!
+  
+  borderBottom: '1px solid #FBCFE8', // Alt kısma çok hafif, yumuşak bir sınır çizgisi
+  boxShadow: 'inset 0 -10px 20px rgba(160, 43, 106, 0.02)', // Hafif bir derinlik hissi
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '0.75rem',
-  animation: 'fadeInDown 0.8s ease-out'
+  justifyContent: 'center'
 }}>
-  {/* 🌸 Tatlı dinamik bir emoji alanı */}
-  <div style={{ 
-    fontSize: '50px', 
-    lineHeight: '1',
-    filter: 'drop-shadow(0 10px 15px rgba(160, 43, 106, 0.15))',
-    animation: 'bounce 2s infinite'
-  }}>
-    🎉
-  </div>
-
-  {/* ✍️ Senin veritabanından gelen dinamik oda başlığın! (Hiçbir şey bozulmuyor) */}
+  {/* ✍️ Oda başlığımız, ekose arka planın üstünde çok net okunsun diye rengini biraz koyulaştırdık */}
   <h1 style={{
     fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif',
-    fontSize: '36px',
+    fontSize: '34px',
     fontStyle: 'italic',
-    fontWeight: '800',
-    color: '#a02b6a', // Kartlarınla uyumlu o asil mürdüm
+    fontWeight: '850',
+    color: '#631D42', // Okunabilirliği yüksek, çok asil koyu bir mürdüm tonu
     margin: 0,
-    textShadow: '0 2px 4px rgba(160, 43, 106, 0.05)',
+    textShadow: '1px 1px 0px rgba(255, 255, 255, 0.8)', // Arka plandaki çizgilerden etkilenmesin diye arkasına hafif beyaz gölge
     letterSpacing: '-0.5px'
   }}>
-    {/* 🚨 Senin projedeki değişken adı neyse buraya onu yaz kanka (wallTitle, title veya roomTitle) */}
-    {wallTitle || 'Yükleniyor...'}
+    "{wallTitle || 'Yükleniyor...'}"
   </h1>
-
-  {/* 📝 Altındaki zarif çizgi ve açıklama */}
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    marginTop: '0.5rem'
-  }}>
-    <span style={{ width: '40px', height: '1px', backgroundColor: '#FECDD3' }} />
-    <span style={{
-      fontFamily: '"Georgia", serif',
-      fontSize: '15px',
-      color: '#7C5858',
-      fontStyle: 'italic',
-      opacity: 0.85
-    }}>
-      kapsüldeki tüm anılar ve sorular başarıyla çözüldü!
-    </span>
-    <span style={{ width: '40px', height: '1px', backgroundColor: '#FECDD3' }} />
-  </div>
 </div>
 
       {/* 📌 AKIŞKAN GRİD ALANI */}
