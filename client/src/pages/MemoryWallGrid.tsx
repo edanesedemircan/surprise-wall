@@ -380,7 +380,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               width: '80%', 
               padding: '0.75rem', 
               borderRadius: '10px', 
-              backgroundColor: '#811b1b', 
+              backgroundColor: '#ac1b1b', 
               color: '#ffffff', 
               border: 'none', 
               fontWeight: 'bold', 
@@ -393,7 +393,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} 
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            {isDeleting ? 'İmha Ediliyor...' : '💣 Kapsülü İmha Et'}
+            {isDeleting ? 'İmha Ediliyor...' : ' Kapsülü İmha Et ❕'}
           </button>
         </div>
 
