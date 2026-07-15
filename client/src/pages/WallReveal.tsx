@@ -112,19 +112,72 @@ export default function WallReveal() {
         }
       `}</style>
 
-      {/* 👑 ÜST KISIM: Sadece Başlığımız */}
-      <div style={{ textAlign: 'center', maxWidth: '800px', marginBottom: '4rem' }}>
+     {/* 👑 ÜST KISIM: Başlık (Ana sayfadan ayrılan, o şık edebi Hero alanı) */}
+      <div style={{ 
+        width: '100%', 
+        maxWidth: '1200px', 
+        backgroundColor: '#ffffff',
+        padding: '3rem 2rem',
+        borderRadius: '24px',
+        boxShadow: '0 15px 40px rgba(160, 43, 106, 0.04)', // Ana sayfadaki o asil mor-pembe alt tonlu hafif gölge
+        border: `1px solid ${currentTheme.border}`,
+        textAlign: 'center',
+        marginBottom: '4rem',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '0.75rem',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Üstte küçük, tatlı bir anı vurgu rozeti */}
+        <div style={{
+          backgroundColor: currentTheme.badge,
+          color: currentTheme.heroText,
+          padding: '6px 16px',
+          borderRadius: '20px',
+          fontSize: '13px',
+          fontWeight: 'bold',
+          fontStyle: 'italic',
+          letterSpacing: '0.5px',
+          border: `1px solid ${currentTheme.border}`
+        }}>
+          ✨ Zaman Kapsülü Açıldı
+        </div>
+
         <h1 style={{ 
-          fontSize: '48px', 
+          fontSize: '44px', 
           fontStyle: 'italic', 
           fontWeight: '900', 
-          color: currentTheme.heroText, 
-          margin: '0 0 1rem 0',
-          lineHeight: '1.3'
+          color: currentTheme.heroText, // Temanın o asil mürdüm/koyu tonu
+          margin: '0.5rem 0 0 0',
+          lineHeight: '1.2',
+          fontFamily: '"Georgia", serif'
         }}>
           {wallTitle}
         </h1>
-        <div style={{ width: '80px', height: '3px', backgroundColor: currentTheme.heroText, margin: '1.5rem auto 0 auto', borderRadius: '2px', opacity: 0.3 }} />
+
+        <p style={{
+          color: currentTheme.text,
+          fontSize: '15px',
+          fontStyle: 'italic',
+          margin: '0 auto',
+          maxWidth: '600px',
+          opacity: 0.85,
+          lineHeight: '1.6'
+        }}>
+          Senin için biriktirilen tüm anılar ve sürpriz sorular tam karşında.
+        </p>
+
+        <div style={{ 
+          width: '60px', 
+          height: '3px', 
+          backgroundColor: currentTheme.heroText, 
+          marginTop: '0.5rem', 
+          borderRadius: '2px', 
+          opacity: 0.25 
+        }} />
       </div>
 
       {/* 📌 AKIŞKAN GRİD ALANI */}
