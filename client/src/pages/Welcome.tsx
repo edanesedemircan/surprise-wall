@@ -1,12 +1,11 @@
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function Welcome() {
   const navigate = useNavigate();
   const [userExists, setUserExists] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
 
-  // Ekran boyutunu anlık dinleyelim ki mobilde dikey düzene kusursuz geçsin kanka:
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 1024);
@@ -55,7 +54,7 @@ export function Welcome() {
   return (
     <div style={{ 
       display: 'flex', 
-      flexDirection: isMobile ? 'column' : 'row', // Mobilde dikey, masaüstünde yan yana kanka!
+      flexDirection: isMobile ? 'column' : 'row', 
       minHeight: '100vh', 
       backgroundColor: '#FFF5F5', 
       fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif',
@@ -75,79 +74,7 @@ export function Welcome() {
         }
       `}</style>
 
-      {/* 🚀 MOBİLDE KARTLARI EN TEPEYE ALIYORUZ (Kullanıcı doğrudan giriş yapsın/oluştursun diye) */}
-      {isMobile && (
-        <div style={{
-          width: '100%',
-          padding: '2rem 1rem 1.5rem 1rem',
-          backgroundColor: '#FFE4E6',
-          borderBottom: '1px solid #FCA5A5',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
-          alignItems: 'center'
-        }}>
-          {/* KUTLAMA ODASI OLUŞTUR KARTI */}
-          <div 
-            onClick={handleCapsuleClick}
-            style={{ 
-              backgroundColor: '#ffffff', 
-              borderRadius: '14px', 
-              padding: '1.25rem 1rem', 
-              boxShadow: '0 6px 15px rgba(159, 18, 57, 0.04)', 
-              border: '1px solid #FECDD3',
-              cursor: userExists ? 'pointer' : 'default',
-              width: '100%',
-              maxWidth: '350px',
-              textAlign: 'center',
-              boxSizing: 'border-box'
-            }}
-          >
-            <div style={{ fontSize: '20px', marginBottom: '0.4rem' }}>✨</div>
-            <h4 style={{ color: '#9F1239', fontSize: '14px', margin: '0 0 0.4rem 0', fontWeight: '800' }}>Kutlama Odası Oluştur</h4>
-            <p style={{ color: '#881337', fontSize: '11px', lineHeight: '1.4', margin: '0 0 1rem 0' }}>
-              Hemen bir zaman kapsülü oluştur ve sihirli linki kap. Temanı seç arkadaşlarını davet et.
-            </p>
-
-            {!userExists && (
-              <div 
-                onClick={(e) => e.stopPropagation()} 
-                id="google-signin-inside-card-mobile" 
-                style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '0.5rem' }}
-              >
-                {/* Mobil için alternatif render alanı yerleştirdik kanka */}
-                <div id="google-signin-inside-card"></div>
-              </div>
-            )}
-          </div>
-
-          {/* ODAYA DAHİL OL KARTI */}
-          <div 
-            onClick={() => navigate('/login')}
-            style={{ 
-              backgroundColor: '#ffffff', 
-              borderRadius: '14px', 
-              padding: '1.25rem 1rem', 
-              boxShadow: '0 6px 15px rgba(159, 18, 57, 0.04)', 
-              border: '1px solid #FECDD3',
-              cursor: 'pointer',
-              width: '100%',
-              maxWidth: '350px',
-              textAlign: 'center',
-              boxSizing: 'border-box'
-            }}
-          >
-            <div style={{ fontSize: '20px', marginBottom: '0.4rem' }}>🔑</div>
-            <h4 style={{ color: '#9F1239', fontSize: '14px', margin: '0 0 0.4rem 0', fontWeight: '800' }}>Kapsüle Dahil Ol</h4>
-            <p style={{ color: '#881337', fontSize: '12px', lineHeight: '1.4', margin: 0 }}>
-              Sana atılan şifreyle kapsülü aç ve anı bırakmaya başla.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* SOL PANEL (İçerikler ve Tanıtım Kartları) */}
+      {/* SOL PANEL (Ana İçerik Alanı) */}
       <div style={{ 
         flex: '1.6', 
         display: 'flex', 
@@ -158,6 +85,7 @@ export function Welcome() {
         width: '100%'
       }}>
         
+        {/* 1. BAŞLIK VE TANITIM ALANI (Her zaman en üstte duracak kanka!) */}
         <div style={{ 
           backgroundColor: '#FFE4E6', 
           backgroundImage: `
@@ -172,7 +100,7 @@ export function Welcome() {
         }}>
           
           <h1 style={{ 
-            fontSize: isMobile ? '38px' : '56px', // Mobilde başlığı küçülttük kanka
+            fontSize: isMobile ? '38px' : '56px', 
             fontStyle: 'italic', 
             fontWeight: '700', 
             margin: '0 0 1.25rem 0', 
@@ -203,9 +131,78 @@ export function Welcome() {
           </p>
         </div>
 
-        {/* TEMA BANNERLARI ALANI */}
+        {/* 🚀 2. MOBİLDE BUTON KARTLARI (Başlığın hemen altında, çok mantıklı bir akışta!) */}
+        {isMobile && (
+          <div style={{
+            width: '100%',
+            padding: '2.5rem 1.5rem 1rem 1.5rem',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.25rem',
+            alignItems: 'center'
+          }}>
+            {/* KUTLAMA ODASI OLUŞTUR KARTI */}
+            <div 
+              onClick={handleCapsuleClick}
+              style={{ 
+                backgroundColor: '#ffffff', 
+                borderRadius: '14px', 
+                padding: '1.5rem 1.25rem', 
+                boxShadow: '0 6px 15px rgba(159, 18, 57, 0.04)', 
+                border: '1px solid #FECDD3',
+                cursor: userExists ? 'pointer' : 'default',
+                width: '100%',
+                maxWidth: '400px',
+                textAlign: 'center',
+                boxSizing: 'border-box'
+              }}
+            >
+              <div style={{ fontSize: '22px', marginBottom: '0.4rem' }}>✨</div>
+              <h4 style={{ color: '#9F1239', fontSize: '15px', margin: '0 0 0.4rem 0', fontWeight: '800' }}>Kutlama Odası Oluştur</h4>
+              <p style={{ color: '#881337', fontSize: '12px', lineHeight: '1.4', margin: '0 0 1rem 0' }}>
+                Hemen bir zaman kapsülü oluştur ve sihirli linki kap. Temanı seç arkadaşlarını davet et.
+              </p>
+
+              {!userExists && (
+                <div 
+                  onClick={(e) => e.stopPropagation()} 
+                  id="google-signin-inside-card-mobile" 
+                  style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '0.5rem' }}
+                >
+                  <div id="google-signin-inside-card"></div>
+                </div>
+              )}
+            </div>
+
+            {/* ODAYA DAHİL OL KARTI */}
+            <div 
+              onClick={() => navigate('/login')}
+              style={{ 
+                backgroundColor: '#ffffff', 
+                borderRadius: '14px', 
+                padding: '1.5rem 1.25rem', 
+                boxShadow: '0 6px 15px rgba(159, 18, 57, 0.04)', 
+                border: '1px solid #FECDD3',
+                cursor: 'pointer',
+                width: '100%',
+                maxWidth: '400px',
+                textAlign: 'center',
+                boxSizing: 'border-box'
+              }}
+            >
+              <div style={{ fontSize: '22px', marginBottom: '0.4rem' }}>🔑</div>
+              <h4 style={{ color: '#9F1239', fontSize: '15px', margin: '0 0 0.4rem 0', fontWeight: '800' }}>Kapsüle Dahil Ol</h4>
+              <p style={{ color: '#881337', fontSize: '12px', lineHeight: '1.4', margin: 0 }}>
+                Sana atılan şifreyle kapsülü aç ve anı bırakmaya başla.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* 3. TEMA BANNERLARI ALANI */}
         <div style={{ 
-          padding: isMobile ? '3rem 1rem 0 1rem' : '5rem 3rem 0 3rem',
+          padding: isMobile ? '2rem 1rem 0 1rem' : '5rem 3rem 0 3rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -227,7 +224,7 @@ export function Welcome() {
             
             {/* 1. DOĞUM GÜNÜ */}
             <div style={{ 
-              height: isMobile ? '300px' : '400px', // Mobilde yükseklikleri biraz daralttık kanka taşmasın diye
+              height: isMobile ? '300px' : '400px', 
               backgroundImage: 'linear-gradient(to bottom, rgba(107, 33, 168, 0.85), rgba(107, 33, 168, 0.85)), url("https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1200&q=80")',
               backgroundSize: 'cover', backgroundPosition: 'center',
               borderRadius: '24px', padding: isMobile ? '2rem' : '3.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
@@ -237,7 +234,7 @@ export function Welcome() {
             }}>
               <h4 style={{ color: '#F3E8FF', margin: '0 0 1rem 0', fontSize: isMobile ? '22px' : '28px', fontWeight: '800' }}>🎉 Doğum Günü Kutlaması</h4>
               <p style={{ color: '#E9D5FF', fontSize: isMobile ? '13px' : '15px', maxWidth: '550px', margin: 0, lineHeight: '1.7' }}>
-                Konfetiler, neon ışıklar ve parti havasıyla coşkulu kutlama odaları. Arkadaşlarınızın yeni yaşını dijital bir şölene dönüştürün.
+                Konfetiler, neon ışıklar and parti havasıyla coşkulu kutlama odaları. Arkadaşlarınızın yeni yaşını dijital bir şölene dönüştürün.
               </p>
             </div>
 
