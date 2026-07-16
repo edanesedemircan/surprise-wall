@@ -129,68 +129,67 @@ export default function WallReveal() {
         }
       `}</style>
 
-      {/* 🛡️ SADECE BAŞLIK VE TEMAYA UYGUN İNCE KESİKLİ AYRIM ÇİZGİSİ */}
+        {/* 🌊 SEÇENEK 1: ORGANİK SVG DALGA GEÇİŞLİ ÜST PANEL */}
 <div style={{
   width: '100vw',
   marginLeft: 'calc(-50vw + 50%)',
   marginRight: 'calc(-50vw + 50%)',
-  marginTop: '-2rem', // Üst boşluğu sıfırlar
-  
+  marginTop: '-2rem',
   textAlign: 'center',
-  padding: '3rem 1rem 1.5rem 1rem', // Başlık için temiz dikey hizalama
+  padding: '3.5rem 0 0 0', // Dalgaya alan açmak için alt padding'i sıfırladık
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   boxSizing: 'border-box',
-  
-  // Arka planı tamamen ana sayfanın arka planıyla eşitliyoruz (Gereksiz renk geçişi yok)
   backgroundColor: 'transparent'
 }}>
-  
-  {/* ✍️ Tamamen temiz, tırnaksız ve net oda başlığı */}
+  {/* ✍️ Saf ve Asil Başlık */}
   <h1 style={{
     fontFamily: '"Georgia", "Baskerville", "Times New Roman", serif',
-    fontSize: '32px',
+    fontSize: '36px',
     fontStyle: 'italic',
     fontWeight: '700',
-    // Başlık rengi tamamen seçili temanın kendi rengini alıyor:
     color: 
       normalizedTheme === 'romantic' ? '#a02b6a' :
       normalizedTheme === 'graduation' ? '#1e40af' :
       normalizedTheme === 'job' ? '#15803d' :
       normalizedTheme === 'funny' ? '#b45309' :
-      '#5a3e3e', // birthday / varsayılan
-    margin: 0,
+      '#5a3e3e',
+    margin: '0 0 1rem 0',
     letterSpacing: '-0.3px'
   }}>
     {wallTitle || 'Yükleniyor...'}
   </h1>
 
-  {/* 📐 İstediğin o hafif gölgeli, temayla aynı renk ince kesikli çizgi */}
-  <div style={{
-    width: '100%',
-    marginTop: '2rem',
-    borderBottom: `2px dashed ${
-      normalizedTheme === 'romantic' ? 'rgba(160, 43, 106, 0.4)' :
-      normalizedTheme === 'graduation' ? 'rgba(30, 64, 175, 0.4)' :
-      normalizedTheme === 'job' ? 'rgba(21, 128, 61, 0.4)' :
-      normalizedTheme === 'funny' ? 'rgba(180, 83, 9, 0.4)' :
-      'rgba(90, 62, 62, 0.4)' // birthday
-    }`,
-    // Altındaki hafif gölge efekti:
-    boxShadow: `0 3px 6px ${
-      normalizedTheme === 'romantic' ? 'rgba(160, 43, 106, 0.04)' :
-      normalizedTheme === 'graduation' ? 'rgba(30, 64, 175, 0.04)' :
-      normalizedTheme === 'job' ? 'rgba(21, 128, 61, 0.04)' :
-      normalizedTheme === 'funny' ? 'rgba(180, 83, 9, 0.04)' :
-      'rgba(90, 62, 62, 0.04)'
-    }`
-  }} />
+  {/* 🌊 Temaya Göre Renk Alan Akıcı SVG Dalgası */}
+  <div style={{ width: '100%', overflow: 'hidden', lineHeight: 0, marginTop: '0.5rem' }}>
+    <svg 
+      viewBox="0 0 1200 120" 
+      preserveAspectRatio="none" 
+      style={{ 
+        position: 'relative', 
+        display: 'block', 
+        width: '100%', 
+        height: '40px',
+        // Çizginin rengini alıp kenarlara doğru yumuşakça solduruyoruz:
+        fill: 
+          normalizedTheme === 'romantic' ? 'rgba(160, 43, 106, 0.15)' :
+          normalizedTheme === 'graduation' ? 'rgba(30, 64, 175, 0.15)' :
+          normalizedTheme === 'job' ? 'rgba(21, 128, 61, 0.15)' :
+          normalizedTheme === 'funny' ? 'rgba(180, 83, 9, 0.15)' :
+          'rgba(90, 62, 62, 0.15)'
+      }}
+    >
+      <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"></path>
+    </svg>
+  </div>
 </div>
 
-{/* Kartların çizginin hemen altına çok yapışmaması için küçük bir nefes boşluğu */}
-<div style={{ height: '2rem', width: '100%' }} />
+{/* Kartlarla mesafe dengesi */}
+<div style={{ height: '2.5rem', width: '100%' }} />
+
+
       
       {/* 📌 AKIŞKAN GRİD ALANI */}
       <div style={{ width: '100%', maxWidth: '1200px' }}>
