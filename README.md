@@ -55,7 +55,7 @@ Sayaç sıfırlandığı an kutlanan kişi için heyecan dolu "Kapsülü Aç ve 
 ### 4) Anı Duvarı ve Panoyu Keşfetme
 Butona tıklandığında, arkadaşlarının hazırladığı o muhteşem anı kartları ve anonim sürpriz sorular dinamik dalga geçişli asil bir arayüzle başrolün önüne serilir.
 <p align="center">
-  <img src="./docs/images/anıduvarı.png" width="800" alt="Anı Duvarı" />
+  <img src="./docs/images/anıGörüntüleme.png" width="800" alt="Davetli Panosu" />
 </p>
 
 ---
@@ -65,7 +65,7 @@ Butona tıklandığında, arkadaşlarının hazırladığı o muhteşem anı kar
 ### 5) Davetli Yönetim ve Pano Sayfası
 Davetlilerin sol paneldeki butonlar aracılığıyla kolayca anı ve soru ekleyebileceği, davetli listesini yönetebileceği ve şu ana kadar yazılmış tüm anı ve soruları görebileceği panel alanı.
 <p align="center">
-  <img src="./docs/images/anıGörüntüleme.png" width="800" alt="Davetli Panosu" />
+  <img src="./docs/images/anıduvarı.png" width="800" alt="Anı Duvarı" />
 </p>
 
 ### 6) Anı Ekleme Modalı (Wall Post-it)
