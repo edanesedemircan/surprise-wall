@@ -85,7 +85,7 @@ export function Welcome() {
         width: '100%'
       }}>
         
-        {/* 1. BAŞLIK VE TANITIM ALANI (Her zaman en üstte duracak kanka!) */}
+        {/* 1. EN ÜST: BAŞLIK VE TANITIM ALANI */}
         <div style={{ 
           backgroundColor: '#FFE4E6', 
           backgroundImage: `
@@ -131,78 +131,9 @@ export function Welcome() {
           </p>
         </div>
 
-        {/* 🚀 2. MOBİLDE BUTON KARTLARI (Başlığın hemen altında, çok mantıklı bir akışta!) */}
-        {isMobile && (
-          <div style={{
-            width: '100%',
-            padding: '2.5rem 1.5rem 1rem 1.5rem',
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.25rem',
-            alignItems: 'center'
-          }}>
-            {/* KUTLAMA ODASI OLUŞTUR KARTI */}
-            <div 
-              onClick={handleCapsuleClick}
-              style={{ 
-                backgroundColor: '#ffffff', 
-                borderRadius: '14px', 
-                padding: '1.5rem 1.25rem', 
-                boxShadow: '0 6px 15px rgba(159, 18, 57, 0.04)', 
-                border: '1px solid #FECDD3',
-                cursor: userExists ? 'pointer' : 'default',
-                width: '100%',
-                maxWidth: '400px',
-                textAlign: 'center',
-                boxSizing: 'border-box'
-              }}
-            >
-              <div style={{ fontSize: '22px', marginBottom: '0.4rem' }}>✨</div>
-              <h4 style={{ color: '#9F1239', fontSize: '15px', margin: '0 0 0.4rem 0', fontWeight: '800' }}>Kutlama Odası Oluştur</h4>
-              <p style={{ color: '#881337', fontSize: '12px', lineHeight: '1.4', margin: '0 0 1rem 0' }}>
-                Hemen bir zaman kapsülü oluştur ve sihirli linki kap. Temanı seç arkadaşlarını davet et.
-              </p>
-
-              {!userExists && (
-                <div 
-                  onClick={(e) => e.stopPropagation()} 
-                  id="google-signin-inside-card-mobile" 
-                  style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '0.5rem' }}
-                >
-                  <div id="google-signin-inside-card"></div>
-                </div>
-              )}
-            </div>
-
-            {/* ODAYA DAHİL OL KARTI */}
-            <div 
-              onClick={() => navigate('/login')}
-              style={{ 
-                backgroundColor: '#ffffff', 
-                borderRadius: '14px', 
-                padding: '1.5rem 1.25rem', 
-                boxShadow: '0 6px 15px rgba(159, 18, 57, 0.04)', 
-                border: '1px solid #FECDD3',
-                cursor: 'pointer',
-                width: '100%',
-                maxWidth: '400px',
-                textAlign: 'center',
-                boxSizing: 'border-box'
-              }}
-            >
-              <div style={{ fontSize: '22px', marginBottom: '0.4rem' }}>🔑</div>
-              <h4 style={{ color: '#9F1239', fontSize: '15px', margin: '0 0 0.4rem 0', fontWeight: '800' }}>Kapsüle Dahil Ol</h4>
-              <p style={{ color: '#881337', fontSize: '12px', lineHeight: '1.4', margin: 0 }}>
-                Sana atılan şifreyle kapsülü aç ve anı bırakmaya başla.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* 3. TEMA BANNERLARI ALANI */}
+        {/* 2. ORTA KISIM: TEMA BANNERLARI ALANI */}
         <div style={{ 
-          padding: isMobile ? '2rem 1rem 0 1rem' : '5rem 3rem 0 3rem',
+          padding: isMobile ? '3rem 1rem 0 1rem' : '5rem 3rem 0 3rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -234,7 +165,7 @@ export function Welcome() {
             }}>
               <h4 style={{ color: '#F3E8FF', margin: '0 0 1rem 0', fontSize: isMobile ? '22px' : '28px', fontWeight: '800' }}>🎉 Doğum Günü Kutlaması</h4>
               <p style={{ color: '#E9D5FF', fontSize: isMobile ? '13px' : '15px', maxWidth: '550px', margin: 0, lineHeight: '1.7' }}>
-                Konfetiler, neon ışıklar and parti havasıyla coşkulu kutlama odaları. Arkadaşlarınızın yeni yaşını dijital bir şölene dönüştürün.
+                Konfetiler, neon ışıklar ve parti havasıyla coşkulu kutlama odaları. Arkadaşlarınızın yeni yaşını dijital bir şölene dönüştürün.
               </p>
             </div>
 
@@ -304,6 +235,75 @@ export function Welcome() {
 
           </div>
         </div>
+
+        {/* 🚀 3. MOBİLDE EN ALT: BUTON KARTLARI */}
+        {isMobile && (
+          <div style={{
+            width: '100%',
+            padding: '4rem 1.5rem 1rem 1.5rem', // Üstüne biraz asil bir boşluk bıraktık kanka temalardan ayrılsın diye
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.25rem',
+            alignItems: 'center'
+          }}>
+            {/* KUTLAMA ODASI OLUŞTUR KARTI */}
+            <div 
+              onClick={handleCapsuleClick}
+              style={{ 
+                backgroundColor: '#ffffff', 
+                borderRadius: '14px', 
+                padding: '1.5rem 1.25rem', 
+                boxShadow: '0 6px 15px rgba(159, 18, 57, 0.04)', 
+                border: '1px solid #FECDD3',
+                cursor: userExists ? 'pointer' : 'default',
+                width: '100%',
+                maxWidth: '400px',
+                textAlign: 'center',
+                boxSizing: 'border-box'
+              }}
+            >
+              <div style={{ fontSize: '22px', marginBottom: '0.4rem' }}>✨</div>
+              <h4 style={{ color: '#9F1239', fontSize: '15px', margin: '0 0 0.4rem 0', fontWeight: '800' }}>Kutlama Odası Oluştur</h4>
+              <p style={{ color: '#881337', fontSize: '12px', lineHeight: '1.4', margin: '0 0 1rem 0' }}>
+                Hemen bir zaman kapsülü oluştur ve sihirli linki kap. Temanı seç arkadaşlarını davet et.
+              </p>
+
+              {!userExists && (
+                <div 
+                  onClick={(e) => e.stopPropagation()} 
+                  id="google-signin-inside-card-mobile" 
+                  style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '0.5rem' }}
+                >
+                  <div id="google-signin-inside-card"></div>
+                </div>
+              )}
+            </div>
+
+            {/* ODAYA DAHİL OL KARTI */}
+            <div 
+              onClick={() => navigate('/login')}
+              style={{ 
+                backgroundColor: '#ffffff', 
+                borderRadius: '14px', 
+                padding: '1.5rem 1.25rem', 
+                boxShadow: '0 6px 15px rgba(159, 18, 57, 0.04)', 
+                border: '1px solid #FECDD3',
+                cursor: 'pointer',
+                width: '100%',
+                maxWidth: '400px',
+                textAlign: 'center',
+                boxSizing: 'border-box'
+              }}
+            >
+              <div style={{ fontSize: '22px', marginBottom: '0.4rem' }}>🔑</div>
+              <h4 style={{ color: '#9F1239', fontSize: '15px', margin: '0 0 0.4rem 0', fontWeight: '800' }}>Kapsüle Dahil Ol</h4>
+              <p style={{ color: '#881337', fontSize: '12px', lineHeight: '1.4', margin: 0 }}>
+                Sana atılan şifreyle kapsülü aç ve anı bırakmaya başla.
+              </p>
+            </div>
+          </div>
+        )}
 
       </div>
 
