@@ -11,7 +11,7 @@ Sıradan kutlama mesajlarını ve 24 saat içinde kaybolup giden sosyal medya st
 ### 1. 🚀 Giriş & Tanıtım Ekranı (Welcome Screen)
 Kullanıcıları karşılayan, konseptlerin ve sistemin amacının anlatıldığı, hızlı işlem kartlarının yer aldığı modern karşılama alanı.
 <p align="center">
-  <img src="./docs/images/welcome.jpg" width="800" alt="Giriş Ekranı" />
+  <img src="./docs/images/welcome.png" width="800" alt="Giriş Ekranı" />
 </p>
 
 ---
@@ -74,7 +74,7 @@ Davetlilerin sol paneldeki butonlar aracılığıyla kolayca anı ve soru ekleye
   <img src="./docs/images/anıbırak.png" width="600" alt="Anı Ekleme Modalı" />
 </p>
 
-### 7) Sağ Panel Soru Hazırlama Ekranı (Quiz Creator)
+### 7) Soru Hazırlama Ekranı (Quiz Creator)
 Davetlilerin kutlanan kişiye özel, şakalı ve çoktan seçmeli anonim sürpriz sorular hazırlayabileceği sağ panel arayüzü.
 <p align="center">
   <img src="./docs/images/quiz.png" width="800" alt="Soru Hazırlama" />
