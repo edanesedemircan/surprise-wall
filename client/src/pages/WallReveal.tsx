@@ -240,7 +240,7 @@ export default function WallReveal() {
                       fontWeight: 'bold', 
                       fontFamily: 'sans-serif' 
                     }}>
-                      {isAnswered ? (isCorrect ? '✔️ DOĞRU CEVAP' : '✖️ YANLIŞ CEVAP') : '✨ KAPSÜL SORUSU'}
+                      {isAnswered ? (isCorrect ? '✅ DOĞRU CEVAP' : '❌ YANLIŞ CEVAP') : '✨ KAPSÜL SORUSU'}
                     </div>
                   </div>
 
