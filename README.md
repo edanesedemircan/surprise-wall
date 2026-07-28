@@ -1,4 +1,4 @@
-buraya # ✦ Sürpriz Duvarı (AniDefteri)
+✦ Sürpriz Duvarı (AniDefteri)
 
 > Sevdiklerinizin en özel anlarını ölümsüzleştirebileceğiniz, rol tabanlı, Google OAuth güvenlikli ve oyunlaştırılmış dinamik bir dijital zaman kapsülü uygulaması!
 
