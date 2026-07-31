@@ -332,39 +332,86 @@ body: JSON.stringify({
           </div>
 
           {/* 3. INPUT: DAVETLİLER LİSTESİ ALANI */}
-          <div style={{ padding: '1.5rem', backgroundColor: '#FFF5F5', borderRadius: '16px', border: '1px dashed #FCA5A5' }}>
-            <label style={{ display: 'block', marginBottom: '0.75rem', color: '#4A2828', fontSize: '16px', fontWeight: '700', fontStyle: 'italic' }}>
-              Anı Yazabilecek Davetliler:
-            </label>
-            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
-              <input 
-                type="email" 
-                placeholder="Örn: xxx@gmail.com" 
-                value={emailInput} 
-                onChange={(e) => setEmailInput(e.target.value)} 
-                style={{ 
-                  flex: 1, padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid #FCA5A5',
-                  backgroundColor: '#ffffff', color: '#4A2828', fontSize: '15px', outline: 'none', fontFamily: 'inherit', fontStyle: 'italic'
-                }} 
-              />
-              <button 
-                type="button" 
-                onClick={handleAddEmail} 
-                style={{ padding: '0 1.5rem', backgroundColor: '#a02b6a', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', fontFamily: '"Segoe UI", sans-serif' }}
-              >
-                Ekle
-              </button>
-            </div>
+<div style={{ padding: '1.25rem', backgroundColor: '#FFF5F5', borderRadius: '16px', border: '1px dashed #FCA5A5', boxSizing: 'border-box', width: '100%' }}>
+  <label style={{ display: 'block', marginBottom: '0.75rem', color: '#4A2828', fontSize: '16px', fontWeight: '700', fontStyle: 'italic' }}>
+    Anı Yazabilecek Davetliler:
+  </label>
+  
+  {/* Mobilde alta geçebilmesi için flexWrap: wrap ve minWidth eklendi */}
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+    <input 
+      type="email" 
+      placeholder="Örn: xxx@gmail.com" 
+      value={emailInput} 
+      onChange={(e) => setEmailInput(e.target.value)} 
+      style={{ 
+        flex: '1 1 200px', // 200px'den dar ekranda butonu otomatik alt satıra atar
+        minWidth: 0,       // Input'un mobil ekrandan dışarı taşmasını engeller
+        padding: '0.875rem 1rem', 
+        borderRadius: '12px', 
+        border: '1px solid #FCA5A5',
+        backgroundColor: '#ffffff', 
+        color: '#4A2828', 
+        fontSize: '15px', 
+        outline: 'none', 
+        fontFamily: 'inherit', 
+        fontStyle: 'italic',
+        boxSizing: 'border-box'
+      }} 
+    />
+    <button 
+      type="button" 
+      onClick={handleAddEmail} 
+      style={{ 
+        padding: '0.875rem 1.5rem', 
+        backgroundColor: '#a02b6a', 
+        color: 'white', 
+        border: 'none', 
+        borderRadius: '12px', 
+        cursor: 'pointer', 
+        fontWeight: 'bold', 
+        fontSize: '14px', 
+        fontFamily: '"Segoe UI", sans-serif',
+        whiteSpace: 'nowrap' // Buton yazısının kırılmasını önler
+      }}
+    >
+      Ekle
+    </button>
+  </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-              {allowedEmails.map((email, i) => (
-                <span key={i} style={{ backgroundColor: '#FFE4E6', color: '#a02b6a', padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600', border: '1px solid #FECDD3', fontFamily: '"Segoe UI", sans-serif' }}>
-                  {email} 
-                  <button type="button" onClick={() => handleRemoveEmail(email)} style={{ border: 'none', background: 'none', color: '#EF4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>✕</button>
-                </span>
-              ))}
-            </div>
-          </div>
+  {/* Eklenen rozetler için mobil kırılma desteği */}
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+    {allowedEmails.map((email, i) => (
+      <span 
+        key={i} 
+        style={{ 
+          backgroundColor: '#FFE4E6', 
+          color: '#a02b6a', 
+          padding: '0.4rem 0.8rem', 
+          borderRadius: '20px', 
+          fontSize: '13px', 
+          display: 'inline-flex', 
+          alignItems: 'center', 
+          gap: '6px', 
+          fontWeight: '600', 
+          border: '1px solid #FECDD3', 
+          fontFamily: '"Segoe UI", sans-serif',
+          wordBreak: 'break-all', // Uzun maillerde rozetin ekrandan taşmasını engeller
+          maxWidth: '100%'
+        }}
+      >
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{email}</span>
+        <button 
+          type="button" 
+          onClick={() => handleRemoveEmail(email)} 
+          style={{ border: 'none', background: 'none', color: '#EF4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', padding: 0, flexShrink: 0 }}
+        >
+          ✕
+        </button>
+      </span>
+    ))}
+  </div>
+</div>
 
           <button 
             type="submit" 

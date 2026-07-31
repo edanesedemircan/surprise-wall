@@ -1,7 +1,7 @@
 // Odaya girmek isteyenler (Davetliler veya Başrol) Ekranı
 
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // 🚀 useParams yerine useLocation ekledik!
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 
 interface HomeProps {
@@ -12,37 +12,55 @@ function parseJwt(token: string) {
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      window
-        .atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
+    
+    const rawData = window.atob(base64);
+    const bytes = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; i++) {
+      bytes[i] = rawData.charCodeAt(i);
+    }
+    
+    const decoder = new TextDecoder('utf-8');
+    return JSON.parse(decoder.decode(bytes));
   } catch (e) {
+    console.error("JWT çözme hatası:", e);
     return null;
   }
 }
 
+// 🚨 HashRouter kullansan bile URL'deki 'id' parametresini %100 yakalayan çift dikişli fonksiyon
+function getWallIdFromUrl(locationSearch: string): number | null {
+  const queryParams = new URLSearchParams(locationSearch);
+  const idFromQuery = queryParams.get('id');
+  if (idFromQuery && !isNaN(Number(idFromQuery))) {
+    return Number(idFromQuery);
+  }
+
+  try {
+    const rawUrl = window.location.href;
+    const match = rawUrl.match(/[?&]id=(\d+)/);
+    if (match && match[1]) {
+      return Number(match[1]);
+    }
+  } catch (e) {
+    console.error("Ham URL'den ID ayıklanırken hata:", e);
+  }
+
+  return null;
+}
+
 export function Home({ onLoginSuccess }: HomeProps) {
   const navigate = useNavigate();
-  const location = useLocation(); // 🚀 URL'deki ?id=40 parametresini yakalamak için location'ı tanımladık!
+  const location = useLocation();
 
-  // 🔎 URL sorgusundaki 'id' parametresini ayıklıyoruz
-  const queryParams = new URLSearchParams(location.search);
-  const idFromQuery = queryParams.get('id');
-  const wallIdFromUrl = idFromQuery ? Number(idFromQuery) : null;
-
+  // 🚀 URL'den gelen ID'yi yakalıyoruz
+  const wallIdFromUrl = getWallIdFromUrl(location.search);
   const [manualWallId, setManualWallId] = useState('');
 
-  // Başlangıçta statusMessage'ı URL'den gelen ID'ye göre dinamik kuruyoruz
   const [statusMessage, setStatusMessage] = useState(
     wallIdFromUrl 
       ? `Kimliğiniz doğrulandıktan sonra #${wallIdFromUrl} numaralı anı odasına giriş yapacaksınız.` 
       : 'Kapsüle erişmek için lütfen oda kodunuzu girin ve Google hesabınızla kimliğinizi doğrulayın.'
   );
-
 
   useEffect(() => {
     if (wallIdFromUrl) {
@@ -86,14 +104,11 @@ export function Home({ onLoginSuccess }: HomeProps) {
 
       if (response.ok && data.success) {
         setStatusMessage('Giriş Başarılı! Yönlendiriliyorsunuz... ✨');
-        
-        // 1. App.tsx'e başarılı girişi bildiriyoruz
         onLoginSuccess(data.role, data.title, finalWallId);
         
-        // 2. Kullanıcıyı dinamik olarak o girdiğiniz oda ID'sine anında uçuruyoruz!
         setTimeout(() => {
           navigate(`/wall/${finalWallId}`);
-        }, 800); // Küçük bir gecikme koyduk ki kullanıcı o tatlı başarı mesajını görebilsin
+        }, 800);
         
       } else {
         setStatusMessage(`Giriş Engellendi: ${data.message || 'Erişim izniniz bulunmuyor!'}`);
@@ -170,6 +185,7 @@ export function Home({ onLoginSuccess }: HomeProps) {
           {statusMessage}
         </p>
 
+        {/* 🚨 URL'den ID gelmediyse el ile girilen input gözükecek */}
         {!wallIdFromUrl && (
           <div style={{ marginBottom: '2rem', padding: '0 10px' }}>
             <input

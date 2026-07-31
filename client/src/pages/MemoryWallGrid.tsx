@@ -43,6 +43,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
   
   const colors = themeStyles[themeName as keyof typeof themeStyles] || themeStyles.graduation;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
 
   const [combinedItems, setCombinedItems] = useState<any[]>([]);
   const [isAnıModalOpen, setIsAnıModalOpen] = useState(false);
