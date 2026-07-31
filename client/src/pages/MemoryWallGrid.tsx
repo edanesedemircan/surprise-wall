@@ -207,7 +207,6 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
   // Kapsülü İmha Etme Fonksiyonu
   const handleDestroyWall = async () => {
-
     const firstConfirm = window.confirm(
       "DİKKAT! Bu zaman kapsülünü ve içindeki tüm anıları/soruları kalıcı olarak silmek istediğinize emin misiniz? "
     );
@@ -270,7 +269,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
   const gridPatternStyle = `linear-gradient(to right, ${colors.gridLine} 1px, transparent 1px), linear-gradient(to bottom, ${colors.gridLine} 1px, transparent 1px)`;
 
-  // ⚙️ KAPSÜL YÖNETİMİ BİLEŞENİ (Hem webde hem mobilde kullanabilmek için izole ettik)
+  // ⚙️ KAPSÜL YÖNETİMİ BİLEŞENİ
   const renderCapsuleManagement = () => (
     <div className="wall-capsule-management-container" style={{ 
       marginTop: 'auto', 
@@ -415,12 +414,6 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           .wall-grid-cards {
             grid-template-columns: 1fr !important;
             gap: 1.25rem !important;
-          }
-          .wall-modal-box {
-            width: 92% !important;
-            padding: 1.5rem !important;
-            max-height: 85vh !important;
-            overflow-y: auto !important;
           }
           .wall-quiz-panel {
             width: 100% !important;
@@ -622,17 +615,24 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         </div>
       )}
 
-      {/* Anı Modali */}
+      {/* Anı Modali (Soru Paneli ile Birebir Aynı Tasarım & Şıklıkta) */}
       {isAnıModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.3)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
-          <div className="wall-modal-box" style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '500px', borderRadius: '28px', padding: '2.5rem', position: 'relative', border: `2px solid ${colors.border}`, boxShadow: '0 25px 50px rgba(0,0,0,0.08)' }}>
-            <button onClick={() => { setIsAnıModalOpen(false); setSelectedImage(null); setEditingMemoryId(null); setAuthorName(''); setContent(''); }} style={{ position: 'absolute', top: '24px', right: '24px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontSize: '18px', color: '#94A3B8' }}>✕</button>
-            <h3 style={{ margin: '0 0 1.75rem 0', fontStyle: 'italic', color: colors.heroText, fontSize: '24px', fontWeight: '800' }}>
-  {editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}
-</h3>
-            <form onSubmit={handleAnıSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px',  boxSizing: 'border-box'}} />
-              <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5', boxSizing: 'border-box'}} />
+        <div style={{ position: 'fixed', top: 0, right: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.2)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'flex-end', zIndex: 99999 }}>
+          <div className="wall-quiz-panel" style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '460px', height: '100vh', padding: '2.5rem', boxSizing: 'border-box', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxShadow: '-10px 0 35px rgba(0,0,0,0.05)', borderLeft: `2px solid ${colors.border}`, backgroundImage: gridPatternStyle, backgroundSize: '20px 20px' }}>
+            
+            {/* Üst Başlık ve Kapatma Butonu */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `2px solid ${colors.border}`, paddingBottom: '1rem' }}>
+              <h3 style={{ margin: 0, color: colors.heroText, fontStyle: 'italic', fontSize: '24px', fontWeight: '900' }}>
+                {editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}
+              </h3>
+              <button onClick={() => { setIsAnıModalOpen(false); setSelectedImage(null); setEditingMemoryId(null); setAuthorName(''); setContent(''); }} style={{ border: 'none', background: 'none', fontSize: '22px', cursor: 'pointer', color: '#94A3B8' }}>✕</button>
+            </div>
+
+            {/* Form Alanı */}
+            <form onSubmit={handleAnıSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ padding: '0.85rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, backgroundColor: '#ffffff', color: colors.text, outline: 'none', fontSize: '15px', fontWeight: '500' }} />
+              <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ padding: '0.85rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, backgroundColor: '#ffffff', color: colors.text, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5', fontWeight: '500' }} />
+              
               <input 
                 type="file" 
                 accept="image/*" 
@@ -640,15 +640,17 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
                 onChange={handleImageChange} 
                 style={{ display: 'none' }}
               />
+              
               {!selectedImage ? (
-                <div onClick={() => fileInputRef.current?.click()} style={{ padding: '1.5rem', border: `2px dashed ${colors.accent}`, borderRadius: '14px', textAlign: 'center', cursor: 'pointer', backgroundColor: colors.badge, fontStyle: 'italic', fontSize: '14px', color: colors.heroText, fontWeight: 'bold' }}>📸 Fotoğraf Ekle / Değiştir</div>
+                <div onClick={() => fileInputRef.current?.click()} style={{ padding: '1.5rem', border: `2px dashed ${colors.border}`, borderRadius: '14px', textAlign: 'center', cursor: 'pointer', backgroundColor: '#ffffff', fontStyle: 'italic', fontSize: '14px', color: colors.heroText, fontWeight: 'bold' }}>📸 Fotoğraf Ekle / Değiştir</div>
               ) : (
-                <div style={{ position: 'relative', width: '100%', height: '180px', borderRadius: '14px', overflow: 'hidden', border: `1px solid ${colors.border}` }}>
+                <div style={{ position: 'relative', width: '100%', height: '180px', borderRadius: '14px', overflow: 'hidden', border: `2px solid ${colors.border}` }}>
                   <img src={selectedImage} alt="Önizleme" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <button type="button" onClick={() => setSelectedImage(null)} style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>✕</button>
                 </div>
               )}
-              <button type="submit" style={{ width: '100%', padding: '1.1rem', backgroundColor: colors.accent, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>
+              
+              <button type="submit" style={{ width: '100%', padding: '1.1rem', backgroundColor: colors.accent, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', marginTop: '0.5rem', boxShadow: `0 4px 14px ${colors.border}` }}>
                 {editingMemoryId ? '💾 Değişiklikleri Kaydet' : '📎 Anıyı Duvara As'}
               </button>
             </form>
