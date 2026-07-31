@@ -270,11 +270,115 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
   const gridPatternStyle = `linear-gradient(to right, ${colors.gridLine} 1px, transparent 1px), linear-gradient(to bottom, ${colors.gridLine} 1px, transparent 1px)`;
 
+  // ⚙️ KAPSÜL YÖNETİMİ BİLEŞENİ (Hem webde hem mobilde kullanabilmek için izole ettik)
+  const renderCapsuleManagement = () => (
+    <div className="wall-capsule-management-container" style={{ 
+      marginTop: 'auto', 
+      paddingTop: '1.5rem', 
+      borderTop: `2px dashed ${colors.border}`,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '1rem',
+      width: '100%',
+      boxSizing: 'border-box'
+    }}>
+      <span style={{ 
+        fontSize: '12px', 
+        fontWeight: 'bold', 
+        color: colors.heroText, 
+        letterSpacing: '0.5px',
+        fontFamily: 'sans-serif'
+      }}>
+        ⚙️ KAPSÜL YÖNETİMİ
+      </span>
+
+      {/* Davetli Ekleme Formu */}
+      <form className="wall-management-form" onSubmit={handleAddCoCreator} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '80%' }}>
+        <input 
+          type="email" 
+          placeholder="Davetli E-posta..." 
+          value={coCreatorEmail}
+          onChange={(e) => setCoCreatorEmail(e.target.value)}
+          required
+          style={{ 
+            width: '100%', 
+            padding: '0.65rem 0.8rem', 
+            borderRadius: '10px', 
+            border: `1.5px solid ${colors.border}`, 
+            fontSize: '12px',
+            outline: 'none',
+            backgroundColor: colors.badge,
+            color: colors.text,
+            boxSizing: 'border-box',
+            fontFamily: 'sans-serif',
+            fontWeight: '500'
+          }} 
+        />
+        <button 
+          type="submit" 
+          disabled={isAddingCreator}
+          style={{ 
+            width: '100%', 
+            padding: '0.65rem', 
+            borderRadius: '10px', 
+            backgroundColor: colors.heroText, 
+            color: '#ffffff', 
+            border: 'none', 
+            fontWeight: 'bold', 
+            fontSize: '12px', 
+            cursor: 'pointer',
+            transition: 'opacity 0.2s',
+            fontFamily: 'sans-serif'
+          }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+        >
+          {isAddingCreator ? 'Ekleniyor...' : '➕ Davetli Ekle'}
+        </button>
+      </form>
+
+      {/* Kapsülü İmha Et Butonu */}
+      <button 
+        className="wall-destroy-btn"
+        onClick={handleDestroyWall} 
+        disabled={isDeleting}
+        style={{ 
+          width: '80%', 
+          padding: '0.75rem', 
+          borderRadius: '10px', 
+          backgroundColor: '#fa0b0b', 
+          color: '#ffffff', 
+          border: 'none', 
+          fontWeight: 'bold', 
+          fontSize: '12px', 
+          cursor: 'pointer',
+          boxShadow: '0 4px 10px rgba(128, 24, 24, 0.15)',
+          transition: 'transform 0.1s',
+          fontFamily: 'sans-serif'
+        }} 
+        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} 
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+      >
+        {isDeleting ? 'İmha Ediliyor...' : '💣 Kapsülü İmha Et'}
+      </button>
+
+      <p style={{ fontSize: '12px', color: colors.heroSubtext, fontFamily: '"Segoe UI", sans-serif', lineHeight: '1.5', fontStyle: 'italic', fontWeight: '500', margin: '0.5rem 0 0 0', textAlign: 'center' }}>
+        Sevdiklerinize notlar bırakın ve onun için harika sürpriz test soruları hazırlayın! ❤️
+      </p>
+    </div>
+  );
+
   return (
     <div className="wall-layout-container" style={{ width: '100%', minHeight: '100vh', backgroundColor: colors.pageBg, display: 'flex', boxSizing: 'border-box', fontFamily: '"Georgia", serif', margin: 0 }}>
-      {/* 📱 MOBİL UYUM CSS MEDYA SORGULARI (Masaüstüne asla dokunmaz) */}
+      {/* 📱 MOBİL UYUM CSS MEDYA SORGULARI */}
       <style>{`
         body, html, #root { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; background-color: ${colors.pageBg} !important; overflow-x: hidden !important; }
+
+        /* Masaüstünde mobil yönetim panelini gizle */
+        .mobile-capsule-wrapper {
+          display: none;
+        }
 
         @media (max-width: 768px) {
           .wall-layout-container {
@@ -287,11 +391,25 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             border-right: none !important;
             border-bottom: 2px solid ${colors.border} !important;
             padding: 1.5rem !important;
-            gap: 1.5rem !important;
+            gap: 1.25rem !important;
+          }
+          /* Mobilde soldaki kapsül yönetimini gizliyoruz */
+          .desktop-capsule-wrapper {
+            display: none !important;
+          }
+          /* Mobilde sayfa sonuna gelecek kapsül yönetimini gösteriyoruz */
+          .mobile-capsule-wrapper {
+            display: flex !important;
+            width: 100% !important;
+            background-color: #ffffff !important;
+            border-top: 2px solid ${colors.border} !important;
+            padding: 2rem 1.5rem !important;
+            box-sizing: border-box !important;
+            margin-top: 2rem !important;
           }
           .wall-main-content {
             margin-left: 0 !important;
-            padding: 1.5rem 1rem !important;
+            padding: 1.5rem 1rem 0 1rem !important;
             min-height: auto !important;
           }
           .wall-grid-cards {
@@ -349,100 +467,10 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           </button>
         </div>
 
-        {/* ⚙️ YÖNETİM PANELİ */}
-        <div style={{ 
-          marginTop: 'auto', 
-          paddingTop: '1.5rem', 
-          borderTop: `2px dashed ${colors.border}`,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1rem'
-        }}>
-          <span style={{ 
-            fontSize: '12px', 
-            fontWeight: 'bold', 
-            color: colors.heroText, 
-            letterSpacing: '0.5px',
-            fontFamily: 'sans-serif'
-          }}>
-            ⚙️ KAPSÜL YÖNETİMİ
-          </span>
-
-          {/* Davetli Ekleme Formu */}
-          <form className="wall-management-form" onSubmit={handleAddCoCreator} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '80%' }}>
-            <input 
-              type="email" 
-              placeholder="Davetli E-posta..." 
-              value={coCreatorEmail}
-              onChange={(e) => setCoCreatorEmail(e.target.value)}
-              required
-              style={{ 
-                width: '100%', 
-                padding: '0.65rem 0.8rem', 
-                borderRadius: '10px', 
-                border: `1.5px solid ${colors.border}`, 
-                fontSize: '12px',
-                outline: 'none',
-                backgroundColor: colors.badge,
-                color: colors.text,
-                boxSizing: 'border-box',
-                fontFamily: 'sans-serif',
-                fontWeight: '500'
-              }} 
-            />
-            <button 
-              type="submit" 
-              disabled={isAddingCreator}
-              style={{ 
-                width: '100%', 
-                padding: '0.65rem', 
-                borderRadius: '10px', 
-                backgroundColor: colors.heroText, 
-                color: '#ffffff', 
-                border: 'none', 
-                fontWeight: 'bold', 
-                fontSize: '12px', 
-                cursor: 'pointer',
-                transition: 'opacity 0.2s',
-                fontFamily: 'sans-serif'
-              }} 
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} 
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              {isAddingCreator ? 'Ekleniyor...' : '➕ Davetli Ekle'}
-            </button>
-          </form>
-
-          {/* Kapsülü İmha Et Butonu */}
-          <button 
-            className="wall-destroy-btn"
-            onClick={handleDestroyWall} 
-            disabled={isDeleting}
-            style={{ 
-              width: '80%', 
-              padding: '0.75rem', 
-              borderRadius: '10px', 
-              backgroundColor: '#fa0b0b', 
-              color: '#ffffff', 
-              border: 'none', 
-              fontWeight: 'bold', 
-              fontSize: '12px', 
-              cursor: 'pointer',
-              boxShadow: '0 4px 10px rgba(128, 24, 24, 0.15)',
-              transition: 'transform 0.1s',
-              fontFamily: 'sans-serif'
-            }} 
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} 
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            {isDeleting ? 'İmha Ediliyor...' : '💣 Kapsülü İmha Et'}
-          </button>
+        {/* ⚙️ MASAÜSTÜ KAPSÜL YÖNETİMİ (Mobilde Gizlenir) */}
+        <div className="desktop-capsule-wrapper" style={{ marginTop: 'auto', width: '100%' }}>
+          {renderCapsuleManagement()}
         </div>
-
-        <p style={{ fontSize: '12px', color: colors.heroSubtext, fontFamily: '"Segoe UI", sans-serif', lineHeight: '1.5', fontStyle: 'italic', fontWeight: '500', margin: 0 }}>
-          Sevdiklerinize notlar bırakın ve onun için harika sürpriz test soruları hazırlayın! ❤️
-        </p>
       </div>
 
       {/* Sağ Taraf: Akışkan Anı Kartları Listesi */}
@@ -491,7 +519,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
               opacity: 0.85
             }}>
               İlk anıyı sen yazarak bu duvarı canlandırmaya ne dersin? <br /><br />
-              Sol taraftaki <strong style={{ color: colors.heroText, fontStyle: 'normal' }}>"✨ Anı Bırak"</strong> veya 
+              Yukarıdaki <strong style={{ color: colors.heroText, fontStyle: 'normal' }}>"✨ Anı Bırak"</strong> veya 
               <strong style={{ color: colors.heroText, fontStyle: 'normal' }}> "❓Soru Sor"</strong> butonlarına basarak anılarını ekleyebilir ya da sorularını sorabilirsin.
             </p>
           </div>
@@ -552,6 +580,11 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
             })}
           </div>
         )}
+
+        {/* 📱 MOBİL KAPSÜL YÖNETİMİ (Sayfanın en altındaki alan, aynı kareli arkaplanla) */}
+        <div className="mobile-capsule-wrapper" style={{ backgroundImage: gridPatternStyle, backgroundSize: '20px 20px' }}>
+          {renderCapsuleManagement()}
+        </div>
       </div>
 
       {/* Soru Paneli */}
@@ -594,7 +627,9 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.3)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
           <div className="wall-modal-box" style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '500px', borderRadius: '28px', padding: '2.5rem', position: 'relative', border: `2px solid ${colors.border}`, boxShadow: '0 25px 50px rgba(0,0,0,0.08)' }}>
             <button onClick={() => { setIsAnıModalOpen(false); setSelectedImage(null); setEditingMemoryId(null); setAuthorName(''); setContent(''); }} style={{ position: 'absolute', top: '24px', right: '24px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontSize: '18px', color: '#94A3B8' }}>✕</button>
-            <h3 style={{ margin: '0 0 1.75rem 0', fontStyle: 'italic', color: colors.heroText, fontSize: '24px', fontWeight: '800' }}>{editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}</h3>
+            <h3 style={{ margin: '0 0 1.75rem 0', fontStyle: 'italic', color: colors.heroText, fontSize: '24px', fontWeight: '800' }}>
+  {editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}
+</h3>
             <form onSubmit={handleAnıSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px',  boxSizing: 'border-box'}} />
               <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5', boxSizing: 'border-box'}} />
