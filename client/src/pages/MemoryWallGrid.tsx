@@ -44,7 +44,6 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
   const colors = themeStyles[themeName as keyof typeof themeStyles] || themeStyles.graduation;
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-
   const [combinedItems, setCombinedItems] = useState<any[]>([]);
   const [isAnıModalOpen, setIsAnıModalOpen] = useState(false);
   const [isQuizPanelOpen, setIsQuizPanelOpen] = useState(false);
@@ -272,13 +271,55 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
   const gridPatternStyle = `linear-gradient(to right, ${colors.gridLine} 1px, transparent 1px), linear-gradient(to bottom, ${colors.gridLine} 1px, transparent 1px)`;
 
   return (
-    <div style={{ width: '100%', minHeight: '100vh', backgroundColor: colors.pageBg, display: 'flex', boxSizing: 'border-box', fontFamily: '"Georgia", serif', margin: 0 }}>
+    <div className="wall-layout-container" style={{ width: '100%', minHeight: '100vh', backgroundColor: colors.pageBg, display: 'flex', boxSizing: 'border-box', fontFamily: '"Georgia", serif', margin: 0 }}>
+      {/* 📱 MOBİL UYUM CSS MEDYA SORGULARI (Masaüstüne asla dokunmaz) */}
       <style>{`
-        body, html, #root { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; background-color: ${colors.pageBg} !important; }
+        body, html, #root { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; background-color: ${colors.pageBg} !important; overflow-x: hidden !important; }
+
+        @media (max-width: 768px) {
+          .wall-layout-container {
+            flex-direction: column !important;
+          }
+          .wall-sidebar {
+            width: 100% !important;
+            height: auto !important;
+            position: relative !important;
+            border-right: none !important;
+            border-bottom: 2px solid ${colors.border} !important;
+            padding: 1.5rem !important;
+            gap: 1.5rem !important;
+          }
+          .wall-main-content {
+            margin-left: 0 !important;
+            padding: 1.5rem 1rem !important;
+            min-height: auto !important;
+          }
+          .wall-grid-cards {
+            grid-template-columns: 1fr !important;
+            gap: 1.25rem !important;
+          }
+          .wall-modal-box {
+            width: 92% !important;
+            padding: 1.5rem !important;
+            max-height: 85vh !important;
+            overflow-y: auto !important;
+          }
+          .wall-quiz-panel {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 1.5rem !important;
+          }
+          .wall-management-form {
+            width: 100% !important;
+          }
+          .wall-destroy-btn {
+            width: 100% !important;
+          }
+        }
       `}</style>
       
       {/* SOL PANEL (SIDEBAR) */}
-      <div style={{ 
+      <div className="wall-sidebar" style={{ 
         width: '280px', 
         height: '100vh', 
         position: 'fixed', 
@@ -329,7 +370,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           </span>
 
           {/* Davetli Ekleme Formu */}
-          <form onSubmit={handleAddCoCreator} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '80%' }}>
+          <form className="wall-management-form" onSubmit={handleAddCoCreator} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '80%' }}>
             <input 
               type="email" 
               placeholder="Davetli E-posta..." 
@@ -375,6 +416,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
 
           {/* Kapsülü İmha Et Butonu */}
           <button 
+            className="wall-destroy-btn"
             onClick={handleDestroyWall} 
             disabled={isDeleting}
             style={{ 
@@ -404,7 +446,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       </div>
 
       {/* Sağ Taraf: Akışkan Anı Kartları Listesi */}
-      <div style={{ 
+      <div className="wall-main-content" style={{ 
         flex: 1, 
         marginLeft: '280px', 
         padding: '4rem 3rem', 
@@ -455,7 +497,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
           </div>
         ) : (
           /* 📌 MEVCUT KARTLARIN GRID LİSTESİ */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+          <div className="wall-grid-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
             {combinedItems.map((item, index) => {
               if (item.isQuiz) {
                 return (
@@ -515,7 +557,7 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       {/* Soru Paneli */}
       {isQuizPanelOpen && (
         <div style={{ position: 'fixed', top: 0, right: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.2)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'flex-end', zIndex: 99999 }}>
-          <div style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '460px', height: '100vh', padding: '2.5rem', boxSizing: 'border-box', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxShadow: '-10px 0 35px rgba(0,0,0,0.05)', borderLeft: `2px solid ${colors.border}`, backgroundImage: gridPatternStyle, backgroundSize: '20px 20px' }}>
+          <div className="wall-quiz-panel" style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '460px', height: '100vh', padding: '2.5rem', boxSizing: 'border-box', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxShadow: '-10px 0 35px rgba(0,0,0,0.05)', borderLeft: `2px solid ${colors.border}`, backgroundImage: gridPatternStyle, backgroundSize: '20px 20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `2px solid ${colors.border}`, paddingBottom: '1rem' }}>
               <h3 style={{ margin: 0, color: colors.heroText, fontStyle: 'italic', fontSize: '24px', fontWeight: '900' }}>
                 {editingQuizId ? '📝 Soruyu Düzenle' : '❓ Soru Hazırla'}
@@ -550,19 +592,19 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       {/* Anı Modali */}
       {isAnıModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.3)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
-          <div style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '500px', borderRadius: '28px', padding: '2.5rem', position: 'relative', border: `2px solid ${colors.border}`, boxShadow: '0 25px 50px rgba(0,0,0,0.08)' }}>
+          <div className="wall-modal-box" style={{ backgroundColor: '#ffffff', width: '100%', maxWidth: '500px', borderRadius: '28px', padding: '2.5rem', position: 'relative', border: `2px solid ${colors.border}`, boxShadow: '0 25px 50px rgba(0,0,0,0.08)' }}>
             <button onClick={() => { setIsAnıModalOpen(false); setSelectedImage(null); setEditingMemoryId(null); setAuthorName(''); setContent(''); }} style={{ position: 'absolute', top: '24px', right: '24px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontSize: '18px', color: '#94A3B8' }}>✕</button>
             <h3 style={{ margin: '0 0 1.75rem 0', fontStyle: 'italic', color: colors.heroText, fontSize: '24px', fontWeight: '800' }}>{editingMemoryId ? '📝 Anıyı Düzenle' : '✨ Duvara Bir Anı İliştir'}</h3>
             <form onSubmit={handleAnıSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <input type="text" placeholder="Adınız / Rumuzunuz" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px',  boxSizing: 'border-box'}} />
               <textarea rows={4} placeholder="Anınızı buraya dökün..." value={content} onChange={(e) => setContent(e.target.value)} required style={{ width: '100%', padding: '0.95rem 1.25rem', borderRadius: '14px', border: `2px solid ${colors.border}`, color: colors.text, backgroundColor: colors.badge, outline: 'none', fontSize: '15px', resize: 'none', lineHeight: '1.5', boxSizing: 'border-box'}} />
               <input 
-  type="file" 
-  accept="image/*" 
-  ref={fileInputRef} 
-  onChange={handleImageChange} 
-  style={{ display: 'none' }} // <-- Bütün o gereksiz stilleri silip sadece bunu bıraktık!
-/>
+                type="file" 
+                accept="image/*" 
+                ref={fileInputRef} 
+                onChange={handleImageChange} 
+                style={{ display: 'none' }}
+              />
               {!selectedImage ? (
                 <div onClick={() => fileInputRef.current?.click()} style={{ padding: '1.5rem', border: `2px dashed ${colors.accent}`, borderRadius: '14px', textAlign: 'center', cursor: 'pointer', backgroundColor: colors.badge, fontStyle: 'italic', fontSize: '14px', color: colors.heroText, fontWeight: 'bold' }}>📸 Fotoğraf Ekle / Değiştir</div>
               ) : (
@@ -580,5 +622,4 @@ export function MemoryWallGrid({ wallId, wallTitle, themeName, apiUrl }: MemoryW
       )}
     </div>
   );
-
 }
